@@ -20,4 +20,9 @@ public class GeoMap {
     public List<Segment> getSegments() {
         return segments.values().stream().flatMap(e -> e.values().stream()).collect(Collectors.toList());
     }
+
+    public Segment getSegment(String origin, String dest) {
+        if (!segments.containsKey(origin)) return null;
+        return segments.get(origin).get(dest);
+    }
 }

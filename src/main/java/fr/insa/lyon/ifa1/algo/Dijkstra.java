@@ -15,7 +15,7 @@ public class Dijkstra implements FindShortestRoutes {
 
         // calcul de tous les voisins
         Map<String, Set<String>> succesors = new HashMap<>();
-        for (Intersection i : gm.getIntersections().values()) {
+        for (Intersection i : gm.getIntersections()) {
             succesors.put(i.getId(), new HashSet<>());
         }
 
@@ -38,7 +38,7 @@ public class Dijkstra implements FindShortestRoutes {
         // initialisation
         String source = ppSource.getAddress().getId();
         dist.put(source, 0.0d);
-        for (Intersection i : gm.getIntersections().values()) {
+        for (Intersection i : gm.getIntersections()) {
             String v = i.getId();
             if (!v.equals(source)) {
                 dist.put(v, Double.POSITIVE_INFINITY);

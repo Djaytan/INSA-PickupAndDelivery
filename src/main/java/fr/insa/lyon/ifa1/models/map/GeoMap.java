@@ -1,5 +1,7 @@
 package fr.insa.lyon.ifa1.models.map;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,11 +15,15 @@ public class GeoMap {
         this.segments = segments;
     }
 
-    public Map<String, Intersection> getIntersections() {
-        return intersections;
+    public Collection<Intersection> getIntersections() {
+        return intersections.values();
     }
 
-    public List<Segment> getSegments() {
+    public Intersection getIntersection(String id) {
+        return intersections.get(id);
+    }
+
+    public Collection<Segment> getSegments() {
         return segments.values().stream().flatMap(e -> e.values().stream()).collect(Collectors.toList());
     }
 

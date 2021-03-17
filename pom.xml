@@ -39,12 +39,6 @@
       <artifactId>javafx-graphics</artifactId>
       <version>17-ea+3</version>
     </dependency>
-    <!-- JAXP -->
-    <dependency>
-      <groupId>javax.xml</groupId>
-      <artifactId>jaxp-api</artifactId>
-      <version>1.4.2</version>
-    </dependency>
     <!-- JUnit -->
     <dependency>
       <groupId>junit</groupId>

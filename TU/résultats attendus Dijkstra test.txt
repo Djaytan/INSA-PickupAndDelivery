@@ -1,0 +1,15 @@
+A->B: A,t,B (4)
+A->C: A,s,C  (5)
+A->D: A,y,D (8)
+
+B->A:  B,t,A (4)
+B->C: B,t,u,C (4)
+B->D: B,w,D (8)
+
+C->A: C,s,A (5)
+C->B: C,u,t,B (4)
+C->D: C,y,D (5)
+
+D->A: D,y,A (8)
+D->B: D,w,B (8)
+D->C: D,y,C (5)

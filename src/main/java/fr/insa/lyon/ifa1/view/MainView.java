@@ -1,13 +1,12 @@
 package fr.insa.lyon.ifa1.view;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-
-import java.io.File;
-import java.net.URL;
 
 public class MainView extends Application {
     public static void main(String[] args) {
@@ -16,27 +15,22 @@ public class MainView extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        System.out.println("ici");
-        String sceneFile = "/fxml/mainView.fxml";
-        Parent root = null;
-        URL url = null;
-        try
-        {
-            url  = getClass().getResource( sceneFile );
-            root = FXMLLoader.load( url );
-            System.out.println( "  fxmlResource = " + sceneFile );
-        }
-        catch ( Exception ex )
-        {
-            System.out.println( "Exception on FXMLLoader.load()" );
-            System.out.println( "  * url: " + url );
-            System.out.println( "  * " + ex );
-            System.out.println( "    ----------------------------------------\n" );
-            throw ex;
-        }
 
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.setTitle("Hello World!");
+        Button btn = new Button();
+        btn.setText("Say 'Hello World'");
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("Hello World!");
+            }
+        });
+
+        StackPane root = new StackPane();
+        root.getChildren().add(btn);
+        primaryStage.setScene(new Scene(root, 300, 250));
         primaryStage.show();
+
     }
 }

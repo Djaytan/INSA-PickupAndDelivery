@@ -74,7 +74,7 @@ public class Dijkstra implements FindShortestRoutes {
                 double length = 0.0d;
                 String currentNode = dest;
                 while (prev.get(currentNode) != null) {
-                    Segment s = gm.getSegment(currentNode, prev.get(currentNode));
+                    Segment s = gm.getSegment(prev.get(currentNode), currentNode);
                     itinerary.addFirst(s);
                     currentNode = prev.get(currentNode);
                     length += s.getLength();

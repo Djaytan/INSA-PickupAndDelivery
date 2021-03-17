@@ -1,12 +1,15 @@
 package fr.insa.lyon.ifa1.controller;
 
-import javafx.event.ActionEvent;
-import javafx.scene.control.Label;
+import javafx.fxml.FXML;
+import java.util.Observable;
 
-public class MainViewController {
-    public Label helloWorld;
 
-    public void sayHelloWorld(ActionEvent actionEvent) {
-        helloWorld.setText("Hello World!");
+public class MainViewController extends Observable {
+    private ViewController vc;
+
+    @FXML
+    public void initialize() {
+        vc = ViewController.getInstance();
+        this.addObserver(vc);
     }
 }

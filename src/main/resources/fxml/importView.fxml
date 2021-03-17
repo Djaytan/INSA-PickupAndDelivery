@@ -8,7 +8,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="fr.insa.lyon.ifa1.view.DeliveryViewController"
+            fx:controller="fr.insa.lyon.ifa1.controller.ImportViewController"
             prefHeight="400.0" prefWidth="600.0">
 
 </AnchorPane>

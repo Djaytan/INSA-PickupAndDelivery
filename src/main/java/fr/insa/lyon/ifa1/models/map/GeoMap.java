@@ -1,5 +1,6 @@
 package fr.insa.lyon.ifa1.models.map;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -7,6 +8,11 @@ import java.util.stream.Collectors;
 public class GeoMap {
     private Map<String, Intersection> intersections;
     private Map<String, Map<String, Segment>> segments;
+
+    public GeoMap() {
+        this.intersections = new HashMap<>();
+        this.segments = new HashMap<>();
+    }
 
     public GeoMap(Map<String, Intersection> intersections, Map<String, Map<String, Segment>>  segments) {
         this.intersections = intersections;

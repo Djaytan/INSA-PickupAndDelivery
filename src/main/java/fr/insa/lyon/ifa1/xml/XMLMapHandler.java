@@ -22,7 +22,11 @@ public class XMLMapHandler extends DefaultHandler {
                 break;
             }
             case "intersection": {
-                // TODO
+                String id = attributes.getValue("id");
+                double latitude = Double.parseDouble(attributes.getValue("latitude"));
+                double longitude = Double.parseDouble(attributes.getValue("longitude"));
+                Intersection intersection = new Intersection(id, latitude, longitude);
+                GeoMapRegistry.addIntersection(intersection);
                 break;
             }
             case "segment": {

@@ -24,22 +24,4 @@ public final class GeoMapRegistry {
     public static GeoMap getGeoMap() {
         return geoMap;
     }
-
-    /**
-     * Adds an {@link Intersection} to the {@link GeoMap}.
-     * 
-     * @param intersection The {@link Intersection} to add.
-     */
-    public static void addIntersection(Intersection intersection) {
-        geoMap.addIntersection(intersection);
-    }
-
-    /**
-     * Adds a {@link Segment} to the {@link GeoMap}.
-     * 
-     * @param segment The {@link Segment} to add.
-     */
-    public static void addSegment(Segment segment) {
-        geoMap.addSegment(segment);
-    }
 }

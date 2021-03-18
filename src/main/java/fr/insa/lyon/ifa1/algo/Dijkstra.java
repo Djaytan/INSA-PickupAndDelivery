@@ -32,23 +32,21 @@ public class Dijkstra implements FindShortestRoutes {
         return solution;
     }
 
-    private Map<String, Route> solveOne(GeoMap gm, PassagePoint ppSource, PassagePoint[] ppDests, Map<String, Set<String>> successors) {
+    private Map<String, Route> solveOne(GeoMap gm, PassagePoint ppOrigin, PassagePoint[] ppDests, Map<String, Set<String>> successors) {
         Map<String, Double> dist = new HashMap<>();
         Map<String, String> prev = new HashMap<>();
         PriorityQueue<String> q = new PriorityQueue<>(Comparator.comparingDouble(dist::get));
         Set<String> unvisited = Arrays.stream(ppDests).map(pp -> pp.getAddress().getId()).collect(Collectors.toSet());
 
         // initialisation
-        String source = ppSource.getAddress().getId();
-        initialize(gm, dist, prev, q, unvisited, source);
+        String origin = ppOrigin.getAddress().getId();
+        initialize(gm, dist, prev, q, unvisited, origin);
 
         // calcul des chemins les plus courts
         computeShortestRoutes(gm, successors, dist, prev, q, unvisited);
 
         // construction des chemins
-        Map<String, Route> route = extractRoutes(gm, ppDests, prev, source);
-
-        return route;
+        return extractRoutes(gm, ppDests, prev, origin);
     }
 
     private void initialize(
@@ -56,13 +54,14 @@ public class Dijkstra implements FindShortestRoutes {
             Map<String, Double> dist,
             Map<String, String> prev,
             PriorityQueue<String> q,
-            Set<String> unvisited, String source
+            Set<String> unvisited,
+            String origin
     ) {
-        dist.put(source, 0.0d);
-        unvisited.remove(source);
+        dist.put(origin, 0.0d);
+        unvisited.remove(origin);
         for (Intersection i : gm.getIntersections()) {
             String v = i.getId();
-            if (!v.equals(source)) {
+            if (!v.equals(origin)) {
                 dist.put(v, Double.POSITIVE_INFINITY);
                 prev.put(v, null);
             }
@@ -100,28 +99,24 @@ public class Dijkstra implements FindShortestRoutes {
             GeoMap gm,
             PassagePoint[] ppDests,
             Map<String, String> prev,
-            String source
+            String origin
     ) {
         return Arrays.stream(ppDests)
-                .map(pp -> extractRoute(gm, prev, source, pp))
+                .map(pp -> extractRoute(gm, prev, origin, pp))
                 .collect(Collectors.toMap(Route::getDestination, r -> r));
     }
 
-    private Route extractRoute(GeoMap gm, Map<String, String> prev, String source, PassagePoint pp) {
+    private Route extractRoute(GeoMap gm, Map<String, String> prev, String origin, PassagePoint pp) {
         String dest = pp.getAddress().getId();
-        if (dest.equals(source)) {
-            return new Route(source, dest, new LinkedList<>(), 0.0d);
-        } else {
-            LinkedList<Segment> itinerary = new LinkedList<>();
-            double length = 0.0d;
-            String currentNode = dest;
-            while (prev.get(currentNode) != null) {
-                Segment s = gm.getSegment(prev.get(currentNode), currentNode);
-                itinerary.addFirst(s);
-                currentNode = prev.get(currentNode);
-                length += s.getLength();
-            }
-            return new Route(source, dest, itinerary, length);
+        LinkedList<Segment> itinerary = new LinkedList<>();
+        double length = 0.0d;
+        String currentNode = dest;
+        while (prev.get(currentNode) != null) {
+            Segment s = gm.getSegment(prev.get(currentNode), currentNode);
+            itinerary.addFirst(s);
+            currentNode = prev.get(currentNode);
+            length += s.getLength();
         }
+        return new Route(origin, dest, itinerary, length);
     }
 }

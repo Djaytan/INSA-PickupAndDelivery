@@ -23,8 +23,18 @@ public class GeoMap {
         return intersections;
     }
 
+    public void addIntersection(Intersection intersection) {
+        this.intersections.put(intersection.getId(), intersection);
+    }
+
     public List<Segment> getSegments() {
         return segments.values().stream().flatMap(e -> e.values().stream()).collect(Collectors.toList());
+    }
+
+    public void addSegment(Segment segment) {
+        Map<String, Segment> map = new HashMap<>();
+        map.put(segment.getDest().getId(), segment);
+        this.segments.put(segment.getOrigin().getId(), map);
     }
 
     public Segment getSegment(String origin, String dest) {

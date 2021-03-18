@@ -6,6 +6,8 @@ import fr.insa.lyon.ifa1.models.map.Segment;
 import fr.insa.lyon.ifa1.models.request.PassagePoint;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Dijkstra implements FindShortestRoutes {
 
@@ -34,10 +36,12 @@ public class Dijkstra implements FindShortestRoutes {
         Map<String, Double> dist = new HashMap<>();
         Map<String, String> prev = new HashMap<>();
         PriorityQueue<String> q = new PriorityQueue<>(Comparator.comparingDouble(dist::get));
+        Set<String> unvisited = Arrays.stream(ppDests).map(pp -> pp.getAddress().getId()).collect(Collectors.toSet());
 
         // initialisation
         String source = ppSource.getAddress().getId();
         dist.put(source, 0.0d);
+        unvisited.remove(source);
         for (Intersection i : gm.getIntersections()) {
             String v = i.getId();
             if (!v.equals(source)) {
@@ -51,6 +55,8 @@ public class Dijkstra implements FindShortestRoutes {
         while (!q.isEmpty()) {
             String u = q.poll();
             Set<String> neighbours = successors.get(u);
+            unvisited.remove(u);
+            if (unvisited.isEmpty()) break; // tous les noeuds intéressants ont été explorés
             for (String neighbour : neighbours) {
                 if (!q.contains(neighbour)) continue; // noeud déjà exploré
                 double alt = dist.get(u) + gm.getSegment(u, neighbour).getLength();

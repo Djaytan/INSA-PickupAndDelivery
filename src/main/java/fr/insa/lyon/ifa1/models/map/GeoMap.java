@@ -23,6 +23,11 @@ public class GeoMap {
         return intersections;
     }
 
+    /**
+     * Adds an {@link Intersection} to the {@link GeoMap}.
+     * 
+     * @param intersection The {@link Intersection} to add.
+     */
     public void addIntersection(Intersection intersection) {
         this.intersections.put(intersection.getId(), intersection);
     }
@@ -31,6 +36,11 @@ public class GeoMap {
         return segments.values().stream().flatMap(e -> e.values().stream()).collect(Collectors.toList());
     }
 
+    /**
+     * Adds a {@link Segment} to the {@link GeoMap}.
+     * 
+     * @param segment The {@link Segment} to add.
+     */
     public void addSegment(Segment segment) {
         Map<String, Segment> map = new HashMap<>();
         map.put(segment.getDest().getId(), segment);

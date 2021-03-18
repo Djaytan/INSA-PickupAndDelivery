@@ -32,6 +32,20 @@ public class GeoMap {
         this.intersections.put(intersection.getId(), intersection);
     }
 
+    /**
+     * Searches and returns the {@link Intersection} corresponding to the specified id.
+     * 
+     * @param idIntersection The id of the targeted {@link Intersection}.
+     * @return The {@link Intersection} found with the specified id, or null.
+     */
+    public Intersection getIntersection(String idIntersection) {
+        Intersection intersection = null;
+        if (this.intersections.containsKey(idIntersection)) {
+            intersection = this.intersections.get(idIntersection);
+        }
+        return intersection;
+    }
+
     public List<Segment> getSegments() {
         return segments.values().stream().flatMap(e -> e.values().stream()).collect(Collectors.toList());
     }

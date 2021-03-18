@@ -9,7 +9,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * This class manage the deserialization of XML files.
+ * This class manages the deserialization of XML files.
  *
  * @author IFA1
  */

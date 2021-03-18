@@ -40,6 +40,24 @@ public class Dijkstra implements FindShortestRoutes {
 
         // initialisation
         String source = ppSource.getAddress().getId();
+        initialize(gm, dist, prev, q, unvisited, source);
+
+        // calcul des chemins les plus courts
+        computeShortestRoutes(gm, successors, dist, prev, q, unvisited);
+
+        // construction des chemins
+        Map<String, Route> route = extractRoutes(gm, ppDests, prev, source);
+
+        return route;
+    }
+
+    private void initialize(
+            GeoMap gm,
+            Map<String, Double> dist,
+            Map<String, String> prev,
+            PriorityQueue<String> q,
+            Set<String> unvisited, String source
+    ) {
         dist.put(source, 0.0d);
         unvisited.remove(source);
         for (Intersection i : gm.getIntersections()) {
@@ -50,8 +68,16 @@ public class Dijkstra implements FindShortestRoutes {
             }
             q.add(v);
         }
+    }
 
-        // calcul des chemins les plus courts
+    private void computeShortestRoutes(
+            GeoMap gm, Map<String,
+            Set<String>> successors,
+            Map<String, Double> dist,
+            Map<String, String> prev,
+            PriorityQueue<String> q,
+            Set<String> unvisited
+    ) {
         while (!q.isEmpty()) {
             String u = q.poll();
             Set<String> neighbours = successors.get(u);
@@ -68,27 +94,34 @@ public class Dijkstra implements FindShortestRoutes {
                 }
             }
         }
+    }
 
-        // construction des chemins
-        Map<String, Route> route = new HashMap<>();
-        for (PassagePoint pp : ppDests) {
-            String dest = pp.getAddress().getId();
-            if (dest.equals(source)) {
-                route.put(dest, new Route(source, dest, new LinkedList<>(), 0.0d));
-            } else {
-                LinkedList<Segment> itinerary = new LinkedList<>();
-                double length = 0.0d;
-                String currentNode = dest;
-                while (prev.get(currentNode) != null) {
-                    Segment s = gm.getSegment(prev.get(currentNode), currentNode);
-                    itinerary.addFirst(s);
-                    currentNode = prev.get(currentNode);
-                    length += s.getLength();
-                }
-                route.put(dest, new Route(source, dest, itinerary, length));
+    private Map<String, Route> extractRoutes(
+            GeoMap gm,
+            PassagePoint[] ppDests,
+            Map<String, String> prev,
+            String source
+    ) {
+        return Arrays.stream(ppDests)
+                .map(pp -> extractRoute(gm, prev, source, pp))
+                .collect(Collectors.toMap(Route::getDestination, r -> r));
+    }
+
+    private Route extractRoute(GeoMap gm, Map<String, String> prev, String source, PassagePoint pp) {
+        String dest = pp.getAddress().getId();
+        if (dest.equals(source)) {
+            return new Route(source, dest, new LinkedList<>(), 0.0d);
+        } else {
+            LinkedList<Segment> itinerary = new LinkedList<>();
+            double length = 0.0d;
+            String currentNode = dest;
+            while (prev.get(currentNode) != null) {
+                Segment s = gm.getSegment(prev.get(currentNode), currentNode);
+                itinerary.addFirst(s);
+                currentNode = prev.get(currentNode);
+                length += s.getLength();
             }
+            return new Route(source, dest, itinerary, length);
         }
-
-        return route;
     }
 }

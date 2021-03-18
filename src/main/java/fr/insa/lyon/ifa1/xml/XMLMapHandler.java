@@ -26,11 +26,10 @@ public class XMLMapHandler extends DefaultHandler {
                 double latitude = Double.parseDouble(attributes.getValue("latitude"));
                 double longitude = Double.parseDouble(attributes.getValue("longitude"));
                 Intersection intersection = new Intersection(id, latitude, longitude);
-                GeoMapRegistry.addIntersection(intersection);
+                GeoMapRegistry.getGeoMap().addIntersection(intersection);
                 break;
             }
             case "segment": {
-                // TODO
                 break;
             }
             default: {

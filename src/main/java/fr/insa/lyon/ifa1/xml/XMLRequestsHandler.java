@@ -7,7 +7,7 @@ import fr.insa.lyon.ifa1.models.request.Depot;
 import fr.insa.lyon.ifa1.models.request.Depot.Time;
 import fr.insa.lyon.ifa1.models.request.DurationPassagePoint;
 import fr.insa.lyon.ifa1.models.request.Request;
-import java.util.jar.Attributes;
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 

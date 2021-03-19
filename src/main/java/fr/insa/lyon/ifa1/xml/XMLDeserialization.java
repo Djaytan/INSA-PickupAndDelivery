@@ -26,10 +26,10 @@ public final class XMLDeserialization {
    */
   public static void deserialize(String fileName, DefaultHandler handler)
       throws SAXException, ParserConfigurationException, IOException {
-    File inputFile = new File(fileName);
+    InputStream is = XMLDeserialization.class.getClassLoader().getResourceAsStream(fileName);
     SAXParserFactory spf = SAXParserFactory.newInstance();
     SAXParser saxParser = spf.newSAXParser();
-    saxParser.parse(inputFile, handler);
+    saxParser.parse(is, handler);
   }
 
   /**

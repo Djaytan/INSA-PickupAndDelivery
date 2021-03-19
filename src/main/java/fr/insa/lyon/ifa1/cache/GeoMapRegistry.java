@@ -3,7 +3,7 @@ package fr.insa.lyon.ifa1.cache;
 import fr.insa.lyon.ifa1.models.map.GeoMap;
 
 /**
- * Singleton class that corresponds to the {@link GeoMap} application instance registry.
+ * Static class that corresponds to the {@link GeoMap} application instance registry.
  *
  * @author IFA1
  */

@@ -37,6 +37,7 @@ public class XMLMapHandler extends DefaultHandler {
         }
       default:
         {
+          throw new InvalidXMLTagException("Invalid XML tag");
         }
     }
   }

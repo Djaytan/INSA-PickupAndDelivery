@@ -14,7 +14,15 @@ public class XMLRequestsHandler extends DefaultHandler {
   public void startElement(String uri, String localName, String qName, Attributes attributes)
       throws SAXException {
     switch (qName) {
-      case "":
+      case "planningRequest":
+        {
+          break;
+        }
+      case "depot":
+        {
+          break;
+        }
+      case "request":
         {
           break;
         }

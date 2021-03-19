@@ -2,11 +2,14 @@ package fr.insa.lyon.ifa1.view;
 
 import fr.insa.lyon.ifa1.controller.MainViewController;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -15,6 +18,7 @@ import javafx.stage.Stage;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -33,46 +37,27 @@ public class MainView extends Application {
 
         primaryStage.setTitle("Pick'Up");
 
-        BorderPane pane = new BorderPane();
+        String fxml = "/view/mainView.fxml";
+        Parent root = null;
+        URL url = null;
+        try
+        {
+            url  = getClass().getResource( fxml );
+            root = FXMLLoader.load( url );
+            System.out.println( "  fxmlResource = " + fxml );
+        }
+        catch ( Exception ex )
+        {
+            System.out.println( "Exception on FXMLLoader.load()" );
+            System.out.println( "  * url: " + url );
+            System.out.println( "  * " + ex );
+            System.out.println( "    ----------------------------------------\n" );
+        }
 
-        // Top Pane
-        BorderPane topPane = new BorderPane();
-
-        Text title = new Text("Pick'Up");
-        title.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
-        topPane.setCenter(title);
-
-        HBox topBottomPane = new HBox();
-        topBottomPane.setAlignment(Pos.BOTTOM_RIGHT);
-
-        Button addBtn = new Button();
-        addBtn.setText("Ajouter une livraison");
-        topBottomPane.getChildren().add(addBtn);
-
-        topPane.setBottom(topBottomPane);
-
-        pane.setTop(topPane);
-
-        // Center Pane
-        Canvas map = new Canvas(750, 300);
+        Scene sc = new Scene(root, 750, 400);
+        Canvas map = (Canvas) sc.lookup("#map");
         drawSegments(map);
-        pane.setCenter(map);
-
-        // Bottom Pane
-        HBox bottomPane = new HBox();
-        bottomPane.setAlignment(Pos.BASELINE_LEFT);
-
-        Text text = new Text("Importer des points relais à partir d'un fichier XML");
-        text.setFont(Font.font("Tahoma", FontWeight.NORMAL, 10));
-        bottomPane.getChildren().add(text);
-
-        Button importButton = new Button();
-        importButton.setText("Sélectionner un fichier");
-        bottomPane.getChildren().add(importButton);
-
-        pane.setBottom(bottomPane);
-
-        primaryStage.setScene(new Scene(pane, 750, 400));
+        primaryStage.setScene(sc);
         primaryStage.show();
 
     }

@@ -78,4 +78,9 @@ public class GeoMap {
     if (!segments.containsKey(origin)) return null;
     return segments.get(origin).get(dest);
   }
+
+  @Override
+  public String toString() {
+    return "{" + "intersections=" + this.intersections + ", segments=" + this.segments + "}";
+  }
 }

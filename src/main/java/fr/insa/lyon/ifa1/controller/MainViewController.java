@@ -1,23 +1,31 @@
 package fr.insa.lyon.ifa1.controller;
 
+import javafx.fxml.FXML;
+import java.util.Observable;
 import fr.insa.lyon.ifa1.models.map.GeoMap;
 import fr.insa.lyon.ifa1.models.map.Intersection;
 import fr.insa.lyon.ifa1.models.map.Segment;
-import javafx.event.ActionEvent;
-
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class MainViewController {
+public class MainViewController extends Observable {
 
+    private ViewController vc;
     private GeoMap model;
 
-    public MainViewController() { this.model = new GeoMap(); }
+    public MainViewController() {
+        this.model = new GeoMap();
+    }
 
-    public MainViewController(Map<String, Intersection> intersections, Map<String, Map<String, Segment>>  segments) {
+    public MainViewController(Map<String, Intersection> intersections, Map<String, Map<String, Segment>> segments) {
         this.model = new GeoMap(intersections, segments);
+    }
+
+    @FXML
+    public void initialize() {
+        vc = ViewController.getInstance();
+        this.addObserver(vc);
     }
 
     public List<Map<String, Map<String, Double>>> getSegments() {
@@ -39,16 +47,22 @@ public class MainViewController {
 
         Double minLatitude = -180., maxLatitude = 180., minLongitude = -180., maxLongitude = 180.;
 
-        for(Intersection intersection : this.model.getIntersections().values()) {
+        for (Intersection intersection : this.model.getIntersections().values()) {
 
             Double latitude = intersection.getLatitude();
             Double longitude = intersection.getLongitude();
 
-            if(latitude < minLatitude) { minLatitude = latitude; }
-            else if(latitude > maxLatitude) { maxLatitude = latitude; }
+            if (latitude < minLatitude) {
+                minLatitude = latitude;
+            } else if (latitude > maxLatitude) {
+                maxLatitude = latitude;
+            }
 
-            if(longitude < minLongitude) { minLongitude = longitude; }
-            else if(longitude > maxLongitude) { maxLongitude = longitude; }
+            if (longitude < minLongitude) {
+                minLongitude = longitude;
+            } else if (longitude > maxLongitude) {
+                maxLongitude = longitude;
+            }
 
         }
 

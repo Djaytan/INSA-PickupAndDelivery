@@ -2,6 +2,7 @@ package fr.insa.lyon.ifa1.xml;
 
 import fr.insa.lyon.ifa1.cache.GeoMapRegistry;
 import fr.insa.lyon.ifa1.models.map.Intersection;
+import fr.insa.lyon.ifa1.models.map.Segment;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -33,6 +34,14 @@ public class XMLMapHandler extends DefaultHandler {
         }
       case "segment":
         {
+          String destinationStr = attributes.getValue("destination");
+          String originStr = attributes.getValue("origin");
+          double length = Double.parseDouble(attributes.getValue("length"));
+          String name = attributes.getValue("name");
+          Intersection destination = GeoMapRegistry.getGeoMap().getIntersection(destinationStr);
+          Intersection origin = GeoMapRegistry.getGeoMap().getIntersection(originStr);
+          Segment segment = new Segment(length, name, origin, destination);
+          GeoMapRegistry.getGeoMap().addSegment(segment);
           break;
         }
       default:

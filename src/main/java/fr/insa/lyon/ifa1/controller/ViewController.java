@@ -50,13 +50,8 @@ public class ViewController extends Application implements Observer {
   }
 
   private void goToMainView() {
-    try {
-      replaceView("/view/mainView.fxml");
-      stage.setTitle("Main page");
-    }
-    catch(Exception ex) {
-      System.out.println("Erreur mainView.fxml");
-    }
+    MainView mv = new MainView();
+    mv.start(this.stage);
   }
 
   private void goToDeliveryView() {
@@ -86,7 +81,7 @@ public class ViewController extends Application implements Observer {
       System.out.println( "    ----------------------------------------\n" );
     }
 
-    stage.setScene(new Scene(root, 800, 600));
+    stage.setScene(new Scene(root, 800, 650));
   }
 
   @Override

@@ -2,6 +2,7 @@ package fr.insa.lyon.ifa1.controller;
 
 import fr.insa.lyon.ifa1.models.request.PassagePoint;
 import fr.insa.lyon.ifa1.models.request.PlanningRequest;
+import fr.insa.lyon.ifa1.cache.GeoMapRegistry;
 import javafx.fxml.FXML;
 
 import java.util.*;
@@ -18,14 +19,7 @@ public class MainViewController extends Observable {
     private GeoMap geoMap;
     private PlanningRequest planningRequest;
 
-    public MainViewController() {
-        this.geoMap = new GeoMap();
-        this.planningRequest = new PlanningRequest();
-    }
-
-    public MainViewController(Map<String, Intersection> intersections, Map<String, Map<String, Segment>> segments) {
-        this.geoMap = new GeoMap(intersections, segments);
-    }
+    public MainViewController() { this.geoMap = GeoMapRegistry.getGeoMap(); }
 
     @FXML
     public void initialize() {
@@ -94,7 +88,7 @@ public class MainViewController extends Observable {
 
         Double minLatitude = -180., maxLatitude = 180., minLongitude = -180., maxLongitude = 180.;
 
-        for (Intersection intersection : this.geoMap.getIntersections().values()) {
+        for (Intersection intersection : this.geoMap.getIntersections()) {
 
             Double latitude = intersection.getLatitude();
             Double longitude = intersection.getLongitude();

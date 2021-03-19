@@ -11,9 +11,6 @@ public final class GeoMapRegistry {
 
   private static final GeoMap geoMap = new GeoMap();
 
-  /** Private constructor */
-  private GeoMapRegistry() {}
-
   /**
    * Returns the {@link GeoMap} instance of the application.
    *

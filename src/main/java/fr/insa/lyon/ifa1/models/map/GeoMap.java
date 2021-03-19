@@ -60,9 +60,14 @@ public class GeoMap {
    * @param segment The {@link Segment} to add.
    */
   public void addSegment(Segment segment) {
-    Map<String, Segment> map = new HashMap<>();
-    map.put(segment.getDest().getId(), segment);
-    this.segments.put(segment.getOrigin().getId(), map);
+    Map<String, Segment> dest;
+    if (this.segments.containsKey(segment.getOrigin().getId())) {
+      dest = new HashMap<>();
+      this.segments.put(segment.getOrigin().getId(), dest);
+    } else {
+      dest = segments.get(segment.getOrigin().getId());
+    }
+    dest.put(segment.getDest().getId(), segment);
   }
 
   public Segment getSegment(String origin, String dest) {

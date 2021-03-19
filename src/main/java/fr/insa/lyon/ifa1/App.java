@@ -13,6 +13,7 @@ public class App {
 
   private static final Logger LOGGER = Logger.getLogger(App.class.getName());
   private static final String TEST_MAP_FILE = "smallMap.xml";
+  private static final String TEST_REQUESTS_FILE = "requestsSmall1.xml";
 
   public static void main(String[] args) {
     System.out.println("Hello World!");
@@ -20,11 +21,21 @@ public class App {
       XMLDeserialization.deserializeMap(TEST_MAP_FILE);
       LOGGER.info(GeoMapRegistry.getGeoMap().toString());
     } catch (SAXException e) {
-      LOGGER.log(Level.SEVERE, "Error during XML file content reading", e);
-    } catch (IOException e) {
-      LOGGER.log(Level.SEVERE, "Error during XML file manipulation", e);
+      LOGGER.log(Level.SEVERE, "Error during XML map file content reading", e);
     } catch (ParserConfigurationException e) {
-      LOGGER.log(Level.SEVERE, "Something went wrong in XML parser configuration", e);
+      LOGGER.log(Level.SEVERE, "Something went wrong in map XML parser configuration", e);
+    } catch (IOException e) {
+      LOGGER.log(Level.SEVERE, "Error during XML map file manipulation", e);
+    }
+
+    try {
+      XMLDeserialization.deserializeRequests(TEST_REQUESTS_FILE);
+    } catch (SAXException e) {
+      LOGGER.log(Level.SEVERE, "Error during XML requests file content reading", e);
+    } catch (ParserConfigurationException e) {
+      LOGGER.log(Level.SEVERE, "Something went wrong in requests XML parser configuration", e);
+    } catch (IOException e) {
+      LOGGER.log(Level.SEVERE, "Error during XML requests file manipulation", e);
     }
   }
 }

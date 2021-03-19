@@ -66,10 +66,10 @@ public class MainView extends Application {
 
         for(Map<String, Map<String, Double>> segment : segments) {
 
-            Integer x1 = (int)((segment.get("origin").get("latitude") - 45.7) * 10000) - 200;
-            Integer y1 = (int)((segment.get("origin").get("longitude") - 4.8) * 10000) - 300;
-            Integer x2 = (int)((segment.get("destination").get("latitude") - 45.7) * 10000) - 200;
-            Integer y2 = (int)((segment.get("destination").get("longitude") - 4.8) * 10000) - 300;
+            Integer x1 = (int) ((segment.get("origin").get("longitude") - 4.8) * 10000) - 300;
+            Integer y1 = (int) ((segment.get("origin").get("latitude") - 45.7) * 10000) - 200;
+            Integer x2 = (int) ((segment.get("destination").get("longitude") - 4.8) * 10000) - 300;
+            Integer y2 = (int) ((segment.get("destination").get("latitude") - 45.7) * 10000) - 200;
 
             System.out.println("Drawing segment from " + x1 + " " + y1 + " to " + x2 + " " + y2);
 
@@ -91,10 +91,10 @@ public class MainView extends Application {
 
             for(Map<String, Map<String, Double>> passagePoint : group) {
 
-                Integer x1 = (int) ((passagePoint.get("pickup").get("latitude") - 45.7) * 10000) - 750;
-                Integer y1 = (int) ((passagePoint.get("pickup").get("longitude") - 4.8) * 10000) - 800;
-                Integer x2 = (int) ((passagePoint.get("delivery").get("latitude") - 45.7) * 10000) - 750;
-                Integer y2 = (int) ((passagePoint.get("delivery").get("longitude") - 4.8) * 10000) - 800;
+                Integer x1 = (int) ((passagePoint.get("pickup").get("longitude") - 4.8) * 10000) - 800;
+                Integer y1 = (int) ((passagePoint.get("pickup").get("latitude") - 45.7) * 10000) - 750;
+                Integer x2 = (int) ((passagePoint.get("delivery").get("longitude") - 4.8) * 10000) - 800;
+                Integer y2 = (int) ((passagePoint.get("delivery").get("latitude") - 45.7) * 10000) - 750;
 
                 System.out.println("Drawing point from " + x1 + " " + y1 + " to " + x1 + " " + y1);
 

@@ -20,6 +20,15 @@ public class PlanningRequest {
     return requests;
   }
 
+  /**
+   * Adds a {@link Request} into the {@link PlanningRequest}.
+   *
+   * @param request The {@link Request} to add into the {@link PlanningRequest}.
+   */
+  public void addRequest(Request request) {
+    this.requests.add(request);
+  }
+
   public Depot getDepot() {
     return depot;
   }

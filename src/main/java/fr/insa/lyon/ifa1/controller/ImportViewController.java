@@ -39,7 +39,7 @@ public class ImportViewController extends Observable  {
             if(file.getName().endsWith(".xml"))
             {
                 //appelle de la function de volta => charger les données
-                importGeoMap(file.getName());
+                importGeoMap(file.getAbsolutePath());
                 //redirection nvl fenetre
                 System.out.println("notify observer");
                 setChanged();

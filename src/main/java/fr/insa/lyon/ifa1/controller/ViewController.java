@@ -31,8 +31,7 @@ public class ViewController extends Application implements Observer {
   public void start(Stage primaryStage) {
     try {
       this.stage = primaryStage;
-      //goToImportView();
-      goToMainView();
+      goToImportView();
       primaryStage.show();
     } catch (Exception ex) {
       System.out.println("start");
@@ -51,14 +50,13 @@ public class ViewController extends Application implements Observer {
   }
 
   private void goToMainView() {
-    Application.launch(MainView.class);
-    /*try {
+    try {
       replaceView("/view/mainView.fxml");
       stage.setTitle("Main page");
     }
     catch(Exception ex) {
       System.out.println("Erreur mainView.fxml");
-    }*/
+    }
   }
 
   private void goToDeliveryView() {

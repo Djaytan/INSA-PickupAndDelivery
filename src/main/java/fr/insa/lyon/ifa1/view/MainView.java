@@ -20,6 +20,8 @@ import java.util.Map;
 
 public class MainView extends Application {
 
+    private static Color mapSegmentsColor = Color.BLACK;
+
     private MainViewController controller;
 
     public static void main(String[] args) {
@@ -55,7 +57,8 @@ public class MainView extends Application {
 
         // Center Pane
         Canvas map = new Canvas(750, 300);
-        drawSegments(map);
+        drawSegments(map, mapSegmentsColor);
+        //drawPoints(map, Color.BLUE);
         pane.setCenter(map);
 
         // Bottom Pane
@@ -77,26 +80,60 @@ public class MainView extends Application {
 
     }
 
-    private void drawSegments(Canvas map) {
+    private void drawSegments(Canvas map, Color color) {
 
         GraphicsContext gc = map.getGraphicsContext2D();
         List<Map<String, Map<String, Double>>> segments = this.controller.getSegments();
 
-        gc.setFill(Color.BLACK);
+        gc.setFill(color);
         gc.setLineWidth(1.0);
 
         for(Map<String, Map<String, Double>> segment : segments) {
 
-            Integer x1 = (int)((segment.get("origin").get("latitude") - 45.7) * 10000) - 750;
-            Integer y1 = (int)((segment.get("origin").get("longitude") - 4.8) * 10000) - 800;
-            Integer x2 = (int)((segment.get("destination").get("latitude") - 45.7) * 10000) - 750;
-            Integer y2 = (int)((segment.get("destination").get("longitude") - 4.8) * 10000) - 800;
+            Integer x1 = (int) ((segment.get("origin").get("latitude") - 45.7) * 10000) - 750;
+            Integer y1 = (int) ((segment.get("origin").get("longitude") - 4.8) * 10000) - 800;
+            Integer x2 = (int) ((segment.get("destination").get("latitude") - 45.7) * 10000) - 750;
+            Integer y2 = (int) ((segment.get("destination").get("longitude") - 4.8) * 10000) - 800;
 
             System.out.println("Drawing segment from " + x1 + " " + y1 + " to " + x2 + " " + y2);
 
             gc.strokeLine(x1, y1, x2, y2);
 
         }
+
+    }
+
+    private void drawPoints(Canvas map, Color color) {
+
+        GraphicsContext gc = map.getGraphicsContext2D();
+        List<List<Map<String, Map<String, Double>>>> passagePoints = this.controller.getPassagePoints();
+
+        gc.setFill(color);
+        gc.setLineWidth(6.0);
+
+        for(List<Map<String, Map<String, Double>>> group : passagePoints) {
+
+            for(Map<String, Map<String, Double>> passagePoint : group) {
+
+                Integer x1 = (int) ((passagePoint.get("pickup").get("latitude") - 45.7) * 10000) - 750;
+                Integer y1 = (int) ((passagePoint.get("pickup").get("longitude") - 4.8) * 10000) - 800;
+                Integer x2 = (int) ((passagePoint.get("delivery").get("latitude") - 45.7) * 10000) - 750;
+                Integer y2 = (int) ((passagePoint.get("delivery").get("longitude") - 4.8) * 10000) - 800;
+
+                System.out.println("Drawing point from " + x1 + " " + y1 + " to " + x1 + " " + y1);
+
+                gc.setFill(color);
+                gc.strokeOval(x1, y1, x1, y1);
+
+                System.out.println("Drawing point from " + x2 + " " + y2 + " to " + x2 + " " + y2);
+
+                gc.setFill(color);
+                gc.strokeOval(x2, y2, x2, y2);
+
+            }
+
+        }
+
 
     }
 

@@ -1,5 +1,6 @@
 package fr.insa.lyon.ifa1.models.map;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +31,8 @@ public class GeoMap {
     this.segments = segments;
   }
 
-  public Map<String, Intersection> getIntersections() {
-    return intersections;
+  public Collection<Intersection> getIntersections() {
+    return intersections.values();
   }
 
   /**
@@ -50,17 +51,7 @@ public class GeoMap {
    * @return The {@link Intersection} found with the specified id, or null.
    */
   public Intersection getIntersection(String idIntersection) {
-    Intersection intersection = null;
-    if (this.intersections.containsKey(idIntersection)) {
-      intersection = this.intersections.get(idIntersection);
-    }
-    return intersection;
-  }
-
-  public List<Segment> getSegments() {
-    return segments.values().stream()
-        .flatMap(e -> e.values().stream())
-        .collect(Collectors.toList());
+    return this.intersections.get(idIntersection);
   }
 
   /**
@@ -77,6 +68,12 @@ public class GeoMap {
   public Segment getSegment(String origin, String dest) {
     if (!segments.containsKey(origin)) return null;
     return segments.get(origin).get(dest);
+  }
+
+  public List<Segment> getSegments() {
+    return segments.values().stream()
+        .flatMap(e -> e.values().stream())
+        .collect(Collectors.toList());
   }
 
   @Override

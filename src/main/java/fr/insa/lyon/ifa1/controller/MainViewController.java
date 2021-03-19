@@ -86,7 +86,7 @@ public class MainViewController extends Observable {
 
     public Map<String, Map<String, Double>> getRange() {
 
-        Double minLatitude = -180., maxLatitude = 180., minLongitude = -180., maxLongitude = 180.;
+        Double minLatitude = 90., maxLatitude = -90., minLongitude = 180., maxLongitude = -180.;
 
         for (Intersection intersection : this.geoMap.getIntersections()) {
 

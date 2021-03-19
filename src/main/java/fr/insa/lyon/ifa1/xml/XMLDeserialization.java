@@ -1,7 +1,7 @@
 package fr.insa.lyon.ifa1.xml;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -9,11 +9,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * This class manages the deserialization of XML files.
+ * This static class manages the deserialization of XML files.
  *
  * @author IFA1
  */
-public class XMLDeserialization {
+public final class XMLDeserialization {
 
   /**
    * Deserialization method for XML files.
@@ -24,7 +24,7 @@ public class XMLDeserialization {
    * @throws ParserConfigurationException If a serious configuration error is detected.
    * @throws IOException If a problem occur during the reading process of the XML file.
    */
-  public void deserialize(String fileName, DefaultHandler handler)
+  public static void deserialize(String fileName, DefaultHandler handler)
       throws SAXException, ParserConfigurationException, IOException {
     File inputFile = new File(fileName);
     SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -40,7 +40,7 @@ public class XMLDeserialization {
    * @throws ParserConfigurationException If a serious configuration error is detected.
    * @throws IOException If a problem occur during the reading process of the XML file.
    */
-  public void deserializeMap(String fileName)
+  public static void deserializeMap(String fileName)
       throws SAXException, ParserConfigurationException, IOException {
     XMLMapHandler xmlMapHandler = new XMLMapHandler();
     deserialize(fileName, xmlMapHandler);
@@ -54,7 +54,7 @@ public class XMLDeserialization {
    * @throws ParserConfigurationException If a serious configuration error is detected.
    * @throws IOException If a problem occur during the reading process of the XML file.
    */
-  public void deserializeRequests(String fileName)
+  public static void deserializeRequests(String fileName)
       throws SAXException, ParserConfigurationException, IOException {
     XMLRequestsHandler xmlRequestsHandler = new XMLRequestsHandler();
     deserialize(fileName, xmlRequestsHandler);

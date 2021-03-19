@@ -39,7 +39,7 @@ public class ImportViewController extends Observable  {
             if(file.getName().endsWith(".xml"))
             {
                 //appelle de la function de volta => charger les données
-                importGeoMap(file.getAbsolutePath());
+                importGeoMap(file);
                 //redirection nvl fenetre
                 System.out.println("notify observer");
                 setChanged();
@@ -48,9 +48,9 @@ public class ImportViewController extends Observable  {
         }
     }
 
-    public void importGeoMap(String filename) {
+    public void importGeoMap(File file) {
         try {
-            XMLDeserialization.deserializeMap(filename);
+            XMLDeserialization.deserializeMap(file);
             LOGGER.info(GeoMapRegistry.getGeoMap().toString());
         } catch (SAXException e) {
             LOGGER.log(Level.SEVERE, "Error during XML map file content reading", e);

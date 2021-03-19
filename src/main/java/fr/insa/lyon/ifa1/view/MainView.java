@@ -54,7 +54,7 @@ public class MainView extends Application {
             System.out.println( "    ----------------------------------------\n" );
         }
 
-        Scene sc = new Scene(root, 750, 400);
+        Scene sc = new Scene(root, 750, 600);
         Canvas map = (Canvas) sc.lookup("#map");
         drawSegments(map);
         primaryStage.setScene(sc);
@@ -72,10 +72,10 @@ public class MainView extends Application {
 
         for(Map<String, Map<String, Double>> segment : segments) {
 
-            Integer x1 = (int)((segment.get("origin").get("latitude") - 45.7) * 10000) - 500;
-            Integer y1 = (int)((segment.get("origin").get("longitude") - 4.8) * 10000) - 600;
-            Integer x2 = (int)((segment.get("destination").get("latitude") - 45.7) * 10000) - 500;
-            Integer y2 = (int)((segment.get("destination").get("longitude") - 4.8) * 10000) - 600;
+            Integer x1 = (int)((segment.get("origin").get("latitude") - 45.7) * 10000) - 200;
+            Integer y1 = (int)((segment.get("origin").get("longitude") - 4.8) * 10000) - 300;
+            Integer x2 = (int)((segment.get("destination").get("latitude") - 45.7) * 10000) - 200;
+            Integer y2 = (int)((segment.get("destination").get("longitude") - 4.8) * 10000) - 300;
 
             System.out.println("Drawing segment from " + x1 + " " + y1 + " to " + x2 + " " + y2);
 

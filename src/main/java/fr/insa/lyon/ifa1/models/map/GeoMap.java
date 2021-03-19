@@ -61,7 +61,7 @@ public class GeoMap {
    */
   public void addSegment(Segment segment) {
     Map<String, Segment> dest;
-    if (this.segments.containsKey(segment.getOrigin().getId())) {
+    if (!this.segments.containsKey(segment.getOrigin().getId())) {
       dest = new HashMap<>();
       this.segments.put(segment.getOrigin().getId(), dest);
     } else {

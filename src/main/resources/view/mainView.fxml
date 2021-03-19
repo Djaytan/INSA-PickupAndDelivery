@@ -13,9 +13,9 @@
             <Font name="Tahoma Bold" size="40"></Font>
         </Text>
 
-        <Button text="Ajouter une libraison" GridPane.rowIndex="0" GridPane.columnIndex="1"></Button>
+        <Button text="Ajouter une livraison" GridPane.rowIndex="0" GridPane.columnIndex="1"></Button>
 
-        <Canvas fx:id="map" width="450" height="280" GridPane.rowIndex="2"/>
+        <Canvas fx:id="map" width="650" height="480" GridPane.rowIndex="2"/>
 
         <GridPane hgap="20" vgap="20" GridPane.rowIndex="3">
             <Text text="Importer des points relais à partir d'un fichier XML" GridPane.columnIndex="0"/>

@@ -2,7 +2,10 @@ package fr.insa.lyon.ifa1;
 
 import fr.insa.lyon.ifa1.cache.GeoMapRegistry;
 import fr.insa.lyon.ifa1.xml.XMLDeserialization;
+import fr.insa.lyon.ifa1.xml.XMLMapHandler;
+import fr.insa.lyon.ifa1.xml.XMLRequestsHandler;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
@@ -18,7 +21,9 @@ public class App {
   public static void main(String[] args) {
     System.out.println("Hello World!");
     try {
-      XMLDeserialization.deserializeMap(TEST_MAP_FILE);
+      InputStream is = XMLDeserialization.class.getClassLoader().getResourceAsStream(TEST_MAP_FILE);
+      XMLMapHandler xmlMapHandler = new XMLMapHandler();
+      XMLDeserialization.deserialize(is, xmlMapHandler);
       LOGGER.info(GeoMapRegistry.getGeoMap().toString());
     } catch (SAXException e) {
       LOGGER.log(Level.SEVERE, "Error during XML map file content reading", e);
@@ -29,7 +34,10 @@ public class App {
     }
 
     try {
-      XMLDeserialization.deserializeRequests(TEST_REQUESTS_FILE);
+      InputStream is =
+          XMLDeserialization.class.getClassLoader().getResourceAsStream(TEST_REQUESTS_FILE);
+      XMLRequestsHandler xmlRequestsHandler = new XMLRequestsHandler();
+      XMLDeserialization.deserialize(is, xmlRequestsHandler);
     } catch (SAXException e) {
       LOGGER.log(Level.SEVERE, "Error during XML requests file content reading", e);
     } catch (ParserConfigurationException e) {

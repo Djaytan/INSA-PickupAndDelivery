@@ -1,103 +1,80 @@
 package fr.insa.lyon.ifa1.view;
 
-import fr.insa.lyon.ifa1.controller.MainViewController;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import fr.insa.lyon.ifa1.controller.GeoMapController;
+import fr.insa.lyon.ifa1.controller.PlanningRequestController;
+import fr.insa.lyon.ifa1.controller.ViewController;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
 import static java.lang.Math.min;
 
-public class MainView extends Application {
+public class MainView implements View {
 
     private static final Color mapSegmentsColor = Color.BLACK;
 
-    private MainViewController controller;
+    private final ViewController VIEW_CONTROLLER;
+    private final GeoMapController GEO_MAP_CONTROLLER;
+    private final PlanningRequestController PLANNING_REQUEST_CONTROLLER;
+
     private Map<String, Double> mapOrigin;
     private Double ratio;
 
-    public static void main(String[] args) {
-        launch(args);
+    public MainView() {
+
+        VIEW_CONTROLLER = ViewController.getInstance();
+        GEO_MAP_CONTROLLER = GeoMapController.getInstance();
+        PLANNING_REQUEST_CONTROLLER = PlanningRequestController.getInstance();
+
     }
 
-    @Override
-    public void start(Stage primaryStage) {
+    public void show() {
 
-        this.controller = new MainViewController();
+        Scene scene = VIEW_CONTROLLER.loadScene("/view/mainView.fxml");
 
-        primaryStage.setTitle("Pick'Up");
-
-        String fxml = "/view/mainView.fxml";
-        Parent root = null;
-        URL url = null;
-        try
-        {
-            url  = getClass().getResource( fxml );
-            root = FXMLLoader.load( url );
-            System.out.println( "  fxmlResource = " + fxml );
-        }
-        catch ( Exception ex )
-        {
-            System.out.println( "Exception on FXMLLoader.load()" );
-            System.out.println( "  * url: " + url );
-            System.out.println( "  * " + ex );
-            System.out.println( "    ----------------------------------------\n" );
-        }
-
-        Scene sc = new Scene(root, 750, 600);
-        Canvas map = (Canvas) sc.lookup("#map");
+        Canvas map = (Canvas) scene.lookup("#map");
         setMapParameters(map);
         drawSegments(map, mapSegmentsColor);
-        primaryStage.setScene(sc);
-        primaryStage.show();
+        drawPoints(map, Color.BLUE);
+
+        VIEW_CONTROLLER.showScene(scene);
 
     }
 
     private void setMapParameters(Canvas map) {
 
-        Map<String, Map<String, Double>> range = this.controller.getRange();
+        Map<String, Map<String, Double>> range = GEO_MAP_CONTROLLER.getRange();
 
         this.mapOrigin = Map.ofEntries(
-                Map.entry("x", range.get("longitude").get("min")),
-                Map.entry("y", range.get("latitude").get("min"))
+                Map.entry("x", range.get("x").get("min")),
+                Map.entry("y", range.get("y").get("min"))
         );
 
-        System.out.println("Canvas size : width = " + map.getWidth() + ", height = " + map.getHeight());
-        System.out.println("Max values : x = " + range.get("longitude").get("max") + ", y = " + range.get("latitude").get("max"));
         this.ratio = min(
-                map.getHeight() / (range.get("latitude").get("max") - range.get("latitude").get("min")),
-                map.getWidth() / (range.get("longitude").get("max") - range.get("longitude").get("min"))
+                map.getWidth() / (range.get("x").get("max") - range.get("x").get("min")),
+                map.getHeight() / (range.get("y").get("max") - range.get("y").get("min"))
         );
-
-        System.out.println("Map origin : x = " + this.mapOrigin.get("x") + ", y = " + this.mapOrigin.get("y"));
-        System.out.println("Map ratio : " + this.ratio);
 
     }
 
     private void drawSegments(Canvas map, Color color) {
 
         GraphicsContext gc = map.getGraphicsContext2D();
-        List<Map<String, Map<String, Double>>> segments = this.controller.getSegments();
+        List<Map<String, Map<String, Double>>> segments = GEO_MAP_CONTROLLER.getSegments();
 
         gc.setFill(color);
         gc.setLineWidth(1.0);
 
         for(Map<String, Map<String, Double>> segment : segments) {
 
-            Integer x1 = (int) ((segment.get("origin").get("longitude") - this.mapOrigin.get("x")) * this.ratio);
-            Integer y1 = (int) ((segment.get("origin").get("latitude") - this.mapOrigin.get("y")) * this.ratio);
-            Integer x2 = (int) ((segment.get("destination").get("longitude") - this.mapOrigin.get("x")) * this.ratio);
-            Integer y2 = (int) ((segment.get("destination").get("latitude") - this.mapOrigin.get("y")) * this.ratio);
-
-            // System.out.println("Drawing segment from " + x1 + " " + y1 + " to " + x2 + " " + y2);
+            int x1 = (int) ((segment.get("origin").get("x") - this.mapOrigin.get("x")) * this.ratio);
+            int y1 = (int) ((segment.get("origin").get("y") - this.mapOrigin.get("y")) * this.ratio);
+            int x2 = (int) ((segment.get("destination").get("x") - this.mapOrigin.get("x")) * this.ratio);
+            int y2 = (int) ((segment.get("destination").get("y") - this.mapOrigin.get("y")) * this.ratio);
 
             gc.strokeLine(x1, y1, x2, y2);
 
@@ -108,34 +85,29 @@ public class MainView extends Application {
     private void drawPoints(Canvas map, Color color) {
 
         GraphicsContext gc = map.getGraphicsContext2D();
-        List<List<Map<String, Map<String, Double>>>> passagePoints = this.controller.getPassagePoints();
+        List<Map<String, Map<String, Double>>> passagePoints = PLANNING_REQUEST_CONTROLLER.getPassagePoints();
 
         gc.setFill(color);
         gc.setLineWidth(6.0);
 
-        for(List<Map<String, Map<String, Double>>> group : passagePoints) {
+        for(Map<String, Map<String, Double>> group : passagePoints) {
 
-            for(Map<String, Map<String, Double>> passagePoint : group) {
+            int x1 = (int) ((group.get("pickup").get("x") - this.mapOrigin.get("x")) * this.ratio);
+            int y1 = (int) ((group.get("pickup").get("y") - this.mapOrigin.get("y")) * this.ratio);
+            int x2 = (int) ((group.get("delivery").get("x") - this.mapOrigin.get("x")) * this.ratio);
+            int y2 = (int) ((group.get("delivery").get("y") - this.mapOrigin.get("y")) * this.ratio);
 
-                Integer x1 = (int) ((passagePoint.get("pickup").get("longitude") - 4.88) * 10000);
-                Integer y1 = (int) ((passagePoint.get("pickup").get("latitude") - 45.775) * 10000);
-                Integer x2 = (int) ((passagePoint.get("delivery").get("longitude") - 4.88) * 10000);
-                Integer y2 = (int) ((passagePoint.get("delivery").get("latitude") - 45.775) * 10000);
+            System.out.println("Drawing point at " + x1 + " " + y1);
 
-                System.out.println("Drawing point from " + x1 + " " + y1 + " to " + x1 + " " + y1);
+            gc.setFill(color);
+            gc.strokeOval(x1, y1, 5, 5);
 
-                gc.setFill(color);
-                gc.strokeOval(x1, y1, x1, y1);
+            System.out.println("Drawing point at " + x2 + " " + y2);
 
-                System.out.println("Drawing point from " + x2 + " " + y2 + " to " + x2 + " " + y2);
-
-                gc.setFill(color);
-                gc.strokeOval(x2, y2, x2, y2);
-
-            }
+            gc.setFill(color);
+            gc.strokeOval(x2, y2, 5, 5);
 
         }
-
 
     }
 

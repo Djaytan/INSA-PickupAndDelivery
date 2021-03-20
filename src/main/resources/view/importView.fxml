@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 
 <GridPane
-        fx:controller="fr.insa.lyon.ifa1.controller.ImportViewController"
+        fx:controller="fr.insa.lyon.ifa1.view.ImportView"
         xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
     <Label GridPane.rowIndex="1" GridPane.columnIndex="0" fx:id="labelImport" text="Importer une carte au format XML"/>
     <Button GridPane.rowIndex="1" GridPane.columnIndex="1" text="Sélectionner un fichier" onAction="#openFileChooser"/>

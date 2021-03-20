@@ -25,8 +25,7 @@ public class GeoMap {
    * @param intersections
    * @param segments
    */
-  public GeoMap(
-      Map<String, Intersection> intersections, Map<String, Map<String, Segment>> segments) {
+  public GeoMap(Map<String, Intersection> intersections, Map<String, Map<String, Segment>> segments) {
     this.intersections = intersections;
     this.segments = segments;
   }

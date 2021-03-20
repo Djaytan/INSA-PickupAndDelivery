@@ -8,17 +8,19 @@ public class PlanningRequest {
   private List<Request> requests;
   private Depot depot;
 
-    public PlanningRequest() {
-        this.requests.add(new Request(
-                new DurationPassagePoint(new Intersection("239601996",45.748684, 4.902288), 30, "pickup"),
-                new DurationPassagePoint(new Intersection("3095792647",45.74138, 4.841897), 15, "delivery")
-        ));
-        this.depot = new Depot(new Intersection("2292223595", 45.73208, 4.902046), new Depot.Time(12, 36, 00));
-    }
-
-  public PlanningRequest(Depot depot) {
-    this(new ArrayList<>(), depot);
+  public PlanningRequest() {
+      this.requests = new ArrayList<>();
+      this.requests.add(new Request(
+              new DurationPassagePoint(new Intersection("239601996",45.748684, 4.902288), 30, "pickup"),
+              new DurationPassagePoint(new Intersection("3095792647",45.74138, 4.841897), 15, "delivery")
+      ));
+      this.depot = new Depot(new Intersection("2292223595", 45.73208, 4.902046), new Depot.Time(12, 36, 00));
   }
+
+  /*public PlanningRequest() {
+    this.requests = new ArrayList<>();
+    this.depot = null;
+  }*/
 
   public PlanningRequest(List<Request> requests, Depot depot) {
     this.requests = requests;
@@ -52,4 +54,7 @@ public class PlanningRequest {
     }
     return pps;
   }
+
+  public void changeDepot(Depot depot) { this.depot = depot; }
+
 }

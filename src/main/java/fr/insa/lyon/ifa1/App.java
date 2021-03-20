@@ -1,49 +1,37 @@
 package fr.insa.lyon.ifa1;
 
-import fr.insa.lyon.ifa1.cache.GeoMapRegistry;
-import fr.insa.lyon.ifa1.xml.XMLDeserialization;
-import fr.insa.lyon.ifa1.xml.XMLMapHandler;
-import fr.insa.lyon.ifa1.xml.XMLRequestsHandler;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
+import fr.insa.lyon.ifa1.controller.GeoMapController;
+import fr.insa.lyon.ifa1.controller.PlanningRequestController;
+import fr.insa.lyon.ifa1.controller.ViewController;
+
 import java.util.logging.Logger;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
 
 /** Hello world! */
 public class App {
 
   private static final Logger LOGGER = Logger.getLogger(App.class.getName());
-  private static final String TEST_MAP_FILE = "smallMap.xml";
-  private static final String TEST_REQUESTS_FILE = "requestsSmall1.xml";
+  private static final Class[] CONTROLLERS = new Class[] {
+          ViewController.class,
+          GeoMapController.class,
+          PlanningRequestController.class
+  };
 
   public static void main(String[] args) {
-    System.out.println("Hello World!");
-    try {
-      InputStream is = XMLDeserialization.class.getClassLoader().getResourceAsStream(TEST_MAP_FILE);
-      XMLMapHandler xmlMapHandler = new XMLMapHandler();
-      XMLDeserialization.deserialize(is, xmlMapHandler);
-      LOGGER.info(GeoMapRegistry.getGeoMap().toString());
-    } catch (SAXException e) {
-      LOGGER.log(Level.SEVERE, "Error during XML map file content reading", e);
-    } catch (ParserConfigurationException e) {
-      LOGGER.log(Level.SEVERE, "Something went wrong in map XML parser configuration", e);
-    } catch (IOException e) {
-      LOGGER.log(Level.SEVERE, "Error during XML map file manipulation", e);
+
+    LOGGER.info("Starting");
+
+    LOGGER.info("Initializing controllers");
+    for(Class controller : App.CONTROLLERS) {
+
+      try { controller.getDeclaredConstructor().newInstance(); }
+      catch(NoSuchMethodException ex) { System.out.println("Missing constructor in controller " + controller.getName()); }
+      catch(Exception ex) {System.out.println("Failed to initialize controller " + controller.getName()); }
+
     }
 
-    try {
-      InputStream is =
-          XMLDeserialization.class.getClassLoader().getResourceAsStream(TEST_REQUESTS_FILE);
-      XMLRequestsHandler xmlRequestsHandler = new XMLRequestsHandler();
-      XMLDeserialization.deserialize(is, xmlRequestsHandler);
-    } catch (SAXException e) {
-      LOGGER.log(Level.SEVERE, "Error during XML requests file content reading", e);
-    } catch (ParserConfigurationException e) {
-      LOGGER.log(Level.SEVERE, "Something went wrong in requests XML parser configuration", e);
-    } catch (IOException e) {
-      LOGGER.log(Level.SEVERE, "Error during XML requests file manipulation", e);
-    }
+    LOGGER.info("Running view");
+    ViewController.getInstance().run();
+
   }
+
 }

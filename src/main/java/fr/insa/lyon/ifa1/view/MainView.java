@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static java.lang.Math.min;
 
-public class MainView implements View {
+public class MainView implements ViewInterface {
 
     private static final ViewController VIEW_CONTROLLER = new ViewController();
     private static final GeoMapController GEO_MAP_CONTROLLER = new GeoMapController();
@@ -26,7 +26,7 @@ public class MainView implements View {
 
     public void show() {
 
-        Scene scene = VIEW_CONTROLLER.loadScene(ViewController.MAIN_VIEW);
+        Scene scene = VIEW_CONTROLLER.loadScene(ViewController.View.MAIN_VIEW);
 
         Canvas map = (Canvas) scene.lookup("#map");
         setMapParameters(map);

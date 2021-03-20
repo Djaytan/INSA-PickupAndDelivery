@@ -3,7 +3,7 @@ package fr.insa.lyon.ifa1.controller;
 import fr.insa.lyon.ifa1.view.DeliveryView;
 import fr.insa.lyon.ifa1.view.ImportView;
 import fr.insa.lyon.ifa1.view.MainView;
-import fr.insa.lyon.ifa1.view.View;
+import fr.insa.lyon.ifa1.view.ViewInterface;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,18 +16,21 @@ import java.util.Map;
 
 public class ViewController extends Application {
 
-  public static final String IMPORT_VIEW = "importView";
-  public static final String MAIN_VIEW = "mainView";
-  public static final String DELIVERY_VIEW = "deliveryView";
+  public enum View { IMPORT_VIEW, MAIN_VIEW, DELIVERY_VIEW }
 
-  private static final Map<String, Class<? extends View>> VIEWS = Map.ofEntries(
-          Map.entry(IMPORT_VIEW, ImportView.class),
-          Map.entry(MAIN_VIEW, MainView.class),
-          Map.entry(DELIVERY_VIEW, DeliveryView.class)
+  private static final Map<View, String> VIEWS_FXML = Map.ofEntries(
+          Map.entry(View.IMPORT_VIEW, "importView.fxml"),
+          Map.entry(View.MAIN_VIEW,"mainView.fxml"),
+          Map.entry(View.DELIVERY_VIEW, "deliveryView.fxml")
+  );
+
+  private static final Map<View, Class<? extends ViewInterface>> VIEWS_CLASS = Map.ofEntries(
+          Map.entry(View.IMPORT_VIEW, ImportView.class),
+          Map.entry(View.MAIN_VIEW, MainView.class),
+          Map.entry(View.DELIVERY_VIEW, DeliveryView.class)
   );
 
   private static final String FXML_REPOSITORY = "/view/";
-  private static final String FXML_EXTENSION = ".fxml";
 
   private static Stage stage;
 
@@ -39,24 +42,24 @@ public class ViewController extends Application {
     try {
       stage = primaryStage;
       stage.setTitle("Pick'Up");
-      goToView(IMPORT_VIEW);
+      goToView(View.IMPORT_VIEW);
       stage.show();
     }
     catch (Exception ex) { System.out.println("Failed to start"); }
 
   }
 
-  public void goToView(String view) {
+  public void goToView(View view) {
 
-    try { VIEWS.get(view).getDeclaredConstructor().newInstance().show(); }
-    catch(NoSuchMethodException ex) { System.out.println("Missing constructor in view " + VIEWS.get(view).getName()); }
-    catch(Exception ex) {System.out.println("Failed to initialize controller " + VIEWS.get(view).getName()); }
+    try { VIEWS_CLASS.get(view).getDeclaredConstructor().newInstance().show(); }
+    catch(NoSuchMethodException ex) { System.out.println("Missing constructor in view " + VIEWS_CLASS.get(view).getName()); }
+    catch(Exception ex) {System.out.println("Failed to initialize controller " + VIEWS_CLASS.get(view).getName()); }
 
   }
 
-  public Scene loadScene(String view) {
+  public Scene loadScene(View view) {
 
-    String fxml = FXML_REPOSITORY + view + FXML_EXTENSION;
+    String fxml = FXML_REPOSITORY + VIEWS_FXML.get(view);
     URL url = null;
     Scene scene = null;
 

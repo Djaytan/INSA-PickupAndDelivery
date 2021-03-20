@@ -1,6 +1,6 @@
 package fr.insa.lyon.ifa1.view;
 
-public interface View {
+public interface ViewInterface {
 
     void show();
 

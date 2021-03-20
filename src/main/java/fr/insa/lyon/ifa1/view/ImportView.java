@@ -10,18 +10,13 @@ import java.io.File;
 
 public class ImportView implements View {
 
-    private ViewController viewController;
-    private GeoMapController geoMapController;
-
-    public ImportView() {
-        this.viewController = ViewController.getInstance();
-        this.geoMapController = GeoMapController.getInstance();
-    }
+    private static final ViewController VIEW_CONTROLLER = new ViewController();
+    private static final GeoMapController GEO_MAP_CONTROLLER = new GeoMapController();
 
     public void show() {
 
-        Scene scene = this.viewController.loadScene("/view/importView.fxml");
-        this.viewController.showScene(scene);
+        Scene scene = VIEW_CONTROLLER.loadScene("/view/importView.fxml");
+        VIEW_CONTROLLER.showScene(scene);
 
     }
 
@@ -35,8 +30,8 @@ public class ImportView implements View {
 
         if(file != null && file.getName().endsWith(".xml")) {
 
-            this.geoMapController.importGeoMap(file);
-            this.viewController.goToView(ViewController.MAIN_VIEW);
+            GEO_MAP_CONTROLLER.importGeoMap(file);
+            VIEW_CONTROLLER.goToView(ViewController.MAIN_VIEW);
 
         }
 

@@ -10,23 +10,13 @@ import java.util.Map;
 
 public class PlanningRequestController {
 
-    private static PlanningRequestController instance;
-    private static PlanningRequest model;
+    private static final PlanningRequest MODEL = new PlanningRequest();
 
-    public static PlanningRequestController getInstance() { return instance; }
-
-    public static PlanningRequest getModel() { return model; }
-
-    public PlanningRequestController() {
-
-        instance = this;
-        model = new PlanningRequest();
-
-    }
+    public static PlanningRequest getModel() { return MODEL; }
 
     public Map<String, Double> getDepot() {
 
-        Intersection depotAddress = model.getDepot().getAddress();
+        Intersection depotAddress = MODEL.getDepot().getAddress();
 
         return Map.ofEntries(
                 Map.entry("x", depotAddress.getLongitude()),
@@ -37,7 +27,7 @@ public class PlanningRequestController {
 
     public List<Map<String, Map<String, Double>>> getPassagePoints() {
 
-        PassagePoint[] passagePoints = model.getPassagePoints();
+        PassagePoint[] passagePoints = MODEL.getPassagePoints();
         List<Map<String, Map<String, Double>>> passagePointsData = new ArrayList<>();
 
         for(int i = 1; i < passagePoints.length - 1; i += 2) {

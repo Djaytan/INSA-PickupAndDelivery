@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlanningRequest {
+
   private List<Request> requests;
   private Depot depot;
 

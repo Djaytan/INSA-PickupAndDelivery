@@ -18,19 +18,9 @@ public class GeoMapController {
 
     private static final Logger LOGGER = Logger.getLogger(GeoMapController.class.getName());
 
-    private static GeoMapController instance;
-    private static GeoMap model;
+    private static final GeoMap MODEL = new GeoMap();
 
-    public static GeoMapController getInstance() { return instance; }
-
-    public static GeoMap getModel() { return model; }
-
-    public GeoMapController() {
-
-        instance = this;
-        model = new GeoMap();
-
-    }
+    public static GeoMap getModel() { return MODEL; }
 
     public void importGeoMap(File file) {
 
@@ -43,7 +33,7 @@ public class GeoMapController {
 
     public List<Map<String, Map<String, Double>>> getSegments() {
 
-        return model.getSegments().stream().map(segment -> Map.ofEntries(
+        return MODEL.getSegments().stream().map(segment -> Map.ofEntries(
                 Map.entry("origin", Map.ofEntries(
                         Map.entry("x", segment.getOrigin().getLongitude()),
                         Map.entry("y", segment.getOrigin().getLatitude())
@@ -60,7 +50,7 @@ public class GeoMapController {
 
         double minLatitude = 90., maxLatitude = -90., minLongitude = 180., maxLongitude = -180.;
 
-        for (Intersection intersection : model.getIntersections()) {
+        for (Intersection intersection : MODEL.getIntersections()) {
 
             double latitude = intersection.getLatitude();
             double longitude = intersection.getLongitude();

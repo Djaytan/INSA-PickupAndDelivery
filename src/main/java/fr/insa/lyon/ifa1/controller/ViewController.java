@@ -17,25 +17,12 @@ public class ViewController extends Application {
 
   public static final String IMPORT_VIEW = "ImportView";
   public static final String MAIN_VIEW = "MainView";
-  private final Map<String, View> VIEWS;
+  private static final Map<String, Class<? extends View>> VIEWS = Map.ofEntries(
+          Map.entry(IMPORT_VIEW, ImportView.class),
+          Map.entry(MAIN_VIEW, MainView.class)
+  );
 
-  private static ViewController instance;
   private static Stage stage;
-
-  public static ViewController getInstance() {
-    return instance;
-  }
-
-  public ViewController() {
-
-    ViewController.instance = this;
-
-    VIEWS = Map.ofEntries(
-            Map.entry(IMPORT_VIEW, new ImportView()),
-            Map.entry(MAIN_VIEW, new MainView())
-    );
-
-  }
 
   public void run() { launch(); }
 
@@ -52,7 +39,13 @@ public class ViewController extends Application {
 
   }
 
-  public void goToView(String view) { VIEWS.get(view).show(); }
+  public void goToView(String view) {
+
+    try { VIEWS.get(view).getDeclaredConstructor().newInstance().show(); }
+    catch(NoSuchMethodException ex) { System.out.println("Missing constructor in view " + VIEWS.get(view).getName()); }
+    catch(Exception ex) {System.out.println("Failed to initialize controller " + VIEWS.get(view).getName()); }
+
+  }
 
   public Scene loadScene(String fxml) {
 

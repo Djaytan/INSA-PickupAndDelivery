@@ -15,22 +15,14 @@ import static java.lang.Math.min;
 
 public class MainView implements View {
 
-    private static final Color mapSegmentsColor = Color.BLACK;
+    private static final ViewController VIEW_CONTROLLER = new ViewController();
+    private static final GeoMapController GEO_MAP_CONTROLLER = new GeoMapController();
+    private static final PlanningRequestController PLANNING_REQUEST_CONTROLLER = new PlanningRequestController();
 
-    private final ViewController VIEW_CONTROLLER;
-    private final GeoMapController GEO_MAP_CONTROLLER;
-    private final PlanningRequestController PLANNING_REQUEST_CONTROLLER;
+    private static final Color MAP_SEGMENTS_COLOR = Color.BLACK;
 
-    private Map<String, Double> mapOrigin;
-    private Double ratio;
-
-    public MainView() {
-
-        VIEW_CONTROLLER = ViewController.getInstance();
-        GEO_MAP_CONTROLLER = GeoMapController.getInstance();
-        PLANNING_REQUEST_CONTROLLER = PlanningRequestController.getInstance();
-
-    }
+    private static Map<String, Double> mapOrigin;
+    private static Double ratio;
 
     public void show() {
 
@@ -38,7 +30,7 @@ public class MainView implements View {
 
         Canvas map = (Canvas) scene.lookup("#map");
         setMapParameters(map);
-        drawSegments(map, mapSegmentsColor);
+        drawSegments(map, MAP_SEGMENTS_COLOR);
         drawPoints(map, Color.BLUE);
 
         VIEW_CONTROLLER.showScene(scene);
@@ -49,12 +41,12 @@ public class MainView implements View {
 
         Map<String, Map<String, Double>> range = GEO_MAP_CONTROLLER.getRange();
 
-        this.mapOrigin = Map.ofEntries(
+        mapOrigin = Map.ofEntries(
                 Map.entry("x", range.get("x").get("min")),
                 Map.entry("y", range.get("y").get("min"))
         );
 
-        this.ratio = min(
+        ratio = min(
                 map.getWidth() / (range.get("x").get("max") - range.get("x").get("min")),
                 map.getHeight() / (range.get("y").get("max") - range.get("y").get("min"))
         );

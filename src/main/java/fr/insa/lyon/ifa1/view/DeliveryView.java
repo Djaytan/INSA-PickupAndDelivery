@@ -9,7 +9,7 @@ public class DeliveryView implements View {
 
     public void show() {
 
-        Scene scene = VIEW_CONTROLLER.loadScene("/view/deliveryView.fxml");
+        Scene scene = VIEW_CONTROLLER.loadScene(ViewController.DELIVERY_VIEW);
         VIEW_CONTROLLER.showScene(scene);
 
     }

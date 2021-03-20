@@ -16,15 +16,18 @@ import java.util.Map;
 
 public class ViewController extends Application {
 
-  public static final String IMPORT_VIEW = "ImportView";
-  public static final String MAIN_VIEW = "MainView";
-  public static final String DELIVERY_VIEW = "DeliveryView";
+  public static final String IMPORT_VIEW = "importView";
+  public static final String MAIN_VIEW = "mainView";
+  public static final String DELIVERY_VIEW = "deliveryView";
 
   private static final Map<String, Class<? extends View>> VIEWS = Map.ofEntries(
           Map.entry(IMPORT_VIEW, ImportView.class),
           Map.entry(MAIN_VIEW, MainView.class),
           Map.entry(DELIVERY_VIEW, DeliveryView.class)
   );
+
+  private static final String FXML_REPOSITORY = "/view/";
+  private static final String FXML_EXTENSION = ".fxml";
 
   private static Stage stage;
 
@@ -51,8 +54,9 @@ public class ViewController extends Application {
 
   }
 
-  public Scene loadScene(String fxml) {
+  public Scene loadScene(String view) {
 
+    String fxml = FXML_REPOSITORY + view + FXML_EXTENSION;
     URL url = null;
     Scene scene = null;
 

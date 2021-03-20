@@ -15,12 +15,12 @@ public class ImportView implements View {
 
     public void show() {
 
-        Scene scene = VIEW_CONTROLLER.loadScene("/view/importView.fxml");
+        Scene scene = VIEW_CONTROLLER.loadScene(ViewController.IMPORT_VIEW);
         VIEW_CONTROLLER.showScene(scene);
 
     }
 
-    public void openFileChooser(ActionEvent actionEvent) {
+    public void openFileChooser() {
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Ouvrir une carte au format XML");

@@ -26,7 +26,7 @@ public class MainView implements View {
 
     public void show() {
 
-        Scene scene = VIEW_CONTROLLER.loadScene("/view/mainView.fxml");
+        Scene scene = VIEW_CONTROLLER.loadScene(ViewController.MAIN_VIEW);
 
         Canvas map = (Canvas) scene.lookup("#map");
         setMapParameters(map);

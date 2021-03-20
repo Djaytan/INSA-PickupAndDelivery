@@ -87,25 +87,19 @@ public class MainView implements View {
         GraphicsContext gc = map.getGraphicsContext2D();
         List<Map<String, Map<String, Double>>> passagePoints = PLANNING_REQUEST_CONTROLLER.getPassagePoints();
 
-        gc.setFill(color);
-        gc.setLineWidth(6.0);
+        gc.setLineWidth(5.0);
 
         for(Map<String, Map<String, Double>> group : passagePoints) {
 
-            int x1 = (int) ((group.get("pickup").get("x") - this.mapOrigin.get("x")) * this.ratio);
-            int y1 = (int) ((group.get("pickup").get("y") - this.mapOrigin.get("y")) * this.ratio);
-            int x2 = (int) ((group.get("delivery").get("x") - this.mapOrigin.get("x")) * this.ratio);
-            int y2 = (int) ((group.get("delivery").get("y") - this.mapOrigin.get("y")) * this.ratio);
+            for(Map.Entry<String, Map<String, Double>> passagePoint : group.entrySet()) {
 
-            System.out.println("Drawing point at " + x1 + " " + y1);
+                int x = (int) ((passagePoint.getValue().get("x") - this.mapOrigin.get("x")) * this.ratio);
+                int y = (int) ((passagePoint.getValue().get("y") - this.mapOrigin.get("y")) * this.ratio);
 
-            gc.setFill(color);
-            gc.strokeOval(x1, y1, 5, 5);
+                gc.setFill(color);
+                gc.strokeOval(x, y, 5, 5);
 
-            System.out.println("Drawing point at " + x2 + " " + y2);
-
-            gc.setFill(color);
-            gc.strokeOval(x2, y2, 5, 5);
+            }
 
         }
 

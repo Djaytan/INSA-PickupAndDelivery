@@ -25,9 +25,12 @@ public class GeoMapController {
     public void importGeoMap(File file) {
 
         try { XMLDeserialization.deserializeMap(file); }
-        catch (SAXException e) { LOGGER.log(Level.SEVERE, "Error during XML map file content reading", e); }
-        catch (ParserConfigurationException e) { LOGGER.log(Level.SEVERE, "Something went wrong in map XML parser configuration", e); }
-        catch (IOException e) { LOGGER.log(Level.SEVERE, "Error during XML map file manipulation", e); }
+        catch (SAXException e)
+        { LOGGER.log(Level.SEVERE, "Error during XML map file content reading", e); }
+        catch (ParserConfigurationException e)
+        { LOGGER.log(Level.SEVERE, "Something went wrong in map XML parser configuration", e); }
+        catch (IOException e)
+        { LOGGER.log(Level.SEVERE, "Error during XML map file manipulation", e); }
 
     }
 

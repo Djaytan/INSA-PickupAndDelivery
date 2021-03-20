@@ -1,5 +1,6 @@
 package fr.insa.lyon.ifa1.controller;
 
+import fr.insa.lyon.ifa1.view.DeliveryView;
 import fr.insa.lyon.ifa1.view.ImportView;
 import fr.insa.lyon.ifa1.view.MainView;
 import fr.insa.lyon.ifa1.view.View;
@@ -17,9 +18,12 @@ public class ViewController extends Application {
 
   public static final String IMPORT_VIEW = "ImportView";
   public static final String MAIN_VIEW = "MainView";
+  public static final String DELIVERY_VIEW = "DeliveryView";
+
   private static final Map<String, Class<? extends View>> VIEWS = Map.ofEntries(
           Map.entry(IMPORT_VIEW, ImportView.class),
-          Map.entry(MAIN_VIEW, MainView.class)
+          Map.entry(MAIN_VIEW, MainView.class),
+          Map.entry(DELIVERY_VIEW, DeliveryView.class)
   );
 
   private static Stage stage;

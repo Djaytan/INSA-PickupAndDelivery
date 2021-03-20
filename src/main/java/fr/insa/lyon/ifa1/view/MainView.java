@@ -63,10 +63,10 @@ public class MainView implements View {
 
         for(Map<String, Map<String, Double>> segment : segments) {
 
-            int x1 = (int) ((segment.get("origin").get("x") - this.mapOrigin.get("x")) * this.ratio);
-            int y1 = (int) ((segment.get("origin").get("y") - this.mapOrigin.get("y")) * this.ratio);
-            int x2 = (int) ((segment.get("destination").get("x") - this.mapOrigin.get("x")) * this.ratio);
-            int y2 = (int) ((segment.get("destination").get("y") - this.mapOrigin.get("y")) * this.ratio);
+            int x1 = (int) ((segment.get("origin").get("x") - mapOrigin.get("x")) * ratio);
+            int y1 = (int) ((segment.get("origin").get("y") - mapOrigin.get("y")) * ratio);
+            int x2 = (int) ((segment.get("destination").get("x") - mapOrigin.get("x")) * ratio);
+            int y2 = (int) ((segment.get("destination").get("y") - mapOrigin.get("y")) * ratio);
 
             gc.strokeLine(x1, y1, x2, y2);
 
@@ -85,8 +85,8 @@ public class MainView implements View {
 
             for(Map.Entry<String, Map<String, Double>> passagePoint : group.entrySet()) {
 
-                int x = (int) ((passagePoint.getValue().get("x") - this.mapOrigin.get("x")) * this.ratio);
-                int y = (int) ((passagePoint.getValue().get("y") - this.mapOrigin.get("y")) * this.ratio);
+                int x = (int) ((passagePoint.getValue().get("x") - mapOrigin.get("x")) * ratio);
+                int y = (int) ((passagePoint.getValue().get("y") - mapOrigin.get("y")) * ratio);
 
                 gc.setFill(color);
                 gc.strokeOval(x, y, 5, 5);

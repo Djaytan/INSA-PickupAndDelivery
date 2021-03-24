@@ -1,72 +1,91 @@
 package fr.insa.lyon.ifa1.algo;
 
 import fr.insa.lyon.ifa1.models.map.GeoMap;
-import fr.insa.lyon.ifa1.models.request.PassagePoint;
-import fr.insa.lyon.ifa1.models.request.PlanningRequest;
+import fr.insa.lyon.ifa1.models.request.*;
 
 import java.util.*;
 
 public class OptimalHamiltonianCircuit implements FindShortestHamiltonianCircuit {
 
     private double optimalLength;
-    private List<String> optimalRoute;
+    private List<PassagePoint> optimalRoute;
+    private Map<String, Map<String, FindShortestRoutes.Route>> routes;
+    private PlanningRequest pr;
 
     @Override
     public List<PassagePoint> solve(GeoMap gm, Map<String, Map<String, FindShortestRoutes.Route>> routes, PlanningRequest pr) {
 
         this.optimalLength = Double.POSITIVE_INFINITY;
         this.optimalRoute = null;
-
-        Set<String> ppNotVisited = new HashSet<>();
+        this.routes = routes;
+        this.pr = pr;
 
         PassagePoint[] passagePoints = pr.getPassagePoints();
-        // init
-        for (PassagePoint pp : passagePoints) {
-            ppNotVisited.add(pp.getAddress().getId());
+
+        Map<PassagePoint, DurationPassagePoint> ppToDurationPp = new HashMap<>();
+
+        for (Request r : pr.getRequests()) {
+            ppToDurationPp.put(Arrays.stream(passagePoints)
+                    .filter(pp -> pp.equals(r.getPickup()))
+                    .findFirst()
+                    .get(), r.getPickup());
+
+
+            ppToDurationPp.put(Arrays.stream(passagePoints)
+                    .filter(pp -> pp.equals(r.getDelivery()))
+                    .findFirst()
+                    .get(), r.getDelivery());
+
         }
 
-        String idDepot = pr.getDepot().getAddress().getId();
-        ppNotVisited.remove(idDepot);
 
-        List<String> ppVisited = new ArrayList<>();
-        ppVisited.add(idDepot);
+        // init
+        Set<PassagePoint> ppNotVisited = new HashSet<>(Arrays.asList(passagePoints));
 
-        visitePoint(idDepot, ppVisited, ppNotVisited, routes, 0d, idDepot);
+        ppNotVisited.remove(pr.getDepot());
 
-        return this.optimalRoute.stream().map(
-                p -> Arrays.stream(passagePoints)
-                        .filter(pp -> pp.getAddress().getId().equals(p))
-                        .findFirst()
-                        .get()
-        ).toList();
+        List<PassagePoint> ppVisited = new ArrayList<>();
+        ppVisited.add(pr.getDepot());
+
+        visitePoint(pr.getDepot(), ppVisited, ppNotVisited, 0d, pr.getDepot(), ppToDurationPp);
+
+        return this.optimalRoute;
+
     }
 
-    private void visitePoint(String currentPoint, List<String> ppVisited, Set<String> ppNotVisited, Map<String, Map<String, FindShortestRoutes.Route>> routes, double lengthCircuit, String idDepot) {
+    private void visitePoint(PassagePoint currentPoint, List<PassagePoint> ppVisited, Set<PassagePoint> ppNotVisited, double lengthCircuit, PassagePoint ppDepot, Map<PassagePoint, DurationPassagePoint> ppToDurationPp) {
 
         if (ppNotVisited.isEmpty()) {
             // Calcule la valeur definif  = lengthCircuit + distance vers depot
-            lengthCircuit += routes.get(currentPoint).get(idDepot).getLength();
+            lengthCircuit += this.routes.get(currentPoint.getAddress().getId()).get(ppDepot.getAddress().getId()).getLength();
 
             if (lengthCircuit < optimalLength) {
                 optimalLength = lengthCircuit;
 
-                List<String> clonePpVisited = new ArrayList<>(ppVisited);
-                clonePpVisited.add(idDepot);
+                List<PassagePoint> clonePpVisited = new ArrayList<>(ppVisited);
+                clonePpVisited.add(ppDepot);
                 optimalRoute = clonePpVisited;
             }
             // finish
             // verifier si c'est chemin le plus court
         }
 
-        Set<String> clonePpNotVisited = new HashSet<>(ppNotVisited);
+        Set<PassagePoint> clonePpNotVisited = new HashSet<>(ppNotVisited);
 
-        for (String ppId : clonePpNotVisited) {
-            ppNotVisited.remove(ppId);
-            ppVisited.add(ppId);
-            visitePoint(ppId, ppVisited, ppNotVisited, routes, lengthCircuit + routes.get(currentPoint).get(ppId).getLength(), idDepot);
+        for (PassagePoint pp : clonePpNotVisited) {
 
-            ppNotVisited.add(ppId);
-            ppVisited.remove(ppId);
+            if (ppToDurationPp.get(pp).getType().equals(PassagePointType.DELIVERY)) {
+
+                // vérifier si on est passé au pick up correspondant
+                Request r = Arrays.stream(this.pr.getRequests()).filter(request -> request.getDelivery().equals(pp)).findFirst().get();
+                if (!ppVisited.contains(r.getPickup())) continue;
+            }
+            ppNotVisited.remove(pp);
+            ppVisited.add(pp);
+            visitePoint(pp, ppVisited, ppNotVisited, lengthCircuit + routes.get(currentPoint.getAddress().getId()).get(pp.getAddress().getId()).getLength(), ppDepot, ppToDurationPp);
+
+            ppNotVisited.add(pp);
+            ppVisited.remove(pp);
         }
     }
 }

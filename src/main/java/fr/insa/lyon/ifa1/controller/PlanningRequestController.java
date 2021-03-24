@@ -10,9 +10,7 @@ import fr.insa.lyon.ifa1.models.map.Segment;
 import fr.insa.lyon.ifa1.models.request.PassagePoint;
 import fr.insa.lyon.ifa1.models.request.PlanningRequest;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

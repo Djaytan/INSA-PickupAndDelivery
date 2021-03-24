@@ -7,7 +7,9 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -93,6 +95,22 @@ public class MainView implements ViewInterface {
 
             }
 
+        }
+
+    }
+
+    public void openFileChooser() {
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Importer des points relais au format XML");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("xml file", "*.xml"));
+
+        File file = fileChooser.showOpenDialog(null);
+
+        if(file != null && file.getName().endsWith(".xml")) {
+
+            PLANNING_REQUEST_CONTROLLER.importPlanningRequest(file);
+            //TODO : call drawing
         }
 
     }

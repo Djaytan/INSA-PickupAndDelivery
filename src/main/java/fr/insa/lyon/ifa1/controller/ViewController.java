@@ -42,6 +42,8 @@ public class ViewController extends Application {
     try {
       stage = primaryStage;
       stage.setTitle("Pick'Up");
+      stage.setMinWidth(800);
+      stage.setMinHeight(650);
       goToView(View.IMPORT_VIEW);
       stage.show();
     }
@@ -66,7 +68,7 @@ public class ViewController extends Application {
     try {
       url = getClass().getResource( fxml );
       Parent root = FXMLLoader.load( url );
-      scene = new Scene(root, 750, 600);
+      scene = new Scene(root);
       System.out.println( "  fxmlResource = " + fxml );
     }
     catch(IOException ex) {

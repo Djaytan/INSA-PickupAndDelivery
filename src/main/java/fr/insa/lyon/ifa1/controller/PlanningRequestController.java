@@ -3,12 +3,21 @@ package fr.insa.lyon.ifa1.controller;
 import fr.insa.lyon.ifa1.models.map.Intersection;
 import fr.insa.lyon.ifa1.models.request.PassagePoint;
 import fr.insa.lyon.ifa1.models.request.PlanningRequest;
+import fr.insa.lyon.ifa1.xml.XMLDeserialization;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PlanningRequestController {
+
+    private static final Logger LOGGER = Logger.getLogger(GeoMapController.class.getName());
 
     private static final PlanningRequest MODEL = new PlanningRequest();
 
@@ -49,6 +58,18 @@ public class PlanningRequestController {
         }
 
         return passagePointsData;
+
+    }
+
+    public void importPlanningRequest(File file) {
+
+        try { XMLDeserialization.deserializeRequests(file); }
+        catch (SAXException e)
+        { LOGGER.log(Level.SEVERE, "Error during XML map file content reading", e); }
+        catch (ParserConfigurationException e)
+        { LOGGER.log(Level.SEVERE, "Something went wrong in map XML parser configuration", e); }
+        catch (IOException e)
+        { LOGGER.log(Level.SEVERE, "Error during XML map file manipulation", e); }
 
     }
 

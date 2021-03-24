@@ -9,18 +9,39 @@ import fr.insa.lyon.ifa1.models.map.Intersection;
 import fr.insa.lyon.ifa1.models.map.Segment;
 import fr.insa.lyon.ifa1.models.request.PassagePoint;
 import fr.insa.lyon.ifa1.models.request.PlanningRequest;
+import fr.insa.lyon.ifa1.xml.XMLDeserialization;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PlanningRequestController {
+
+    private static final Logger LOGGER = Logger.getLogger(GeoMapController.class.getName());
 
     private static final PlanningRequest PLANNING_REQUEST = new PlanningRequest();
     private static final Dijkstra DIJKSTRA = new Dijkstra();
     private static final FindShortestHamiltonianCircuit HAMILTONIAN_CIRCUIT = new OptimalHamiltonianCircuit();
 
     public static PlanningRequest getModel() { return PLANNING_REQUEST; }
+
+    public static void importPlanningRequest(File file) {
+
+        try { XMLDeserialization.deserializeRequests(file); }
+        catch (SAXException e)
+        { LOGGER.log(Level.SEVERE, "Error during XML map file content reading", e); }
+        catch (ParserConfigurationException e)
+        { LOGGER.log(Level.SEVERE, "Something went wrong in map XML parser configuration", e); }
+        catch (IOException e)
+        { LOGGER.log(Level.SEVERE, "Error during XML map file manipulation", e); }
+
+    }
 
     public static Map<String, Double> getDepot() {
 
@@ -70,17 +91,17 @@ public class PlanningRequestController {
 
         List<List<Map<String, Map<String, Double>>>> segmentsList = new ArrayList<>();
 
-        for(List<PassagePoint> passagePoints : passagePointsList) {
+        for (List<PassagePoint> passagePoints : passagePointsList) {
 
             List<Map<String, Map<String, Double>>> segments = new ArrayList<>();
 
-            for(int i = 0; i < passagePoints.size() - 1; i++) {
+            for (int i = 0; i < passagePoints.size() - 1; i++) {
 
                 String origin = passagePoints.get(i).getAddress().getId();
-                String destination = passagePoints.get(i+1).getAddress().getId();
+                String destination = passagePoints.get(i + 1).getAddress().getId();
                 FindShortestRoutes.Route route = dijkstraRoutes.get(origin).get(destination);
 
-                for(Segment segment : route.getItinerary()) {
+                for (Segment segment : route.getItinerary()) {
 
                     segments.add(Map.ofEntries(
                             Map.entry("origin", Map.ofEntries(

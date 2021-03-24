@@ -7,7 +7,9 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -33,11 +35,6 @@ public class MainView implements ViewInterface {
         setMapParameters(map);
         drawSegments(GeoMapController.getSegments(), map, MAP_SEGMENTS_COLOR);
         drawPoints(map, Color.BLUE);
-
-        List<List<Map<String, Map<String, Double>>>> deliveryMenPaths = PlanningRequestController.getDeliveryMenPaths();
-        for(int i = 0; i < deliveryMenPaths.size(); i++) {
-            drawSegments(deliveryMenPaths.get(i), map, DELIVERY_MEN_PATHS_COLORS[i % DELIVERY_MEN_PATHS_COLORS.length]);
-        }
 
         VIEW_CONTROLLER.showScene(scene);
 
@@ -97,6 +94,27 @@ public class MainView implements ViewInterface {
                 gc.strokeOval(x, y, 5, 5);
 
             }
+
+        }
+
+    }
+
+    public void openFileChooser() {
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Importer des points relais au format XML");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("xml file", "*.xml"));
+
+        File file = fileChooser.showOpenDialog(null);
+
+        if(file != null && file.getName().endsWith(".xml")) {
+
+            PlanningRequestController.importPlanningRequest(file);
+
+            /*List<List<Map<String, Map<String, Double>>>> deliveryMenPaths = PlanningRequestController.getDeliveryMenPaths();
+            for(int i = 0; i < deliveryMenPaths.size(); i++) {
+                drawSegments(deliveryMenPaths.get(i), map, DELIVERY_MEN_PATHS_COLORS[i % DELIVERY_MEN_PATHS_COLORS.length]);
+            }*/
 
         }
 

@@ -10,7 +10,6 @@ import java.io.File;
 public class ImportView implements ViewInterface {
 
     private static final ViewController VIEW_CONTROLLER = new ViewController();
-    private static final GeoMapController GEO_MAP_CONTROLLER = new GeoMapController();
 
     public void show() {
 
@@ -29,7 +28,7 @@ public class ImportView implements ViewInterface {
 
         if(file != null && file.getName().endsWith(".xml")) {
 
-            GEO_MAP_CONTROLLER.importGeoMap(file);
+            GeoMapController.importGeoMap(file);
             VIEW_CONTROLLER.goToView(ViewController.View.MAIN_VIEW);
 
         }

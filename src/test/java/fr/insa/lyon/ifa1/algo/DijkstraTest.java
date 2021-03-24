@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 public class DijkstraTest {
 
     @Test
-    public void solve() {
+    public void solveTest() {
 
         Map<String, Intersection> intersections = new HashMap<>();
         intersections.put("A", new Intersection("A", 0, 0));
@@ -92,9 +92,9 @@ public class DijkstraTest {
 
         PassagePoint[] pps = new PassagePoint[]{
                 new Depot(intersections.get("A"), new Depot.Time(7, 0, 0)),
-                new DurationPassagePoint(intersections.get("B"), 4, "Pickup"),
-                new DurationPassagePoint(intersections.get("C"), 3, "Pickup"),
-                new DurationPassagePoint(intersections.get("D"), 4, "Pickup")
+                new DurationPassagePoint(intersections.get("B"), 4, PassagePointType.PICKUP),
+                new DurationPassagePoint(intersections.get("C"), 3, PassagePointType.PICKUP),
+                new DurationPassagePoint(intersections.get("D"), 4, PassagePointType.PICKUP)
         };
 
         Dijkstra algoD = new Dijkstra();

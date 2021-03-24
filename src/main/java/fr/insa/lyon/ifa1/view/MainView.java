@@ -18,6 +18,9 @@ public class MainView implements ViewInterface {
     private static final ViewController VIEW_CONTROLLER = new ViewController();
 
     private static final Color MAP_SEGMENTS_COLOR = Color.BLACK;
+    private static final Color[] DELIVERY_MEN_PATHS_COLORS = new Color[] {
+            Color.BLUE, Color.GREEN, Color.ORANGE, Color.PINK, Color.YELLOW, Color.RED, Color.PURPLE
+    };
 
     private static Map<String, Double> mapOrigin;
     private static Double ratio;
@@ -28,8 +31,13 @@ public class MainView implements ViewInterface {
 
         Canvas map = (Canvas) scene.lookup("#map");
         setMapParameters(map);
-        drawSegments(map, MAP_SEGMENTS_COLOR);
+        drawSegments(GeoMapController.getSegments(), map, MAP_SEGMENTS_COLOR);
         drawPoints(map, Color.BLUE);
+
+        List<List<Map<String, Map<String, Double>>>> deliveryMenPaths = PlanningRequestController.getDeliveryMenPaths();
+        for(int i = 0; i < deliveryMenPaths.size(); i++) {
+            drawSegments(deliveryMenPaths.get(i), map, DELIVERY_MEN_PATHS_COLORS[i % DELIVERY_MEN_PATHS_COLORS.length]);
+        }
 
         VIEW_CONTROLLER.showScene(scene);
 
@@ -51,10 +59,9 @@ public class MainView implements ViewInterface {
 
     }
 
-    private void drawSegments(Canvas map, Color color) {
+    private void drawSegments(List<Map<String, Map<String, Double>>> segments, Canvas map, Color color) {
 
         GraphicsContext gc = map.getGraphicsContext2D();
-        List<Map<String, Map<String, Double>>> segments = GeoMapController.getSegments();
 
         gc.setFill(color);
         gc.setLineWidth(1.0);

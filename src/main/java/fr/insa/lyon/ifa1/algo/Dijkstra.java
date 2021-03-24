@@ -101,9 +101,14 @@ public class Dijkstra implements FindShortestRoutes {
             Map<String, String> prev,
             String origin
     ) {
-        return Arrays.stream(ppDests)
-                .map(pp -> extractRoute(gm, prev, origin, pp))
-                .collect(Collectors.toMap(Route::getDestination, r -> r));
+        Map<String,Route> result = new HashMap<>();
+        for (PassagePoint pp: ppDests){
+            result.put(pp.getAddress().getId(),extractRoute(gm, prev, origin, pp));
+        }
+        return result;
+//        return Arrays.stream(ppDests)
+//                .map(pp -> extractRoute(gm, prev, origin, pp))
+//                .collect(Collectors.toMap(Route::getDestination, r -> r));
     }
 
     private Route extractRoute(GeoMap gm, Map<String, String> prev, String origin, PassagePoint pp) {

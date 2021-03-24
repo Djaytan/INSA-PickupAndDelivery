@@ -6,6 +6,7 @@ import fr.insa.lyon.ifa1.models.map.Intersection;
 import fr.insa.lyon.ifa1.models.request.Depot;
 import fr.insa.lyon.ifa1.models.request.Depot.Time;
 import fr.insa.lyon.ifa1.models.request.DurationPassagePoint;
+import fr.insa.lyon.ifa1.models.request.PassagePointType;
 import fr.insa.lyon.ifa1.models.request.Request;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -18,8 +19,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class XMLRequestsHandler extends DefaultHandler {
 
-  public static final String PICKUP_TYPE = "pickup";
-  public static final String DELIVERY_TYPE = "delivery";
 
   @Override
   public void startElement(String uri, String localName, String qName, Attributes attributes)
@@ -53,9 +52,9 @@ public class XMLRequestsHandler extends DefaultHandler {
           Intersection pickupIntersection = GeoMapController.getModel().getIntersection(pickupIntersectionId);
           Intersection deliveryIntersection = GeoMapController.getModel().getIntersection(deliveryIntersectionId);
           DurationPassagePoint pickupPassagePoint =
-              new DurationPassagePoint(pickupIntersection, pickupDuration, PICKUP_TYPE);
+              new DurationPassagePoint(pickupIntersection, pickupDuration, PassagePointType.PICKUP);
           DurationPassagePoint delivertPassagePoint =
-              new DurationPassagePoint(deliveryIntersection, deliveryDuration, DELIVERY_TYPE);
+              new DurationPassagePoint(deliveryIntersection, deliveryDuration, PassagePointType.DELIVERY);
           Request request = new Request(pickupPassagePoint, delivertPassagePoint);
           PlanningRequestController.getModel().addRequest(request);
           break;

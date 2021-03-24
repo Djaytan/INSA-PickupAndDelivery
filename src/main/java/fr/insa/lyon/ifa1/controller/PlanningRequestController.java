@@ -14,7 +14,7 @@ public class PlanningRequestController {
 
     public static PlanningRequest getModel() { return MODEL; }
 
-    public Map<String, Double> getDepot() {
+    public static Map<String, Double> getDepot() {
 
         Intersection depotAddress = MODEL.getDepot().getAddress();
 
@@ -25,7 +25,7 @@ public class PlanningRequestController {
 
     }
 
-    public List<Map<String, Map<String, Double>>> getPassagePoints() {
+    public static List<Map<String, Map<String, Double>>> getPassagePoints() {
 
         PassagePoint[] passagePoints = MODEL.getPassagePoints();
         List<Map<String, Map<String, Double>>> passagePointsData = new ArrayList<>();

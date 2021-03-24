@@ -22,7 +22,7 @@ public class GeoMapController {
 
     public static GeoMap getModel() { return MODEL; }
 
-    public void importGeoMap(File file) {
+    public static void importGeoMap(File file) {
 
         try { XMLDeserialization.deserializeMap(file); }
         catch (SAXException e)
@@ -34,7 +34,7 @@ public class GeoMapController {
 
     }
 
-    public List<Map<String, Map<String, Double>>> getSegments() {
+    public static List<Map<String, Map<String, Double>>> getSegments() {
 
         return MODEL.getSegments().stream().map(segment -> Map.ofEntries(
                 Map.entry("origin", Map.ofEntries(
@@ -49,7 +49,7 @@ public class GeoMapController {
 
     }
 
-    public Map<String, Map<String, Double>> getRange() {
+    public static Map<String, Map<String, Double>> getRange() {
 
         double minLatitude = 90., maxLatitude = -90., minLongitude = 180., maxLongitude = -180.;
 

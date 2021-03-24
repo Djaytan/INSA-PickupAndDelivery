@@ -41,7 +41,7 @@ public class XMLRequestsHandler extends DefaultHandler {
           Time departureTime = new Time(hours, minutes, seconds);
           Intersection intersection = GeoMapController.getModel().getIntersection(intersectionId);
           Depot depot = new Depot(intersection, departureTime);
-          PlanningRequestController.getModel().changeDepot(depot);
+          PlanningRequestController.getModel().setDepot(depot);
           break;
         }
       case "request":

@@ -16,8 +16,6 @@ import static java.lang.Math.min;
 public class MainView implements ViewInterface {
 
     private static final ViewController VIEW_CONTROLLER = new ViewController();
-    private static final GeoMapController GEO_MAP_CONTROLLER = new GeoMapController();
-    private static final PlanningRequestController PLANNING_REQUEST_CONTROLLER = new PlanningRequestController();
 
     private static final Color MAP_SEGMENTS_COLOR = Color.BLACK;
 
@@ -39,7 +37,7 @@ public class MainView implements ViewInterface {
 
     private void setMapParameters(Canvas map) {
 
-        Map<String, Map<String, Double>> range = GEO_MAP_CONTROLLER.getRange();
+        Map<String, Map<String, Double>> range = GeoMapController.getRange();
 
         mapOrigin = Map.ofEntries(
                 Map.entry("x", range.get("x").get("min")),
@@ -56,7 +54,7 @@ public class MainView implements ViewInterface {
     private void drawSegments(Canvas map, Color color) {
 
         GraphicsContext gc = map.getGraphicsContext2D();
-        List<Map<String, Map<String, Double>>> segments = GEO_MAP_CONTROLLER.getSegments();
+        List<Map<String, Map<String, Double>>> segments = GeoMapController.getSegments();
 
         gc.setFill(color);
         gc.setLineWidth(1.0);
@@ -77,7 +75,7 @@ public class MainView implements ViewInterface {
     private void drawPoints(Canvas map, Color color) {
 
         GraphicsContext gc = map.getGraphicsContext2D();
-        List<Map<String, Map<String, Double>>> passagePoints = PLANNING_REQUEST_CONTROLLER.getPassagePoints();
+        List<Map<String, Map<String, Double>>> passagePoints = PlanningRequestController.getPassagePoints();
 
         gc.setLineWidth(5.0);
 

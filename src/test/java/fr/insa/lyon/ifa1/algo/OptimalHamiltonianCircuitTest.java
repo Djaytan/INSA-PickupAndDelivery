@@ -96,7 +96,7 @@ public class OptimalHamiltonianCircuitTest {
                 new Request(P4,D4),
         };
 
-        PlanningRequest pr = new PlanningRequest(requests,depot);
+        PlanningRequest pr = new PlanningRequest(Arrays.asList(requests),depot);
 
 
 //        Map<String, Map<String, FindShortestRoutes.Route>> routes = new HashMap<>();
@@ -168,7 +168,7 @@ public class OptimalHamiltonianCircuitTest {
 //        routes.put("G", routeDeG);
 
 
-        OptimalHamiltonianCircuit algoHamilton = new OptimalHamiltonianCircuit();
+        OptimalHamiltonianCircuit algoHamilton = new OptimalHamiltonianCircuit(5000);
         List<PassagePoint> result = algoHamilton.solve(gM,routes,pr);
 
         assertEquals(depot, result.get(0));
@@ -180,7 +180,7 @@ public class OptimalHamiltonianCircuitTest {
         if(result.get(6).equals(D2)){
             assertEquals(D2, result.get(6));
             assertEquals(D1, result.get(7));
-        } else{
+        } else {
             assertEquals(D1, result.get(6));
             assertEquals(D2, result.get(7));
         }

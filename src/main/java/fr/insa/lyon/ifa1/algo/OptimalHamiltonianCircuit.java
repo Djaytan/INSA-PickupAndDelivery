@@ -11,6 +11,12 @@ public class OptimalHamiltonianCircuit implements FindShortestHamiltonianCircuit
     private List<PassagePoint> optimalRoute;
     private Map<String, Map<String, FindShortestRoutes.Route>> routes;
     private PlanningRequest pr;
+    private long timeLimitInMilliseconds;
+    private long startTime;
+
+    public OptimalHamiltonianCircuit(long timeLimitInMilliseconds) {
+        this.timeLimitInMilliseconds = timeLimitInMilliseconds;
+    }
 
     @Override
     public List<PassagePoint> solve(GeoMap gm, Map<String, Map<String, FindShortestRoutes.Route>> routes, PlanningRequest pr) {
@@ -47,6 +53,7 @@ public class OptimalHamiltonianCircuit implements FindShortestHamiltonianCircuit
         List<PassagePoint> ppVisited = new ArrayList<>();
         ppVisited.add(pr.getDepot());
 
+        startTime = System.currentTimeMillis();
         visitePoint(pr.getDepot(), ppVisited, ppNotVisited, 0d, pr.getDepot(), ppToDurationPp);
 
         return this.optimalRoute;
@@ -54,6 +61,9 @@ public class OptimalHamiltonianCircuit implements FindShortestHamiltonianCircuit
     }
 
     private void visitePoint(PassagePoint currentPoint, List<PassagePoint> ppVisited, Set<PassagePoint> ppNotVisited, double lengthCircuit, PassagePoint ppDepot, Map<PassagePoint, DurationPassagePoint> ppToDurationPp) {
+        if (System.currentTimeMillis() - startTime > timeLimitInMilliseconds) {
+            return;
+        }
 
         if (ppNotVisited.isEmpty()) {
             // Calcule la valeur definif  = lengthCircuit + distance vers depot
@@ -77,7 +87,7 @@ public class OptimalHamiltonianCircuit implements FindShortestHamiltonianCircuit
             if (ppToDurationPp.get(pp).getType().equals(PassagePointType.DELIVERY)) {
 
                 // vérifier si on est passé au pick up correspondant
-                Request r = Arrays.stream(this.pr.getRequests()).filter(request -> request.getDelivery().equals(pp)).findFirst().get();
+                Request r = this.pr.getRequests().stream().filter(request -> request.getDelivery().equals(pp)).findFirst().get();
                 if (!ppVisited.contains(r.getPickup())) continue;
             }
             ppNotVisited.remove(pp);

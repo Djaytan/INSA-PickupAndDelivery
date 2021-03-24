@@ -33,7 +33,10 @@ public class ImportView implements ViewInterface {
             VIEW_CONTROLLER.goToView(ViewController.View.MAIN_VIEW);
 
         }
+    }
 
+    public void quit() {
+        System.exit(0);
     }
 
 }

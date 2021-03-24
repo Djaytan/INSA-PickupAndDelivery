@@ -42,8 +42,8 @@ public class ViewController extends Application {
     try {
       stage = primaryStage;
       stage.setTitle("Pick'Up");
-      stage.setMinWidth(800);
-      stage.setMinHeight(650);
+      stage.setMinWidth(900);
+      stage.setMinHeight(670);
       goToView(View.IMPORT_VIEW);
       stage.show();
     }

@@ -115,4 +115,16 @@ public class MainView implements ViewInterface {
 
     }
 
+    public void quit() {
+        System.exit(0);
+    }
+
+    public void calculatePath() {
+        //TODO call calculatePath;
+    }
+
+    public void canvaClick() {
+        //TODO click
+    }
+
 }

@@ -5,5 +5,6 @@ Canvas {
 
 .root {
     -fx-padding: 20;
+    -fx-margin: 20;
     -fx-background-color: white;
 }

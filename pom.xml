@@ -17,6 +17,7 @@
     <maven.compiler.source>16</maven.compiler.source>
     <maven.compiler.target>16</maven.compiler.target>
     <exec.mainClass>fr.insa.lyon.ifa1.App</exec.mainClass>
+    <javafx.version>16</javafx.version>
   </properties>
 
   <dependencies>
@@ -24,25 +25,19 @@
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
-      <version>13</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-fxml</artifactId>
-        <version>13</version>
-        <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-base</artifactId>
-      <version>17-ea+3</version>
+      <version>${javafx.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-graphics</artifactId>
-      <version>17-ea+3</version>
+      <version>${javafx.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-fxml</artifactId>
+      <version>${javafx.version}</version>
       <scope>compile</scope>
     </dependency>
     <!-- JUnit -->

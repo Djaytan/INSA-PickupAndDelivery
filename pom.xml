@@ -13,9 +13,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.mainClass>fr.insa.lyon.ifa1.App</project.mainClass>
     <maven.compiler.source>15</maven.compiler.source>
     <maven.compiler.target>15</maven.compiler.target>
-    <exec.mainClass>fr.insa.lyon.ifa1.App</exec.mainClass>
     <javafx.version>16</javafx.version>
   </properties>
 
@@ -103,7 +103,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>${project.groupId}.App</mainClass>
+              <mainClass>${project.mainClass}</mainClass>
             </manifest>
             <manifestEntries>
               <Class-Path>.</Class-Path>

@@ -184,7 +184,6 @@ public class OptimalHamiltonianCircuitTest {
             assertEquals(D1, result.get(6));
             assertEquals(D2, result.get(7));
         }
-        assertEquals(D1, result.get(7));
         assertEquals(D4, result.get(8));
         assertEquals(depot, result.get(9));
     }

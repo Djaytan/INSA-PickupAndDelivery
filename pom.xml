@@ -52,17 +52,17 @@
     <sourceDirectory>${project.basedir}/src/main/java/</sourceDirectory>
     <testSourceDirectory>${project.basedir}/src/test/java/</testSourceDirectory>
     <directory>${project.basedir}/target/</directory>
-      <plugins>
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-compiler-plugin</artifactId>
-              <configuration>
-                  <source>15</source>
-                  <target>15</target>
-              </configuration>
-          </plugin>
-      </plugins>
-      <resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>15</source>
+          <target>15</target>
+        </configuration>
+      </plugin>
+    </plugins>
+    <resources>
       <resource>
         <directory>${project.basedir}/src/main/resources/</directory>
         <filtering>true</filtering>
@@ -87,6 +87,25 @@
           <version>2.22.1</version>
         </plugin>
         <plugin>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>3.1.2</version>
+          <executions>
+            <execution>
+              <id>copy-dependencies</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>copy-dependencies</goal>
+              </goals>
+              <configuration>
+                <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                <overWriteReleases>false</overWriteReleases>
+                <overWriteSnapshots>false</overWriteSnapshots>
+                <overWriteIfNewer>true</overWriteIfNewer>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.0.2</version>
           <configuration>
@@ -95,8 +114,11 @@
               <manifest>
                 <addClasspath>true</addClasspath>
                 <classpathPrefix>lib/</classpathPrefix>
-                <mainClass>${project.groupId}.controller.ViewController</mainClass>
+                <mainClass>${project.groupId}.App</mainClass>
               </manifest>
+              <manifestEntries>
+                <Class-Path>.</Class-Path>
+              </manifestEntries>
             </archive>
           </configuration>
         </plugin>

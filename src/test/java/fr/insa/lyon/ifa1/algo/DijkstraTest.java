@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 public class DijkstraTest {
 
     @Test
-    public void solve() {
+    public void solveTest() {
 
         Map<String, Intersection> intersections = new HashMap<>();
         intersections.put("A", new Intersection("A", 0, 0));

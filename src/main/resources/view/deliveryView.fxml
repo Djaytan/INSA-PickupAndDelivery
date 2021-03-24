@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 
 <GridPane
-        fx:controller="fr.insa.lyon.ifa1.controller.DeliveryViewController"
+        fx:controller="fr.insa.lyon.ifa1.view.DeliveryView"
         xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
     <Label GridPane.rowIndex="1" text="deliver page"/>
 

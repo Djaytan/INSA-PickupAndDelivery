@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlanningRequest {
+
   private List<Request> requests;
   private Depot depot;
 
-  public PlanningRequest(Depot depot) {
-    this(new ArrayList<>(), depot);
+  public PlanningRequest() {
+    this.requests = new ArrayList<>();
+    this.depot = null;
   }
 
   public PlanningRequest(List<Request> requests, Depot depot) {
@@ -43,4 +45,7 @@ public class PlanningRequest {
     }
     return pps;
   }
+
+  public void setDepot(Depot depot) { this.depot = depot; }
+
 }

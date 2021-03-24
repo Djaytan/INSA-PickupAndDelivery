@@ -19,9 +19,9 @@ public class MainView implements ViewInterface {
 
     private static final ViewController VIEW_CONTROLLER = new ViewController();
 
-    private static final Color MAP_SEGMENTS_COLOR = Color.BLACK;
+    private static final Color MAP_SEGMENTS_COLOR = Color.GRAY;
     private static final Color[] DELIVERY_MEN_PATHS_COLORS = new Color[] {
-            Color.BLUE, Color.GREEN, Color.ORANGE, Color.PINK, Color.YELLOW, Color.RED, Color.PURPLE
+            Color.RED, Color.GREEN, Color.ORANGE, Color.PINK, Color.YELLOW, Color.BLUE, Color.PURPLE
     };
 
     private static final Scene SCENE = VIEW_CONTROLLER.loadScene(ViewController.View.MAIN_VIEW);
@@ -59,9 +59,9 @@ public class MainView implements ViewInterface {
 
         GraphicsContext gc = map.getGraphicsContext2D();
 
-        gc.setFill(color);
+        gc.setStroke(color);
         gc.setLineWidth(1.0);
-
+System.out.println(segments.size() + " segments to draw in " + color.toString());
         for(Map<String, Map<String, Double>> segment : segments) {
 
             int x1 = (int) ((segment.get("origin").get("x") - mapOrigin.get("x")) * ratio);
@@ -75,13 +75,13 @@ public class MainView implements ViewInterface {
 
     }
 
-    private void drawPoints(List<Map<String, Map<String, Double>>> passagePoints, Canvas map, Color color) {
+    private void drawPoints(List<Map<String, Map<String, Double>>> points, Canvas map, Color color) {
 
         GraphicsContext gc = map.getGraphicsContext2D();
 
         gc.setLineWidth(5.0);
-
-        for(Map<String, Map<String, Double>> group : passagePoints) {
+System.out.println(points.size() + " points to draw");
+        for(Map<String, Map<String, Double>> group : points) {
 
             for(Map.Entry<String, Map<String, Double>> passagePoint : group.entrySet()) {
 
@@ -112,11 +112,12 @@ public class MainView implements ViewInterface {
             PlanningRequestController.importPlanningRequest(file);
 System.out.println("Start drawing P&D points");
             drawPoints(PlanningRequestController.getPassagePoints(), map, Color.BLUE);
+System.out.println("Start calculating deliverymen paths");
+            List<List<Map<String, Map<String, Double>>>> deliveryMenPaths = PlanningRequestController.getDeliveryMenPaths();
 System.out.println("Start drawing deliverymen paths");
-            /*List<List<Map<String, Map<String, Double>>>> deliveryMenPaths = PlanningRequestController.getDeliveryMenPaths();
             for(int i = 0; i < deliveryMenPaths.size(); i++) {
                 drawSegments(deliveryMenPaths.get(i), map, DELIVERY_MEN_PATHS_COLORS[i % DELIVERY_MEN_PATHS_COLORS.length]);
-            }*/
+            }
 
         }
 

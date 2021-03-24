@@ -27,7 +27,7 @@ public class PlanningRequestController {
 
     private static final PlanningRequest PLANNING_REQUEST = new PlanningRequest();
     private static final Dijkstra DIJKSTRA = new Dijkstra();
-    private static final FindShortestHamiltonianCircuit HAMILTONIAN_CIRCUIT = new OptimalHamiltonianCircuit();
+    private static final FindShortestHamiltonianCircuit HAMILTONIAN_CIRCUIT = new OptimalHamiltonianCircuit(5000);
 
     public static PlanningRequest getModel() { return PLANNING_REQUEST; }
 

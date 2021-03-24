@@ -5,9 +5,9 @@ import fr.insa.lyon.ifa1.models.map.Intersection;
 public class DurationPassagePoint extends PassagePoint {
 
     private int duration;
-    private String type;
+    private PassagePointType type;
 
-    public DurationPassagePoint(Intersection intersection, int duration, String type) {
+    public DurationPassagePoint(Intersection intersection, int duration, PassagePointType type) {
         super(intersection);
         this.duration = duration;
         this.type = type;
@@ -17,7 +17,7 @@ public class DurationPassagePoint extends PassagePoint {
         return duration;
     }
 
-    public String getType() {
+    public PassagePointType getType() {
         return type;
     }
 

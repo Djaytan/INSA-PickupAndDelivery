@@ -57,7 +57,9 @@ public class PlanningRequestController {
     public static List<Map<String, Map<String, Double>>> getPassagePoints() {
 
         PassagePoint[] passagePoints = PLANNING_REQUEST.getPassagePoints();
-        List<Map<String, Map<String, Double>>> passagePointsData = new ArrayList<>();
+        List<Map<String, Map<String, Double>>> passagePointsData = new ArrayList<>() {{
+            add(Map.ofEntries(Map.entry("depot", PlanningRequestController.getDepot())));
+        }};
 
         for(int i = 1; i < passagePoints.length - 1; i += 2) {
 

@@ -11,12 +11,9 @@ public class ImportView implements ViewInterface {
 
     private static final ViewController VIEW_CONTROLLER = new ViewController();
 
-    public void show() {
+    private static final Scene SCENE = VIEW_CONTROLLER.loadScene(ViewController.View.IMPORT_VIEW);
 
-        Scene scene = VIEW_CONTROLLER.loadScene(ViewController.View.IMPORT_VIEW);
-        VIEW_CONTROLLER.showScene(scene);
-
-    }
+    public void show() { VIEW_CONTROLLER.showScene(SCENE); }
 
     public void openFileChooser() {
 

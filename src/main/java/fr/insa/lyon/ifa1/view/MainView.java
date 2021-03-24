@@ -24,19 +24,18 @@ public class MainView implements ViewInterface {
             Color.BLUE, Color.GREEN, Color.ORANGE, Color.PINK, Color.YELLOW, Color.RED, Color.PURPLE
     };
 
+    private static final Scene SCENE = VIEW_CONTROLLER.loadScene(ViewController.View.MAIN_VIEW);
+
     private static Map<String, Double> mapOrigin;
     private static Double ratio;
 
     public void show() {
 
-        Scene scene = VIEW_CONTROLLER.loadScene(ViewController.View.MAIN_VIEW);
-
-        Canvas map = (Canvas) scene.lookup("#map");
+        Canvas map = (Canvas) SCENE.lookup("#map");
         setMapParameters(map);
         drawSegments(GeoMapController.getSegments(), map, MAP_SEGMENTS_COLOR);
-        drawPoints(map, Color.BLUE);
 
-        VIEW_CONTROLLER.showScene(scene);
+        VIEW_CONTROLLER.showScene(SCENE);
 
     }
 
@@ -76,10 +75,9 @@ public class MainView implements ViewInterface {
 
     }
 
-    private void drawPoints(Canvas map, Color color) {
+    private void drawPoints(List<Map<String, Map<String, Double>>> passagePoints, Canvas map, Color color) {
 
         GraphicsContext gc = map.getGraphicsContext2D();
-        List<Map<String, Map<String, Double>>> passagePoints = PlanningRequestController.getPassagePoints();
 
         gc.setLineWidth(5.0);
 
@@ -109,8 +107,12 @@ public class MainView implements ViewInterface {
 
         if(file != null && file.getName().endsWith(".xml")) {
 
-            PlanningRequestController.importPlanningRequest(file);
+            Canvas map = (Canvas) SCENE.lookup("#map");
 
+            PlanningRequestController.importPlanningRequest(file);
+System.out.println("Start drawing P&D points");
+            drawPoints(PlanningRequestController.getPassagePoints(), map, Color.BLUE);
+System.out.println("Start drawing deliverymen paths");
             /*List<List<Map<String, Map<String, Double>>>> deliveryMenPaths = PlanningRequestController.getDeliveryMenPaths();
             for(int i = 0; i < deliveryMenPaths.size(); i++) {
                 drawSegments(deliveryMenPaths.get(i), map, DELIVERY_MEN_PATHS_COLORS[i % DELIVERY_MEN_PATHS_COLORS.length]);

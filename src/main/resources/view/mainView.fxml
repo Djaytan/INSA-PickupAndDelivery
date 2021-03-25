@@ -49,11 +49,16 @@
             </StackPane>
             <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="590.0" prefWidth="800.0">
                <children>
-                  <ButtonBar prefHeight="40.0" prefWidth="200.0">
-                    <buttons>
-                      <Button mnemonicParsing="false" text="Ajouter une livraison " />
-                    </buttons>
-                  </ButtonBar>
+                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" id="stateTxt"/>
+                        <ButtonBar prefHeight="35.0" prefWidth="866.0">
+                          <buttons>
+                            <Button id="btnAddPickup" mnemonicParsing="false" onAction="#addPickup" text="Ajouter une livraison" />
+                          </buttons>
+                        </ButtonBar>
+                     </children>
+                  </HBox>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
                         <Canvas id="map" height="480.0" onMouseClicked="#canvaClick" width="650.0" />
@@ -62,10 +67,10 @@
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                      <children>
                         <Label text="Importer des points relais à partir d'un fichier XML" />
-                        <Button mnemonicParsing="false" onAction="#openFileChooser" text="Séléctionner un fichier" />
+                        <Button id="btnFileChooser" mnemonicParsing="false" onAction="#openFileChooser" text="Séléctionner un fichier" />
                         <Label text="Nombre de livreurs" />
-                        <TextField id="nbLivreur" maxWidth="-Infinity" HBox.hgrow="NEVER" />
-                        <Button mnemonicParsing="false" onAction="#calculatePath" text="Calculer" />
+                        <TextField id="nbLivreurs" maxWidth="-Infinity" HBox.hgrow="NEVER" />
+                        <Button id="btnPath" mnemonicParsing="false" onAction="#calculatePath" text="Calculer" />
                      </children>
                   </HBox>
                </children>

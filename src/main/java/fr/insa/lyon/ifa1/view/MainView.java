@@ -26,6 +26,9 @@ public class MainView implements ViewInterface {
     private static Map<String, Double> mapOrigin;
     private static Double ratio;
 
+    private static StateMainView state;
+
+
     public void show() {
 
         Scene scene = VIEW_CONTROLLER.loadScene(ViewController.View.MAIN_VIEW);
@@ -34,6 +37,8 @@ public class MainView implements ViewInterface {
         setMapParameters(map);
         drawSegments(map, MAP_SEGMENTS_COLOR);
         drawPoints(map, Color.BLUE);
+
+        setState(new MainViewWaitingState());
 
         VIEW_CONTROLLER.showScene(scene);
 
@@ -123,8 +128,36 @@ public class MainView implements ViewInterface {
         //TODO call calculatePath;
     }
 
+    public void setState(StateMainView state) {
+        this.state = state;
+    }
+
+    public void addPickup() {
+        if(state instanceof MainViewWaitingState) {
+            setState(new MainViewAddPickupState());
+        } else {
+            setState(new MainViewWaitingState());
+        }
+
+        if(state != null) {
+            state.canvaClick(this);
+        }
+    }
+
     public void canvaClick() {
-        //TODO click
+        if(state instanceof MainViewAddPickupState) {
+            setState(new MainViewAddDeliveryState());
+        } else if(state instanceof MainViewAddDeliveryState) {
+            setState(new MainViewWaitingState());
+        }
+
+        if(state != null) {
+            state.canvaClick(this);
+        }
+    }
+
+    public Scene getScene() {
+        return VIEW_CONTROLLER.getScene();
     }
 
 }

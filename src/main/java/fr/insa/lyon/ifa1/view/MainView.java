@@ -140,45 +140,44 @@ public class MainView implements ViewInterface {
 
     private void userDrawPoint(Canvas map, Color color, double mapX, double mapY) {
         //get closest intersect position
-        Map<String, Integer> closestIntersection = findClosestIntersection(GEO_MAP_CONTROLLER.getIntersections(), mapX, mapY);
-
-        //TODO : insert value in data structure temporary
-
-        //draw
-        GraphicsContext gc = map.getGraphicsContext2D();
-        gc.setFill(color);
-        gc.strokeOval(closestIntersection.get("x"), closestIntersection.get("y"), 5, 5);
-        gc.fillOval(closestIntersection.get("x"), closestIntersection.get("y"), 5, 5);
-
-        //map.setOnContextMenuRequested(e -> menu.show(map.getScene().getWindow(), e.getScreenX(), e.getScreenY()));
-    }
-
-    private Map<String, Integer> findClosestIntersection(Collection<Intersection> intersections, double approximativeX, double approximativeY) {
         int closestX = 0;
         int closestY = 0;
+        Intersection closestIntersection = null;
         double distance = Double.MAX_VALUE;
         double tmpDistance;
 
-        for (Intersection intersection : intersections) {
+        for (Intersection intersection : GEO_MAP_CONTROLLER.getIntersections()) {
             int x = (int) ((intersection.getLongitude() - mapOrigin.get("x")) * ratio);
             int y = (int) ((intersection.getLatitude() - mapOrigin.get("y")) * ratio);
 
-            tmpDistance = Math.sqrt((approximativeY - y) * (approximativeY - y) + (approximativeX - x) * (approximativeX - x));
+            tmpDistance = Math.sqrt((mapY - y) * (mapY - y) + (mapX - x) * (mapX - x));
             if(tmpDistance < distance) {
+                closestIntersection = intersection;
                 closestX = x;
                 closestY = y;
                 distance = tmpDistance;
             }
         }
 
-        return Map.ofEntries(
-                Map.entry("x", closestX),
-                Map.entry("y", closestY)
-        );
+        //insert value in data structure temporary
+        if(state instanceof MainViewAddPickupState) {
+            PLANNING_REQUEST_CONTROLLER.addPickupPoint(closestIntersection);
+        } else if(state instanceof MainViewAddDeliveryState) {
+            PLANNING_REQUEST_CONTROLLER.addDeliveryPoint(closestIntersection);
+            PLANNING_REQUEST_CONTROLLER.commit();
+        }
+
+        //draw
+        GraphicsContext gc = map.getGraphicsContext2D();
+        gc.setFill(color);
+        gc.strokeOval(closestX, closestY, 5, 5);
+        gc.fillOval(closestX, closestY, 5, 5);
+
+        //map.setOnContextMenuRequested(e -> menu.show(map.getScene().getWindow(), e.getScreenX(), e.getScreenY()));
     }
 
     public void openFileChooser() {
-
+        List<Map<String, Map<String, Double>>> passagePoints = PLANNING_REQUEST_CONTROLLER.getPassagePoints();
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Importer des points relais au format XML");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("xml file", "*.xml"));
@@ -208,8 +207,10 @@ public class MainView implements ViewInterface {
     public void addPickup() {
         if(state instanceof MainViewWaitingState) {
             setState(new MainViewAddPickupState());
+            PLANNING_REQUEST_CONTROLLER.begin();
         } else {
             setState(new MainViewWaitingState());
+            PLANNING_REQUEST_CONTROLLER.undo();
         }
 
         if(state != null) {

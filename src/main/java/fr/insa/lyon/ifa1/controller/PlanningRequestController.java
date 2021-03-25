@@ -1,8 +1,10 @@
 package fr.insa.lyon.ifa1.controller;
 
 import fr.insa.lyon.ifa1.models.map.Intersection;
+import fr.insa.lyon.ifa1.models.request.DurationPassagePoint;
 import fr.insa.lyon.ifa1.models.request.PassagePoint;
 import fr.insa.lyon.ifa1.models.request.PlanningRequest;
+import fr.insa.lyon.ifa1.models.request.Request;
 import fr.insa.lyon.ifa1.xml.XMLDeserialization;
 import org.xml.sax.SAXException;
 
@@ -22,6 +24,8 @@ public class PlanningRequestController {
     private static final PlanningRequest MODEL = new PlanningRequest();
 
     public static PlanningRequest getModel() { return MODEL; }
+
+    public static Request tmpRequest = null;
 
     public Map<String, Double> getDepot() {
 
@@ -59,6 +63,32 @@ public class PlanningRequestController {
 
         return passagePointsData;
 
+    }
+
+    public void addPickupPoint(Intersection intersection) {
+        tmpRequest.setPickup(new DurationPassagePoint(intersection, 5, "pickup"));
+    }
+
+    public void addDeliveryPoint(Intersection intersection) {
+        tmpRequest.setDelivery(new DurationPassagePoint(intersection, 5, "delivery"));
+    }
+
+    public boolean commit() {
+        if(tmpRequest != null) {
+            MODEL.addRequest(tmpRequest);
+            return true;
+        }
+       return false;
+    }
+
+    public void undo() {
+        tmpRequest = null;
+    }
+
+    public void begin() {
+        if(tmpRequest == null) {
+            tmpRequest = new Request();
+        }
     }
 
     public void importPlanningRequest(File file) {

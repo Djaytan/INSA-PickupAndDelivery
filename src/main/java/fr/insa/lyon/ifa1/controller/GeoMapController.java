@@ -8,6 +8,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -47,6 +48,10 @@ public class GeoMapController {
                 ))
         )).collect(Collectors.toList());
 
+    }
+
+    public Collection<Intersection> getIntersections() {
+        return MODEL.getIntersections();
     }
 
     public Map<String, Map<String, Double>> getRange() {

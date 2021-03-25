@@ -3,13 +3,22 @@ package fr.insa.lyon.ifa1.view;
 import fr.insa.lyon.ifa1.controller.GeoMapController;
 import fr.insa.lyon.ifa1.controller.PlanningRequestController;
 import fr.insa.lyon.ifa1.controller.ViewController;
+import fr.insa.lyon.ifa1.models.map.Intersection;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.FileChooser;
 
+import javafx.event.ActionEvent;
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +51,33 @@ public class MainView implements ViewInterface {
 
         VIEW_CONTROLLER.showScene(scene);
 
+        //contextMenu
+        ContextMenu contextMenu = new ContextMenu();
+
+        MenuItem itemDelete = new MenuItem("Supprimer");
+        itemDelete.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                int x = 0;
+            }
+        });
+        MenuItem itemMove = new MenuItem("Déplacer");
+        itemMove.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                int x = 0;
+            }
+        });
+
+        // Add MenuItem to ContextMenu
+        contextMenu.getItems().addAll(itemDelete, itemMove);
+
+        map.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+            @Override
+            public void handle(ContextMenuEvent event) {
+                contextMenu.show(map.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+            }
+        });
     }
 
     private void setMapParameters(Canvas map) {
@@ -99,9 +135,46 @@ public class MainView implements ViewInterface {
                 gc.strokeOval(x, y, 5, 5);
 
             }
+        }
+    }
 
+    private void userDrawPoint(Canvas map, Color color, double mapX, double mapY) {
+        //get closest intersect position
+        Map<String, Integer> closestIntersection = findClosestIntersection(GEO_MAP_CONTROLLER.getIntersections(), mapX, mapY);
+
+        //TODO : insert value in data structure temporary
+
+        //draw
+        GraphicsContext gc = map.getGraphicsContext2D();
+        gc.setFill(color);
+        gc.strokeOval(closestIntersection.get("x"), closestIntersection.get("y"), 5, 5);
+        gc.fillOval(closestIntersection.get("x"), closestIntersection.get("y"), 5, 5);
+
+        //map.setOnContextMenuRequested(e -> menu.show(map.getScene().getWindow(), e.getScreenX(), e.getScreenY()));
+    }
+
+    private Map<String, Integer> findClosestIntersection(Collection<Intersection> intersections, double approximativeX, double approximativeY) {
+        int closestX = 0;
+        int closestY = 0;
+        double distance = Double.MAX_VALUE;
+        double tmpDistance;
+
+        for (Intersection intersection : intersections) {
+            int x = (int) ((intersection.getLongitude() - mapOrigin.get("x")) * ratio);
+            int y = (int) ((intersection.getLatitude() - mapOrigin.get("y")) * ratio);
+
+            tmpDistance = Math.sqrt((approximativeY - y) * (approximativeY - y) + (approximativeX - x) * (approximativeX - x));
+            if(tmpDistance < distance) {
+                closestX = x;
+                closestY = y;
+                distance = tmpDistance;
+            }
         }
 
+        return Map.ofEntries(
+                Map.entry("x", closestX),
+                Map.entry("y", closestY)
+        );
     }
 
     public void openFileChooser() {
@@ -144,10 +217,13 @@ public class MainView implements ViewInterface {
         }
     }
 
-    public void canvaClick() {
+    @FXML
+    public void canvaClick(MouseEvent event) {
         if(state instanceof MainViewAddPickupState) {
+            userDrawPoint((Canvas)getScene().lookup("#map"), Color.RED, event.getX(), event.getY());
             setState(new MainViewAddDeliveryState());
         } else if(state instanceof MainViewAddDeliveryState) {
+            userDrawPoint((Canvas)getScene().lookup("#map"), Color.BLUE, event.getX(), event.getY());
             setState(new MainViewWaitingState());
         }
 

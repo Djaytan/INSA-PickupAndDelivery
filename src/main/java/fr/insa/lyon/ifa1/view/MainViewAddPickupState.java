@@ -1,6 +1,5 @@
 package fr.insa.lyon.ifa1.view;
 
-import fr.insa.lyon.ifa1.controller.ViewController;
 import javafx.scene.ImageCursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;

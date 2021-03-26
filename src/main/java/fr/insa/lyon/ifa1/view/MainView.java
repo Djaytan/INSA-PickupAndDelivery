@@ -183,16 +183,17 @@ System.out.println(points.size() + " points to draw");
 
         if(file != null && file.getName().endsWith(".xml")) {
 
-            Canvas map = (Canvas) SCENE.lookup("#map");
+            Canvas passagePointsMap = (Canvas) SCENE.lookup("#passagePoints");
+            Canvas deliverymenPathsMap = (Canvas) SCENE.lookup("#deliverymenPaths");
 
             PlanningRequestController.importPlanningRequest(file);
 System.out.println("Start drawing P&D points");
-            drawPoints(PlanningRequestController.getPassagePoints(), map, Color.BLUE);
+            drawPoints(PlanningRequestController.getPassagePoints(), passagePointsMap, Color.BLUE);
 System.out.println("Start calculating deliverymen paths");
             List<List<Map<String, Map<String, Double>>>> deliveryMenPaths = PlanningRequestController.getDeliveryMenPaths();
 System.out.println("Start drawing deliverymen paths");
             for(int i = 0; i < deliveryMenPaths.size(); i++) {
-                drawSegments(deliveryMenPaths.get(i), map, DELIVERY_MEN_PATHS_COLORS[i % DELIVERY_MEN_PATHS_COLORS.length]);
+                drawSegments(deliveryMenPaths.get(i), deliverymenPathsMap, DELIVERY_MEN_PATHS_COLORS[i % DELIVERY_MEN_PATHS_COLORS.length]);
             }
 
         }

@@ -155,8 +155,7 @@ public class PlanningRequestController {
 
     }
 
-
-    public void deleteOneRequest(PassagePoint pp){
+    public static void deleteOneRequest(PassagePoint pp) {
 
         final GeoMap geoMap = GeoMapController.getModel();
 

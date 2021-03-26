@@ -17,8 +17,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.FileChooser;
 
 import javafx.event.ActionEvent;
+
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +39,7 @@ public class MainView implements ViewInterface {
     private static Double ratio;
 
     private static StateMainView state;
-
+    private static Map<String, Double> closestPassagePoint;
 
     public void show() {
 
@@ -49,18 +49,15 @@ public class MainView implements ViewInterface {
 
         setState(new MainViewWaitingState());
 
+        SCENE.setOnMouseMoved(onMouseMove());
+
         VIEW_CONTROLLER.showScene(SCENE);
 
         //contextMenu
         ContextMenu contextMenu = new ContextMenu();
 
         MenuItem itemDelete = new MenuItem("Supprimer");
-        itemDelete.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                int x = 0;
-            }
-        });
+        itemDelete.setOnAction(onDeletePassagePoint());
         MenuItem itemMove = new MenuItem("Déplacer");
         itemMove.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -136,6 +133,16 @@ System.out.println(points.size() + " points to draw");
         }
     }
 
+    private void drawOverPassagePoint(Map<String, Double> passagePoint, Canvas canvas) {
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        gc.setLineWidth(2.0);
+        gc.setFill(Color.YELLOW);
+        gc.strokeOval(passagePoint.get("x"), passagePoint.get("y"), 10, 5);
+
+    }
+
     private void userDrawPoint(Canvas map, Color color, double mapX, double mapY) {
         //get closest intersect position
         int closestX = 0;
@@ -209,7 +216,7 @@ System.out.println("Start drawing deliverymen paths");
     }
 
     public void setState(StateMainView state) {
-        this.state = state;
+        MainView.state = state;
     }
 
     public void addPickup() {
@@ -243,6 +250,41 @@ System.out.println("Start drawing deliverymen paths");
 
     public Scene getScene() {
         return VIEW_CONTROLLER.getScene();
+    }
+
+    private EventHandler<ActionEvent> onDeletePassagePoint() {
+
+        return e -> {
+
+            PlanningRequestController.deleteOneRequest(closestPassagePoint);
+
+            Canvas canvas = (Canvas) SCENE.lookup("#passagePoints");
+            cleanCanvas(canvas);
+            drawPoints(PlanningRequestController.getPassagePoints(), canvas, Color.BLUE);
+
+        };
+
+    }
+
+    private void cleanCanvas(Canvas canvas) {
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+    }
+
+    private EventHandler<? super MouseEvent> onMouseMove() {
+
+        return e -> {
+
+            closestPassagePoint = PlanningRequestController.getClosestPassagePoint(e.getX(), e.getY());
+
+            Canvas canvas = (Canvas) SCENE.lookup("#overEffects");
+            cleanCanvas(canvas);
+            drawOverPassagePoint(closestPassagePoint, canvas);
+
+        };
+
     }
 
 }

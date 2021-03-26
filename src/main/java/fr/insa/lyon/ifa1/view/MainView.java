@@ -146,7 +146,6 @@ System.out.println(points.size() + " points to draw");
 
         gc.setLineWidth(2.0);
         gc.setStroke(Color.RED);
-        System.out.println("Overing passage point at x : " + x + " y : " + y);
         gc.strokeOval(x, y, 10, 5);
 
     }
@@ -186,12 +185,12 @@ System.out.println(points.size() + " points to draw");
         File file = fileChooser.showOpenDialog(null);
 
         if(file != null && file.getName().endsWith(".xml")) {
-            Canvas map = (Canvas) SCENE.lookup("#map");
+            Canvas canvas = (Canvas) SCENE.lookup("#passagePoints");
 
             PlanningRequestController.importPlanningRequest(file);
             chargedPoints = true;
             System.out.println("Start drawing P&D points");
-            drawPoints(PlanningRequestController.getPassagePoints(), map, Color.BLUE);
+            drawPoints(PlanningRequestController.getPassagePoints(), canvas, Color.BLUE);
 
             Button btnPath = (Button) SCENE.lookup("#btnPath");
             if(btnPath != null) {
@@ -207,15 +206,16 @@ System.out.println(points.size() + " points to draw");
 
     public void calculatePath() {
         TextField input = (TextField) SCENE.lookup("#nbLivreurs");
-        Canvas map = (Canvas) SCENE.lookup("#map");
-        if(input != null && map != null) {
+        Canvas canvas = (Canvas) SCENE.lookup("#deliverymenPaths");
+        if(input != null && canvas != null) {
             int nbLivreurs = Integer.parseInt(input.getText());
             System.out.println("nb de livreurs :" + nbLivreurs);
             System.out.println("Start calculating deliverymen paths");
             List<List<Map<String, Map<String, Double>>>> deliveryMenPaths = PlanningRequestController.getDeliveryMenPaths();
+            clearCanvas(canvas);
             System.out.println("Start drawing deliverymen paths");
             for(int i = 0; i < deliveryMenPaths.size(); i++) {
-                drawSegments(deliveryMenPaths.get(i), map, DELIVERY_MEN_PATHS_COLORS[i % DELIVERY_MEN_PATHS_COLORS.length]);
+                drawSegments(deliveryMenPaths.get(i), canvas, DELIVERY_MEN_PATHS_COLORS[i % DELIVERY_MEN_PATHS_COLORS.length]);
             }
         }
     }
@@ -278,15 +278,17 @@ System.out.println(points.size() + " points to draw");
             PlanningRequestController.deleteOneRequest(closestPassagePoint);
 
             Canvas canvas = (Canvas) SCENE.lookup("#passagePoints");
-            cleanCanvas(canvas);
+            clearCanvas(canvas);
             drawPoints(PlanningRequestController.getPassagePoints(), canvas, Color.BLUE);
+
+            calculatePath();
 
         };
 
     }
 
-    private void cleanCanvas(Canvas canvas) {
-
+    private void clearCanvas(Canvas canvas) {
+System.out.println("Clearing " + canvas.getId());
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
@@ -301,7 +303,7 @@ System.out.println(points.size() + " points to draw");
                 closestPassagePoint = PlanningRequestController.getClosestPassagePoint(getWorldCoordinatesFromMapCoordinates(e.getX(), e.getY()));
 
                 Canvas canvas = (Canvas) SCENE.lookup("#overEffects");
-                cleanCanvas(canvas);
+                clearCanvas(canvas);
                 drawOverPassagePoint(closestPassagePoint, canvas);
 
             }

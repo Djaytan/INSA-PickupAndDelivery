@@ -182,12 +182,11 @@ public class PlanningRequestController {
 
     }
 
-    static public void deleteOneRequest(Map<String,Double> point){
-
-        final GeoMap geoMap = GeoMapController.getModel();
+    static public void deleteOneRequest(Map<String,Double> point) {
 
         // suppression de la course
         List<Request> requests = PLANNING_REQUEST.getRequests();
+
         for (Request request : PLANNING_REQUEST.getRequests()) {
             if ((point.get("x").equals(request.getPickup().getAddress().getLongitude())
                     && point.get("y").equals(request.getPickup().getAddress().getLatitude()))
@@ -197,11 +196,8 @@ public class PlanningRequestController {
                 break;
             }
         }
-        PLANNING_REQUEST.setRequests(requests);
 
-        // maj du circuit hamiltonien
-        final Map<String, Map<String, FindShortestRoutes.Route>> dijkstraRoutes = DIJKSTRA.solve(geoMap, PLANNING_REQUEST.getPassagePoints());
-        HAMILTONIAN_CIRCUIT.solve(geoMap, dijkstraRoutes, PLANNING_REQUEST);
+        PLANNING_REQUEST.setRequests(requests);
 
     }
 

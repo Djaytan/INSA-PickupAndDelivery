@@ -155,4 +155,26 @@ public class PlanningRequestController {
 
     }
 
+
+    public void deleteOneRequest(PassagePoint pp){
+
+        final GeoMap geoMap = GeoMapController.getModel();
+
+        // suppression de la course
+        List<Request> requests = PLANNING_REQUEST.getRequests();
+        for (Request request : PLANNING_REQUEST.getRequests()) {
+            if (pp == request.getPickup() || pp == request.getDelivery()) {
+                requests.remove(request);
+                break;
+            }
+        }
+
+        PLANNING_REQUEST.setRequests(requests);
+
+        // maj du circuit hamiltonien
+        final Map<String, Map<String, FindShortestRoutes.Route>> dijkstraRoutes = DIJKSTRA.solve(geoMap, PLANNING_REQUEST.getPassagePoints());
+        HAMILTONIAN_CIRCUIT.solve(geoMap, dijkstraRoutes, PLANNING_REQUEST);
+    }
+
+
 }

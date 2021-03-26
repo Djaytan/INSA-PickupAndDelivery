@@ -48,4 +48,6 @@ public class PlanningRequest {
 
   public void setDepot(Depot depot) { this.depot = depot; }
 
+  public void setRequests(List<Request> requests) { this.requests = requests; }
+
 }

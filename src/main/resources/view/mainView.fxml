@@ -61,10 +61,10 @@
                   </HBox>
                   <StackPane alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Canvas id="map" height="480.0" onMouseClicked="#canvaClick" width="650.0" />
+                        <Canvas id="map" height="480.0" width="650.0" />
                         <Canvas id="deliverymenPaths" height="480.0" width="650.0" />
                         <Canvas id="passagePoints" height="480.0" width="650.0" />
-                        <Canvas id="overEffects" height="480.0" width="650.0" />
+                        <Canvas id="overEffects" onMouseClicked="#canvaClick" height="480.0" width="650.0" />
                      </children>
                   </StackPane>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">

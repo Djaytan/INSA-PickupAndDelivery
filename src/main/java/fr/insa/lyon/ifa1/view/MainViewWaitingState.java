@@ -16,7 +16,7 @@ public class MainViewWaitingState implements StateMainView {
         Button btnPath = (Button) context.getScene().lookup("#btnPath");
         TextField input = (TextField) context.getScene().lookup("#nbLivreurs");
         Text stateTxt = (Text) context.getScene().lookup("#stateTxt");
-        Canvas map = (Canvas) context.getScene().lookup("#map");
+        Canvas map = (Canvas) context.getScene().lookup("#overEffects");
 
         if(btnPickup != null && btnFileChooser != null && btnPath != null && input != null && stateTxt != null && map != null) {
             btnPickup.setText("Ajouter une livraison");

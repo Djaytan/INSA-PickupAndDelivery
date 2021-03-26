@@ -7,8 +7,10 @@ import fr.insa.lyon.ifa1.models.map.Intersection;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -138,24 +140,7 @@ System.out.println(points.size() + " points to draw");
 
     private void userDrawPoint(Canvas map, Color color, double mapX, double mapY) {
         //get closest intersect position
-        int closestX = 0;
-        int closestY = 0;
-        Intersection closestIntersection = null;
-        double distance = Double.MAX_VALUE;
-        double tmpDistance;
-
-        for (Intersection intersection : GeoMapController.getIntersections()) {
-            int x = (int) ((intersection.getLongitude() - mapOrigin.get("x")) * ratio);
-            int y = (int) ((intersection.getLatitude() - mapOrigin.get("y")) * ratio);
-
-            tmpDistance = Math.sqrt((mapY - y) * (mapY - y) + (mapX - x) * (mapX - x));
-            if(tmpDistance < distance) {
-                closestIntersection = intersection;
-                closestX = x;
-                closestY = y;
-                distance = tmpDistance;
-            }
-        }
+        Intersection closestIntersection = GeoMapController.getClosestIntersection(getWorldCoordinatesFromMapCoordinates(mapX, mapY).get("x"), getWorldCoordinatesFromMapCoordinates(mapX, mapY).get("y"));
 
         //insert value in data structure temporary
         if(state instanceof MainViewAddPickupState) {
@@ -163,13 +148,19 @@ System.out.println(points.size() + " points to draw");
         } else if(state instanceof MainViewAddDeliveryState) {
             PlanningRequestController.addDeliveryPoint(closestIntersection);
             PlanningRequestController.commit();
+            Button btnPath = (Button) SCENE.lookup("#btnPath");
+            if(btnPath != null) {
+                btnPath.setDisable(false);
+            }
         }
 
         //draw
+        int x = (int) ((closestIntersection.getLongitude() - mapOrigin.get("x")) * ratio);
+        int y = (int) ((closestIntersection.getLatitude() - mapOrigin.get("y")) * ratio);
         GraphicsContext gc = map.getGraphicsContext2D();
         gc.setFill(color);
-        gc.strokeOval(closestX, closestY, 5, 5);
-        gc.fillOval(closestX, closestY, 5, 5);
+        gc.strokeOval(x, y, 5, 5);
+        gc.fillOval(x, y, 5, 5);
 
         //map.setOnContextMenuRequested(e -> menu.show(map.getScene().getWindow(), e.getScreenX(), e.getScreenY()));
     }
@@ -182,19 +173,16 @@ System.out.println(points.size() + " points to draw");
         File file = fileChooser.showOpenDialog(null);
 
         if(file != null && file.getName().endsWith(".xml")) {
-
             Canvas map = (Canvas) SCENE.lookup("#map");
 
             PlanningRequestController.importPlanningRequest(file);
-System.out.println("Start drawing P&D points");
+            System.out.println("Start drawing P&D points");
             drawPoints(PlanningRequestController.getPassagePoints(), map, Color.BLUE);
-System.out.println("Start calculating deliverymen paths");
-            List<List<Map<String, Map<String, Double>>>> deliveryMenPaths = PlanningRequestController.getDeliveryMenPaths();
-System.out.println("Start drawing deliverymen paths");
-            for(int i = 0; i < deliveryMenPaths.size(); i++) {
-                drawSegments(deliveryMenPaths.get(i), map, DELIVERY_MEN_PATHS_COLORS[i % DELIVERY_MEN_PATHS_COLORS.length]);
-            }
 
+            Button btnPath = (Button) SCENE.lookup("#btnPath");
+            if(btnPath != null) {
+                btnPath.setDisable(false);
+            }
         }
 
     }
@@ -204,7 +192,32 @@ System.out.println("Start drawing deliverymen paths");
     }
 
     public void calculatePath() {
-        //TODO call calculatePath;
+        TextField input = (TextField) SCENE.lookup("#nbLivreurs");
+        Canvas map = (Canvas) SCENE.lookup("#map");
+        if(input != null && map != null) {
+            int nbLivreurs = Integer.parseInt(input.getText());
+            System.out.println("nb de livreurs :" + nbLivreurs);
+            System.out.println("Start calculating deliverymen paths");
+            List<List<Map<String, Map<String, Double>>>> deliveryMenPaths = PlanningRequestController.getDeliveryMenPaths();
+            System.out.println("Start drawing deliverymen paths");
+            for(int i = 0; i < deliveryMenPaths.size(); i++) {
+                drawSegments(deliveryMenPaths.get(i), map, DELIVERY_MEN_PATHS_COLORS[i % DELIVERY_MEN_PATHS_COLORS.length]);
+            }
+        }
+    }
+
+    private Map<String, Double> getWorldCoordinatesFromMapCoordinates(double x, double y) {
+        return Map.ofEntries(
+                Map.entry("x", x/ratio + mapOrigin.get("x")),
+                Map.entry("y", y/ratio + mapOrigin.get("y"))
+        );
+    }
+
+    private Map<String, Integer> getMapCoordinatesFromWorldCoordinates(double x, double y) {
+        return Map.ofEntries(
+                Map.entry("x", (int)((x - mapOrigin.get("x")) * ratio)),
+                Map.entry("y", (int)((y - mapOrigin.get("y")) * ratio))
+        );
     }
 
     public void setState(StateMainView state) {

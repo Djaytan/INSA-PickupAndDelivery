@@ -6,11 +6,8 @@ import fr.insa.lyon.ifa1.algo.FindShortestRoutes;
 import fr.insa.lyon.ifa1.algo.OptimalHamiltonianCircuit;
 import fr.insa.lyon.ifa1.models.map.GeoMap;
 import fr.insa.lyon.ifa1.models.map.Intersection;
-import fr.insa.lyon.ifa1.models.request.DurationPassagePoint;
+import fr.insa.lyon.ifa1.models.request.*;
 import fr.insa.lyon.ifa1.models.map.Segment;
-import fr.insa.lyon.ifa1.models.request.PassagePoint;
-import fr.insa.lyon.ifa1.models.request.PlanningRequest;
-import fr.insa.lyon.ifa1.models.request.Request;
 import fr.insa.lyon.ifa1.xml.XMLDeserialization;
 import org.xml.sax.SAXException;
 

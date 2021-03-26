@@ -51,7 +51,7 @@ public class GeoMapController {
     }
 
     public static Collection<Intersection> getIntersections() {
-        return MODEL.getIntersections();
+        return GEO_MAP.getIntersections();
     }
 
     public static Map<String, Map<String, Double>> getRange() {

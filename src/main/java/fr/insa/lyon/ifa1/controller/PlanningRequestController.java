@@ -156,19 +156,18 @@ public class PlanningRequestController {
     }
 
 
-    public void deleteOneRequest(PassagePoint pp){
-
+    static public void deleteOneRequest(Map<String,Double> point){
         final GeoMap geoMap = GeoMapController.getModel();
 
         // suppression de la course
         List<Request> requests = PLANNING_REQUEST.getRequests();
         for (Request request : PLANNING_REQUEST.getRequests()) {
-            if (pp == request.getPickup() || pp == request.getDelivery()) {
+            if (point.get("x").equals(request.getPickup().getAddress().getLongitude())
+                    && point.get("y").equals(request.getDelivery().getAddress().getLatitude())){
                 requests.remove(request);
                 break;
             }
         }
-
         PLANNING_REQUEST.setRequests(requests);
 
         // maj du circuit hamiltonien

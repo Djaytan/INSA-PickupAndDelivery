@@ -175,7 +175,6 @@ System.out.println(points.size() + " points to draw");
     }
 
     public void openFileChooser() {
-        List<Map<String, Map<String, Double>>> passagePoints = PlanningRequestController.getPassagePoints();
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Importer des points relais au format XML");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("xml file", "*.xml"));

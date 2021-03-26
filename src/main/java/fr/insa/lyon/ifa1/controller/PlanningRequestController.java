@@ -189,8 +189,10 @@ public class PlanningRequestController {
         // suppression de la course
         List<Request> requests = PLANNING_REQUEST.getRequests();
         for (Request request : PLANNING_REQUEST.getRequests()) {
-            if (point.get("x").equals(request.getPickup().getAddress().getLongitude())
-                    && point.get("y").equals(request.getDelivery().getAddress().getLatitude())){
+            if ((point.get("x").equals(request.getPickup().getAddress().getLongitude())
+                    && point.get("y").equals(request.getPickup().getAddress().getLatitude()))
+            || (point.get("x").equals(request.getDelivery().getAddress().getLongitude())
+                    && point.get("y").equals(request.getDelivery().getAddress().getLatitude()))){
                 requests.remove(request);
                 break;
             }

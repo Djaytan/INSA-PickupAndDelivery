@@ -23,7 +23,7 @@ public class MainViewWaitingState implements StateMainView {
             stateTxt.setText("");
             btnFileChooser.setDisable(false);
             btnPath.setDisable(false);
-            input.setDisable(false);
+            input.setDisable(true);
 
             map.setCursor(Cursor.DEFAULT);
         }

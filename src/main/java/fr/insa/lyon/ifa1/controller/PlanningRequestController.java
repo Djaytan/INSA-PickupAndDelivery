@@ -84,6 +84,26 @@ public class PlanningRequestController {
 
     }
 
+    public static PassagePoint getClosestPassagePoint(double x, double y) {
+        PassagePoint closestPassagePoint = null;
+        double distance = Double.MAX_VALUE;
+        double tmpDistance;
+
+        PassagePoint[] passagePoints = PLANNING_REQUEST.getPassagePoints();
+
+        //loop on all passage point to find the closest one to x,y
+        for (PassagePoint passagePoint : passagePoints) {
+
+            tmpDistance = Math.sqrt((y - passagePoint.getAddress().getLatitude()) * (y - passagePoint.getAddress().getLatitude()) + (x - passagePoint.getAddress().getLongitude()) * (x - passagePoint.getAddress().getLongitude()));
+            if(tmpDistance < distance) {
+                closestPassagePoint = passagePoint;
+                distance = tmpDistance;
+            }
+        }
+
+        return closestPassagePoint;
+    }
+
     public static void addPickupPoint(Intersection intersection) {
         tmpRequest.setPickup(new DurationPassagePoint(intersection, 5, PassagePointType.PICKUP));
     }

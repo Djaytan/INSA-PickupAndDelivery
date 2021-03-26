@@ -19,11 +19,11 @@ public class GeoMapController {
 
     private static final Logger LOGGER = Logger.getLogger(GeoMapController.class.getName());
 
-    private static final GeoMap MODEL = new GeoMap();
+    private static final GeoMap GEO_MAP = new GeoMap();
 
-    public static GeoMap getModel() { return MODEL; }
+    public static GeoMap getModel() { return GEO_MAP; }
 
-    public void importGeoMap(File file) {
+    public static void importGeoMap(File file) {
 
         try { XMLDeserialization.deserializeMap(file); }
         catch (SAXException e)
@@ -35,9 +35,9 @@ public class GeoMapController {
 
     }
 
-    public List<Map<String, Map<String, Double>>> getSegments() {
+    public static List<Map<String, Map<String, Double>>> getSegments() {
 
-        return MODEL.getSegments().stream().map(segment -> Map.ofEntries(
+        return GEO_MAP.getSegments().stream().map(segment -> Map.ofEntries(
                 Map.entry("origin", Map.ofEntries(
                         Map.entry("x", segment.getOrigin().getLongitude()),
                         Map.entry("y", segment.getOrigin().getLatitude())
@@ -50,15 +50,15 @@ public class GeoMapController {
 
     }
 
-    public Collection<Intersection> getIntersections() {
+    public static Collection<Intersection> getIntersections() {
         return MODEL.getIntersections();
     }
 
-    public Map<String, Map<String, Double>> getRange() {
+    public static Map<String, Map<String, Double>> getRange() {
 
         double minLatitude = 90., maxLatitude = -90., minLongitude = 180., maxLongitude = -180.;
 
-        for (Intersection intersection : MODEL.getIntersections()) {
+        for (Intersection intersection : GEO_MAP.getIntersections()) {
 
             double latitude = intersection.getLatitude();
             double longitude = intersection.getLongitude();

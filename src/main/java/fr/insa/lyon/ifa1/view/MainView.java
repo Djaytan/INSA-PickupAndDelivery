@@ -27,10 +27,13 @@ import static java.lang.Math.min;
 public class MainView implements ViewInterface {
 
     private static final ViewController VIEW_CONTROLLER = new ViewController();
-    private static final GeoMapController GEO_MAP_CONTROLLER = new GeoMapController();
-    private static final PlanningRequestController PLANNING_REQUEST_CONTROLLER = new PlanningRequestController();
 
-    private static final Color MAP_SEGMENTS_COLOR = Color.BLACK;
+    private static final Color MAP_SEGMENTS_COLOR = Color.GRAY;
+    private static final Color[] DELIVERY_MEN_PATHS_COLORS = new Color[] {
+            Color.RED, Color.GREEN, Color.ORANGE, Color.PINK, Color.YELLOW, Color.BLUE, Color.PURPLE
+    };
+
+    private static final Scene SCENE = VIEW_CONTROLLER.loadScene(ViewController.View.MAIN_VIEW);
 
     private static Map<String, Double> mapOrigin;
     private static Double ratio;
@@ -40,16 +43,13 @@ public class MainView implements ViewInterface {
 
     public void show() {
 
-        Scene scene = VIEW_CONTROLLER.loadScene(ViewController.View.MAIN_VIEW);
-
-        Canvas map = (Canvas) scene.lookup("#map");
+        Canvas map = (Canvas) SCENE.lookup("#map");
         setMapParameters(map);
-        drawSegments(map, MAP_SEGMENTS_COLOR);
-        drawPoints(map, Color.BLUE);
+        drawSegments(GeoMapController.getSegments(), map, MAP_SEGMENTS_COLOR);
 
         setState(new MainViewWaitingState());
 
-        VIEW_CONTROLLER.showScene(scene);
+        VIEW_CONTROLLER.showScene(SCENE);
 
         //contextMenu
         ContextMenu contextMenu = new ContextMenu();
@@ -82,7 +82,7 @@ public class MainView implements ViewInterface {
 
     private void setMapParameters(Canvas map) {
 
-        Map<String, Map<String, Double>> range = GEO_MAP_CONTROLLER.getRange();
+        Map<String, Map<String, Double>> range = GeoMapController.getRange();
 
         mapOrigin = Map.ofEntries(
                 Map.entry("x", range.get("x").get("min")),
@@ -96,14 +96,13 @@ public class MainView implements ViewInterface {
 
     }
 
-    private void drawSegments(Canvas map, Color color) {
+    private void drawSegments(List<Map<String, Map<String, Double>>> segments, Canvas map, Color color) {
 
         GraphicsContext gc = map.getGraphicsContext2D();
-        List<Map<String, Map<String, Double>>> segments = GEO_MAP_CONTROLLER.getSegments();
 
-        gc.setFill(color);
+        gc.setStroke(color);
         gc.setLineWidth(1.0);
-
+System.out.println(segments.size() + " segments to draw in " + color.toString());
         for(Map<String, Map<String, Double>> segment : segments) {
 
             int x1 = (int) ((segment.get("origin").get("x") - mapOrigin.get("x")) * ratio);
@@ -117,14 +116,13 @@ public class MainView implements ViewInterface {
 
     }
 
-    private void drawPoints(Canvas map, Color color) {
+    private void drawPoints(List<Map<String, Map<String, Double>>> points, Canvas map, Color color) {
 
         GraphicsContext gc = map.getGraphicsContext2D();
-        List<Map<String, Map<String, Double>>> passagePoints = PLANNING_REQUEST_CONTROLLER.getPassagePoints();
 
         gc.setLineWidth(5.0);
-
-        for(Map<String, Map<String, Double>> group : passagePoints) {
+System.out.println(points.size() + " points to draw");
+        for(Map<String, Map<String, Double>> group : points) {
 
             for(Map.Entry<String, Map<String, Double>> passagePoint : group.entrySet()) {
 
@@ -146,7 +144,7 @@ public class MainView implements ViewInterface {
         double distance = Double.MAX_VALUE;
         double tmpDistance;
 
-        for (Intersection intersection : GEO_MAP_CONTROLLER.getIntersections()) {
+        for (Intersection intersection : GeoMapController.getIntersections()) {
             int x = (int) ((intersection.getLongitude() - mapOrigin.get("x")) * ratio);
             int y = (int) ((intersection.getLatitude() - mapOrigin.get("y")) * ratio);
 
@@ -161,10 +159,10 @@ public class MainView implements ViewInterface {
 
         //insert value in data structure temporary
         if(state instanceof MainViewAddPickupState) {
-            PLANNING_REQUEST_CONTROLLER.addPickupPoint(closestIntersection);
+            PlanningRequestController.addPickupPoint(closestIntersection);
         } else if(state instanceof MainViewAddDeliveryState) {
-            PLANNING_REQUEST_CONTROLLER.addDeliveryPoint(closestIntersection);
-            PLANNING_REQUEST_CONTROLLER.commit();
+            PlanningRequestController.addDeliveryPoint(closestIntersection);
+            PlanningRequestController.commit();
         }
 
         //draw
@@ -177,7 +175,7 @@ public class MainView implements ViewInterface {
     }
 
     public void openFileChooser() {
-        List<Map<String, Map<String, Double>>> passagePoints = PLANNING_REQUEST_CONTROLLER.getPassagePoints();
+        List<Map<String, Map<String, Double>>> passagePoints = PlanningRequestController.getPassagePoints();
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Importer des points relais au format XML");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("xml file", "*.xml"));
@@ -186,8 +184,18 @@ public class MainView implements ViewInterface {
 
         if(file != null && file.getName().endsWith(".xml")) {
 
-            PLANNING_REQUEST_CONTROLLER.importPlanningRequest(file);
-            //TODO : call drawing
+            Canvas map = (Canvas) SCENE.lookup("#map");
+
+            PlanningRequestController.importPlanningRequest(file);
+System.out.println("Start drawing P&D points");
+            drawPoints(PlanningRequestController.getPassagePoints(), map, Color.BLUE);
+System.out.println("Start calculating deliverymen paths");
+            List<List<Map<String, Map<String, Double>>>> deliveryMenPaths = PlanningRequestController.getDeliveryMenPaths();
+System.out.println("Start drawing deliverymen paths");
+            for(int i = 0; i < deliveryMenPaths.size(); i++) {
+                drawSegments(deliveryMenPaths.get(i), map, DELIVERY_MEN_PATHS_COLORS[i % DELIVERY_MEN_PATHS_COLORS.length]);
+            }
+
         }
 
     }
@@ -207,10 +215,10 @@ public class MainView implements ViewInterface {
     public void addPickup() {
         if(state instanceof MainViewWaitingState) {
             setState(new MainViewAddPickupState());
-            PLANNING_REQUEST_CONTROLLER.begin();
+            PlanningRequestController.begin();
         } else {
             setState(new MainViewWaitingState());
-            PLANNING_REQUEST_CONTROLLER.undo();
+            PlanningRequestController.undo();
         }
 
         if(state != null) {

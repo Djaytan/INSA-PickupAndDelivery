@@ -55,7 +55,7 @@ public class ViewController extends Application {
 
     try { VIEWS_CLASS.get(view).getDeclaredConstructor().newInstance().show(); }
     catch(NoSuchMethodException ex) { System.out.println("Missing constructor in view " + VIEWS_CLASS.get(view).getName()); }
-    catch(Exception ex) {System.out.println("Failed to initialize controller " + VIEWS_CLASS.get(view).getName()); }
+    catch(Exception ex) {System.out.println("Failed to initialize controller " + VIEWS_CLASS.get(view).getName() + ex); }
 
   }
 

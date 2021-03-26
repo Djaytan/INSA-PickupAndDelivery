@@ -10,14 +10,10 @@ import java.io.File;
 public class ImportView implements ViewInterface {
 
     private static final ViewController VIEW_CONTROLLER = new ViewController();
-    private static final GeoMapController GEO_MAP_CONTROLLER = new GeoMapController();
 
-    public void show() {
+    private static final Scene SCENE = VIEW_CONTROLLER.loadScene(ViewController.View.IMPORT_VIEW);
 
-        Scene scene = VIEW_CONTROLLER.loadScene(ViewController.View.IMPORT_VIEW);
-        VIEW_CONTROLLER.showScene(scene);
-
-    }
+    public void show() { VIEW_CONTROLLER.showScene(SCENE); }
 
     public void openFileChooser() {
 
@@ -29,7 +25,7 @@ public class ImportView implements ViewInterface {
 
         if(file != null && file.getName().endsWith(".xml")) {
 
-            GEO_MAP_CONTROLLER.importGeoMap(file);
+            GeoMapController.importGeoMap(file);
             VIEW_CONTROLLER.goToView(ViewController.View.MAIN_VIEW);
 
         }

@@ -14,6 +14,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.mainClass>fr.insa.lyon.ifa1.App</project.mainClass>
+    <exec.mainClass>${project.mainClass}</exec.mainClass>
     <maven.compiler.source>15</maven.compiler.source>
     <maven.compiler.target>15</maven.compiler.target>
     <javafx.version>16</javafx.version>

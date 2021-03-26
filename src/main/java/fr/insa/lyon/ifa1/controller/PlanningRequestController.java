@@ -84,11 +84,13 @@ public class PlanningRequestController {
 
     }
 
-    public static Map<String, Double> getClosestPassagePoint(double x, double y) {
+    public static Map<String, Double> getClosestPassagePoint(Map<String, Double> coordinates) {
 
         PassagePoint closestPassagePoint = null;
         double distance = Double.MAX_VALUE;
         double tmpDistance;
+        double x = coordinates.get("x");
+        double y = coordinates.get("y");
 
         PassagePoint[] passagePoints = PLANNING_REQUEST.getPassagePoints();
 
@@ -180,24 +182,25 @@ public class PlanningRequestController {
 
     }
 
-    public static void deleteOneRequest(PassagePoint pp) {
+    static public void deleteOneRequest(Map<String,Double> point){
 
         final GeoMap geoMap = GeoMapController.getModel();
 
         // suppression de la course
         List<Request> requests = PLANNING_REQUEST.getRequests();
         for (Request request : PLANNING_REQUEST.getRequests()) {
-            if (pp == request.getPickup() || pp == request.getDelivery()) {
+            if (point.get("x").equals(request.getPickup().getAddress().getLongitude())
+                    && point.get("y").equals(request.getDelivery().getAddress().getLatitude())){
                 requests.remove(request);
                 break;
             }
         }
-
         PLANNING_REQUEST.setRequests(requests);
 
         // maj du circuit hamiltonien
         final Map<String, Map<String, FindShortestRoutes.Route>> dijkstraRoutes = DIJKSTRA.solve(geoMap, PLANNING_REQUEST.getPassagePoints());
         HAMILTONIAN_CIRCUIT.solve(geoMap, dijkstraRoutes, PLANNING_REQUEST);
+
     }
 
 

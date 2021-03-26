@@ -41,17 +41,19 @@ public class MainView implements ViewInterface {
     private static Double ratio;
 
     private static StateMainView state;
+    private static boolean chargedPoints = false;
     private static Map<String, Double> closestPassagePoint;
 
     public void show() {
 
         Canvas map = (Canvas) SCENE.lookup("#map");
+        Canvas overEffects = (Canvas) SCENE.lookup("#overEffects");
         setMapParameters(map);
         drawSegments(GeoMapController.getSegments(), map, MAP_SEGMENTS_COLOR);
 
         setState(new MainViewWaitingState());
 
-        SCENE.setOnMouseMoved(onMouseMove());
+        overEffects.setOnMouseMoved(onMouseMove());
 
         VIEW_CONTROLLER.showScene(SCENE);
 
@@ -71,7 +73,7 @@ public class MainView implements ViewInterface {
         // Add MenuItem to ContextMenu
         contextMenu.getItems().addAll(itemDelete, itemMove);
 
-        map.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+        overEffects.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
             @Override
             public void handle(ContextMenuEvent event) {
                 contextMenu.show(map.getScene().getWindow(), event.getScreenX(), event.getScreenY());
@@ -128,7 +130,7 @@ System.out.println(points.size() + " points to draw");
                 int x = (int) ((passagePoint.getValue().get("x") - mapOrigin.get("x")) * ratio);
                 int y = (int) ((passagePoint.getValue().get("y") - mapOrigin.get("y")) * ratio);
 
-                gc.setFill(color);
+                gc.setStroke(color);
                 gc.strokeOval(x, y, 5, 5);
 
             }
@@ -139,9 +141,13 @@ System.out.println(points.size() + " points to draw");
 
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
+        int x = (int) ((passagePoint.get("x") - mapOrigin.get("x")) * ratio);
+        int y = (int) ((passagePoint.get("y") - mapOrigin.get("y")) * ratio);
+
         gc.setLineWidth(2.0);
-        gc.setFill(Color.YELLOW);
-        gc.strokeOval(passagePoint.get("x"), passagePoint.get("y"), 10, 5);
+        gc.setStroke(Color.RED);
+        System.out.println("Overing passage point at x : " + x + " y : " + y);
+        gc.strokeOval(x, y, 10, 5);
 
     }
 
@@ -183,6 +189,7 @@ System.out.println(points.size() + " points to draw");
             Canvas map = (Canvas) SCENE.lookup("#map");
 
             PlanningRequestController.importPlanningRequest(file);
+            chargedPoints = true;
             System.out.println("Start drawing P&D points");
             drawPoints(PlanningRequestController.getPassagePoints(), map, Color.BLUE);
 
@@ -289,11 +296,15 @@ System.out.println(points.size() + " points to draw");
 
         return e -> {
 
-            closestPassagePoint = PlanningRequestController.getClosestPassagePoint(e.getX(), e.getY());
+            if(chargedPoints) {
 
-            Canvas canvas = (Canvas) SCENE.lookup("#overEffects");
-            cleanCanvas(canvas);
-            drawOverPassagePoint(closestPassagePoint, canvas);
+                closestPassagePoint = PlanningRequestController.getClosestPassagePoint(getWorldCoordinatesFromMapCoordinates(e.getX(), e.getY()));
+
+                Canvas canvas = (Canvas) SCENE.lookup("#overEffects");
+                cleanCanvas(canvas);
+                drawOverPassagePoint(closestPassagePoint, canvas);
+
+            }
 
         };
 

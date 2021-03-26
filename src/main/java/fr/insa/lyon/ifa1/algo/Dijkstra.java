@@ -16,14 +16,7 @@ public class Dijkstra implements FindShortestRoutes {
         Map<String, Map<String, Route>> solution = new HashMap<>();
 
         // calcul de tous les voisins
-        Map<String, Set<String>> succesors = new HashMap<>();
-        for (Intersection i : gm.getIntersections()) {
-            succesors.put(i.getId(), new HashSet<>());
-        }
-
-        for (Segment s : gm.getSegments()) {
-            succesors.get(s.getOrigin().getId()).add(s.getDest().getId());
-        }
+        Map<String, Set<String>> succesors = getSuccesors(gm);
 
         for (PassagePoint ppSource : pps) {
             solution.put(ppSource.getAddress().getId(), solveOne(gm, ppSource, pps, succesors));
@@ -32,7 +25,21 @@ public class Dijkstra implements FindShortestRoutes {
         return solution;
     }
 
-    private Map<String, Route> solveOne(GeoMap gm, PassagePoint ppOrigin, PassagePoint[] ppDests, Map<String, Set<String>> successors) {
+
+    public Map<String, Set<String>> getSuccesors(GeoMap gm) {
+        Map<String, Set<String>> succesors = new HashMap<>();
+        for (Intersection i : gm.getIntersections()) {
+            succesors.put(i.getId(), new HashSet<>());
+        }
+
+        for (Segment s : gm.getSegments()) {
+            succesors.get(s.getOrigin().getId()).add(s.getDest().getId());
+        }
+        return succesors;
+    }
+
+
+    public Map<String, Route> solveOne(GeoMap gm, PassagePoint ppOrigin, PassagePoint[] ppDests, Map<String, Set<String>> successors) {
         Map<String, Double> dist = new HashMap<>();
         Map<String, String> prev = new HashMap<>();
         PriorityQueue<String> q = new PriorityQueue<>(Comparator.comparingDouble(dist::get));

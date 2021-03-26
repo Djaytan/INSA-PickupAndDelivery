@@ -1,6 +1,6 @@
 package fr.insa.lyon.ifa1.xml;
 
-import fr.insa.lyon.ifa1.cache.GeoMapRegistry;
+import fr.insa.lyon.ifa1.controller.GeoMapController;
 import fr.insa.lyon.ifa1.models.map.Intersection;
 import fr.insa.lyon.ifa1.models.map.Segment;
 import org.xml.sax.Attributes;
@@ -29,7 +29,7 @@ public class XMLMapHandler extends DefaultHandler {
           double latitude = Double.parseDouble(attributes.getValue("latitude"));
           double longitude = Double.parseDouble(attributes.getValue("longitude"));
           Intersection intersection = new Intersection(id, latitude, longitude);
-          GeoMapRegistry.getGeoMap().addIntersection(intersection);
+          GeoMapController.getModel().addIntersection(intersection);
           break;
         }
       case "segment":
@@ -38,10 +38,10 @@ public class XMLMapHandler extends DefaultHandler {
           String originStr = attributes.getValue("origin");
           double length = Double.parseDouble(attributes.getValue("length"));
           String name = attributes.getValue("name");
-          Intersection destination = GeoMapRegistry.getGeoMap().getIntersection(destinationStr);
-          Intersection origin = GeoMapRegistry.getGeoMap().getIntersection(originStr);
+          Intersection destination = GeoMapController.getModel().getIntersection(destinationStr);
+          Intersection origin = GeoMapController.getModel().getIntersection(originStr);
           Segment segment = new Segment(length, name, origin, destination);
-          GeoMapRegistry.getGeoMap().addSegment(segment);
+          GeoMapController.getModel().addSegment(segment);
           break;
         }
       default:

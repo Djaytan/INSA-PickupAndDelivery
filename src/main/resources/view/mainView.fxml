@@ -5,23 +5,35 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.canvas.*?>
 
-<GridPane
-        fx:controller="fr.insa.lyon.ifa1.controller.MainViewController"
-        xmlns:fx="http://javafx.com/fxml" hgap="20" vgap="20">
-
-        <Text text="Pick'Up" GridPane.rowIndex="0" GridPane.columnIndex="0">
-            <Font name="Tahoma Bold" size="40"></Font>
+<BorderPane fx:controller="fr.insa.lyon.ifa1.view.MainView" xmlns:fx="http://javafx.com/fxml" stylesheets="@mainView.css">
+    <top>
+        <Text text="Pick'Up" BorderPane.alignment="CENTER">
+            <font>
+                <Font name="Arial Black" size="24.0" />
+            </font>
         </Text>
+    </top>
+    <center>
+        <VBox BorderPane.alignment="CENTER">
+            <HBox alignment="BASELINE_RIGHT">
+                <Button text="Ajouter une livraison"></Button>
+            </HBox>
 
-        <Button text="Ajouter une livraison" GridPane.rowIndex="0" GridPane.columnIndex="1"></Button>
+            <Canvas fx:id="map" width="650" height="480" GridPane.rowIndex="2"/>
+        </VBox>
 
-        <Canvas fx:id="map" width="650" height="480" GridPane.rowIndex="2"/>
 
-        <GridPane hgap="20" vgap="20" GridPane.rowIndex="3">
-            <Text text="Importer des points relais à partir d'un fichier XML" GridPane.columnIndex="0"/>
-            <Button text="Sélectionner un fichier" GridPane.columnIndex="1"></Button>
-            <TextField fx:id="nbLivreur" layoutX="10" GridPane.columnIndex="2">
-            </TextField>
-            <Button text="Calculer" GridPane.columnIndex="3"></Button>
-        </GridPane>
-</GridPane>
+
+
+    </center>
+    <bottom>
+        <HBox>
+            <Label text="Importer des points relais à partir d'un fichier XML"></Label>
+            <Button text="Sélectionner un fichier" onAction="#openFileChooser"></Button>
+            <Region HBox.hgrow="ALWAYS" prefWidth="50"></Region>
+            <Label text="nombre de livreurs"></Label>
+            <TextField fx:id="nbLivreur"></TextField>
+            <Button text="Calculer"></Button>
+        </HBox>
+    </bottom>
+</BorderPane>

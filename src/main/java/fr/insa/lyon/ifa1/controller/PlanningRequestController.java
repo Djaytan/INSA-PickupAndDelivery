@@ -84,7 +84,8 @@ public class PlanningRequestController {
 
     }
 
-    public static PassagePoint getClosestPassagePoint(double x, double y) {
+    public static Map<String, Double> getClosestPassagePoint(double x, double y) {
+
         PassagePoint closestPassagePoint = null;
         double distance = Double.MAX_VALUE;
         double tmpDistance;
@@ -101,7 +102,11 @@ public class PlanningRequestController {
             }
         }
 
-        return closestPassagePoint;
+        return Map.ofEntries(
+                Map.entry("x", closestPassagePoint.getAddress().getLongitude()),
+                Map.entry("y", closestPassagePoint.getAddress().getLatitude())
+        );
+
     }
 
     public static void addPickupPoint(Intersection intersection) {

@@ -59,11 +59,13 @@
                         </ButtonBar>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                  <StackPane alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
                         <Canvas id="map" height="480.0" onMouseClicked="#canvaClick" width="650.0" />
+                        <Canvas id="deliverymenPaths" height="480.0" width="650.0" />
+                        <Canvas id="passagePoints" height="480.0" width="650.0" />
                      </children>
-                  </HBox>
+                  </StackPane>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                      <children>
                         <Label text="Importer des points relais à partir d'un fichier XML" />

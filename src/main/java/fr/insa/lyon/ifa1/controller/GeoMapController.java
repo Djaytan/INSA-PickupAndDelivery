@@ -84,4 +84,21 @@ public class GeoMapController {
 
     }
 
+    public static Intersection getClosestIntersection(double x, double y) {
+        Intersection closestIntersection = null;
+        double distance = Double.MAX_VALUE;
+        double tmpDistance;
+
+        for (Intersection intersection : GeoMapController.getIntersections()) {
+
+            tmpDistance = Math.sqrt((y - intersection.getLatitude()) * (y - intersection.getLatitude()) + (x - intersection.getLongitude()) * (x - intersection.getLongitude()));
+            if(tmpDistance < distance) {
+                closestIntersection = intersection;
+                distance = tmpDistance;
+            }
+        }
+
+        return closestIntersection;
+    }
+
 }

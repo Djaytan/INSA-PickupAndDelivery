@@ -71,8 +71,8 @@
                         <Label text="Importer des points relais à partir d'un fichier XML" />
                         <Button id="btnFileChooser" mnemonicParsing="false" onAction="#openFileChooser" text="Séléctionner un fichier" />
                         <Label text="Nombre de livreurs" />
-                        <TextField id="nbLivreurs" maxWidth="-Infinity" HBox.hgrow="NEVER" />
-                        <Button id="btnPath" mnemonicParsing="false" onAction="#calculatePath" text="Calculer" />
+                        <TextField id="nbLivreurs" maxWidth="-Infinity" HBox.hgrow="NEVER" disable="true" text="1"/>
+                        <Button id="btnPath" mnemonicParsing="false" onAction="#calculatePath" text="Calculer" disable="true"/>
                      </children>
                   </HBox>
                </children>

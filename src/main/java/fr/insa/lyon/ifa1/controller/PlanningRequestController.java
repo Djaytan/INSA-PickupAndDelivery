@@ -44,6 +44,8 @@ public class PlanningRequestController {
 
     }
 
+    public static boolean isEmpty() { return PLANNING_REQUEST.getRequests().isEmpty(); }
+
     public static Map<String, Double> getDepot() {
 
         Intersection depotAddress = PLANNING_REQUEST.getDepot().getAddress();

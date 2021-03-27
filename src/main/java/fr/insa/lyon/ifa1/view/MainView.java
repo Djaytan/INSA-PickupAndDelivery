@@ -41,7 +41,6 @@ public class MainView implements ViewInterface {
     private static Double ratio;
 
     private static StateMainView state;
-    private static boolean chargedPoints = false;
     private static Map<String, Double> closestPassagePoint;
 
     public void show() {
@@ -188,7 +187,6 @@ System.out.println(points.size() + " points to draw");
             Canvas canvas = (Canvas) SCENE.lookup("#passagePoints");
 
             PlanningRequestController.importPlanningRequest(file);
-            chargedPoints = true;
             System.out.println("Start drawing P&D points");
             drawPoints(PlanningRequestController.getPassagePoints(), canvas, Color.BLUE);
 
@@ -288,7 +286,7 @@ System.out.println(points.size() + " points to draw");
     }
 
     private void clearCanvas(Canvas canvas) {
-System.out.println("Clearing " + canvas.getId());
+
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
@@ -298,7 +296,7 @@ System.out.println("Clearing " + canvas.getId());
 
         return e -> {
 
-            if(chargedPoints) {
+            if(!PlanningRequestController.isEmpty()) {
 
                 closestPassagePoint = PlanningRequestController.getClosestPassagePoint(getWorldCoordinatesFromMapCoordinates(e.getX(), e.getY()));
 

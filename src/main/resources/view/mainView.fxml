@@ -73,7 +73,7 @@
                         <Button id="btnFileChooser" mnemonicParsing="false" onAction="#openFileChooser" text="Séléctionner un fichier" />
                         <Label text="Nombre de livreurs" />
                         <TextField id="nbLivreurs" maxWidth="-Infinity" HBox.hgrow="NEVER" disable="true" text="1"/>
-                        <Button id="btnPath" mnemonicParsing="false" onAction="#calculatePath" text="Calculer" disable="true"/>
+                        <Button id="btnPath" mnemonicParsing="false" onAction="#onCalculate" text="Calculer" disable="true"/>
                      </children>
                   </HBox>
                </children>

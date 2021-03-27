@@ -4,6 +4,7 @@ import fr.insa.lyon.ifa1.controller.GeoMapController;
 import fr.insa.lyon.ifa1.controller.PlanningRequestController;
 import fr.insa.lyon.ifa1.controller.ViewController;
 import fr.insa.lyon.ifa1.models.map.Intersection;
+import fr.insa.lyon.ifa1.models.request.PassagePointType;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -11,7 +12,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
-import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.canvas.Canvas;
@@ -21,6 +21,7 @@ import javafx.stage.FileChooser;
 import javafx.event.ActionEvent;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,10 +31,22 @@ public class MainView implements ViewInterface {
 
     private static final ViewController VIEW_CONTROLLER = new ViewController();
 
+    private static final double MAP_SEGMENTS_WIDTH = 1.0;
+    private static final double DELIVERY_MEN_PATHS_WIDTH = 2.0;
+    private static final double DEPOT_WIDTH = 16.0;
+    private static final double PASSAGE_POINTS_WIDTH = 8.0;
+    private static final double OVERED_PASSAGE_POINTS_WIDTH = 16.0;
+
     private static final Color MAP_SEGMENTS_COLOR = Color.GRAY;
     private static final Color[] DELIVERY_MEN_PATHS_COLORS = new Color[] {
             Color.RED, Color.GREEN, Color.ORANGE, Color.PINK, Color.YELLOW, Color.BLUE, Color.PURPLE
     };
+    private static final Color DEPOT_COLOR = Color.BLACK;
+    private static final Color[] PASSAGE_POINTS_COLORS = new Color[] {
+            Color.GREEN, Color.ORANGE, Color.PINK, Color.YELLOW, Color.BLUE, Color.PURPLE, Color.CRIMSON,
+            Color.BROWN, Color.CYAN, Color.FUCHSIA, Color.LEMONCHIFFON
+    };
+    private static final Color OVERED_PASSAGE_POINTS_COLOR = Color.RED;
 
     private static final Scene SCENE = VIEW_CONTROLLER.loadScene(ViewController.View.MAIN_VIEW);
 
@@ -41,14 +54,14 @@ public class MainView implements ViewInterface {
     private static Double ratio;
 
     private static StateMainView state;
-    private static Map<String, Double> closestPassagePoint;
+    private static Map<PassagePointType, Map<String, Double>> closestPassagePoint;
 
     public void show() {
 
         Canvas map = (Canvas) SCENE.lookup("#map");
         Canvas overEffects = (Canvas) SCENE.lookup("#overEffects");
         setMapParameters(map);
-        drawSegments(GeoMapController.getSegments(), map, MAP_SEGMENTS_COLOR);
+        drawSegments(GeoMapController.getSegments(), map, MAP_SEGMENTS_WIDTH, MAP_SEGMENTS_COLOR);
 
         setState(new MainViewWaitingState());
 
@@ -62,22 +75,12 @@ public class MainView implements ViewInterface {
         MenuItem itemDelete = new MenuItem("Supprimer");
         itemDelete.setOnAction(onDeletePassagePoint());
         MenuItem itemMove = new MenuItem("Déplacer");
-        itemMove.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                int x = 0;
-            }
-        });
+        itemMove.setOnAction(e -> { int x = 0; });
 
         // Add MenuItem to ContextMenu
         contextMenu.getItems().addAll(itemDelete, itemMove);
 
-        overEffects.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-            @Override
-            public void handle(ContextMenuEvent event) {
-                contextMenu.show(map.getScene().getWindow(), event.getScreenX(), event.getScreenY());
-            }
-        });
+        overEffects.setOnContextMenuRequested(e -> contextMenu.show(map.getScene().getWindow(), e.getScreenX(), e.getScreenY()));
     }
 
     private void setMapParameters(Canvas map) {
@@ -96,13 +99,13 @@ public class MainView implements ViewInterface {
 
     }
 
-    private void drawSegments(List<Map<String, Map<String, Double>>> segments, Canvas map, Color color) {
+    private void drawSegments(List<Map<String, Map<String, Double>>> segments, Canvas map, double width, Color color) {
 
         GraphicsContext gc = map.getGraphicsContext2D();
 
         gc.setStroke(color);
-        gc.setLineWidth(1.0);
-System.out.println(segments.size() + " segments to draw in " + color.toString());
+        gc.setLineWidth(width);
+
         for(Map<String, Map<String, Double>> segment : segments) {
 
             int x1 = (int) ((segment.get("origin").get("x") - mapOrigin.get("x")) * ratio);
@@ -116,36 +119,52 @@ System.out.println(segments.size() + " segments to draw in " + color.toString())
 
     }
 
-    private void drawPoints(List<Map<String, Map<String, Double>>> points, Canvas map, Color color) {
+    private void drawPoints(List<Map<PassagePointType, Map<String, Double>>> points, Canvas map, double width, Color[] colors) {
 
         GraphicsContext gc = map.getGraphicsContext2D();
 
-        gc.setLineWidth(5.0);
-System.out.println(points.size() + " points to draw");
-        for(Map<String, Map<String, Double>> group : points) {
+        int i = 0;
+        for(Map<PassagePointType, Map<String, Double>> group : points) {
 
-            for(Map.Entry<String, Map<String, Double>> passagePoint : group.entrySet()) {
+            gc.setFill(colors[i % colors.length]);
 
-                int x = (int) ((passagePoint.getValue().get("x") - mapOrigin.get("x")) * ratio);
-                int y = (int) ((passagePoint.getValue().get("y") - mapOrigin.get("y")) * ratio);
+            for(Map.Entry<PassagePointType, Map<String, Double>> passagePoint : group.entrySet()) {
 
-                gc.setStroke(color);
-                gc.strokeOval(x, y, 5, 5);
+                int x = (int) ((passagePoint.getValue().get("x") - mapOrigin.get("x")) * ratio - width / 2);
+                int y = (int) ((passagePoint.getValue().get("y") - mapOrigin.get("y")) * ratio - width / 2);
+
+                if (passagePoint.getKey() == PassagePointType.DELIVERY)
+                { gc.fillRect(x, y, width, width); }
+                else { gc.fillOval(x, y, width, width); }
 
             }
+
+            i++;
         }
     }
 
-    private void drawOverPassagePoint(Map<String, Double> passagePoint, Canvas canvas) {
+    private void drawPassagePoints() {
 
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+        Canvas canvas = (Canvas) SCENE.lookup("#passagePoints");
+        clearCanvas(canvas);
 
-        int x = (int) ((passagePoint.get("x") - mapOrigin.get("x")) * ratio);
-        int y = (int) ((passagePoint.get("y") - mapOrigin.get("y")) * ratio);
+        List<Map<PassagePointType, Map<String, Double>>> passagePoints = PlanningRequestController.getPassagePoints();
 
-        gc.setLineWidth(2.0);
-        gc.setStroke(Color.RED);
-        gc.strokeOval(x, y, 10, 5);
+        drawPoints(new ArrayList<>() {{ add(passagePoints.get(0)); }}, canvas, DEPOT_WIDTH, new Color[] { DEPOT_COLOR });
+        passagePoints.remove(0);
+        drawPoints(passagePoints, canvas, PASSAGE_POINTS_WIDTH, PASSAGE_POINTS_COLORS);
+
+    }
+
+    public void drawDeliveryMenPaths() {
+
+        Canvas canvas = (Canvas) SCENE.lookup("#deliverymenPaths");
+        clearCanvas(canvas);
+
+        List<List<Map<String, Map<String, Double>>>> deliveryMenPaths = PlanningRequestController.getDeliveryMenPaths();
+
+        for(int i = 0; i < deliveryMenPaths.size(); i++)
+        { drawSegments(deliveryMenPaths.get(i), canvas, DELIVERY_MEN_PATHS_WIDTH, DELIVERY_MEN_PATHS_COLORS[i % DELIVERY_MEN_PATHS_COLORS.length]); }
 
     }
 
@@ -188,7 +207,7 @@ System.out.println(points.size() + " points to draw");
 
             PlanningRequestController.importPlanningRequest(file);
             System.out.println("Start drawing P&D points");
-            drawPoints(PlanningRequestController.getPassagePoints(), canvas, Color.BLUE);
+            drawPassagePoints();
 
             Button btnPath = (Button) SCENE.lookup("#btnPath");
             if(btnPath != null) {
@@ -202,20 +221,16 @@ System.out.println(points.size() + " points to draw");
         System.exit(0);
     }
 
-    public void calculatePath() {
-        TextField input = (TextField) SCENE.lookup("#nbLivreurs");
-        Canvas canvas = (Canvas) SCENE.lookup("#deliverymenPaths");
-        if(input != null && canvas != null) {
-            int nbLivreurs = Integer.parseInt(input.getText());
-            System.out.println("nb de livreurs :" + nbLivreurs);
-            System.out.println("Start calculating deliverymen paths");
-            List<List<Map<String, Map<String, Double>>>> deliveryMenPaths = PlanningRequestController.getDeliveryMenPaths();
-            clearCanvas(canvas);
-            System.out.println("Start drawing deliverymen paths");
-            for(int i = 0; i < deliveryMenPaths.size(); i++) {
-                drawSegments(deliveryMenPaths.get(i), canvas, DELIVERY_MEN_PATHS_COLORS[i % DELIVERY_MEN_PATHS_COLORS.length]);
-            }
-        }
+    public void onCalculate() {
+
+        int deliveryMenNumber = Integer.parseInt(((TextField) SCENE.lookup("#nbLivreurs")).getText());
+        System.out.println("nb de livreurs :" + deliveryMenNumber);
+
+        System.out.println("Start calculating deliverymen paths");
+        PlanningRequestController.calculateDeliveryMenPaths(deliveryMenNumber);
+
+        drawDeliveryMenPaths();
+
     }
 
     private Map<String, Double> getWorldCoordinatesFromMapCoordinates(double x, double y) {
@@ -274,12 +289,8 @@ System.out.println(points.size() + " points to draw");
         return e -> {
 
             PlanningRequestController.deleteOneRequest(closestPassagePoint);
-
-            Canvas canvas = (Canvas) SCENE.lookup("#passagePoints");
-            clearCanvas(canvas);
-            drawPoints(PlanningRequestController.getPassagePoints(), canvas, Color.BLUE);
-
-            calculatePath();
+            drawPassagePoints();
+            drawDeliveryMenPaths();
 
         };
 
@@ -299,10 +310,13 @@ System.out.println(points.size() + " points to draw");
             if(!PlanningRequestController.isEmpty()) {
 
                 closestPassagePoint = PlanningRequestController.getClosestPassagePoint(getWorldCoordinatesFromMapCoordinates(e.getX(), e.getY()));
+                List<Map<PassagePointType, Map<String, Double>>> closestPassagePoints = new ArrayList<>() {{
+                    add(PlanningRequestController.getCouplePassagePoints(closestPassagePoint));
+                }};
 
                 Canvas canvas = (Canvas) SCENE.lookup("#overEffects");
                 clearCanvas(canvas);
-                drawOverPassagePoint(closestPassagePoint, canvas);
+                drawPoints(closestPassagePoints, canvas, OVERED_PASSAGE_POINTS_WIDTH, new Color[] { OVERED_PASSAGE_POINTS_COLOR });
 
             }
 

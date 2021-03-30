@@ -65,25 +65,31 @@ public class PlanningRequestController {
     public static List<Map<PassagePointType, Map<String, Double>>> getPassagePoints() {
 
         PassagePoint[] passagePoints = PLANNING_REQUEST.getPassagePoints();
-        List<Map<PassagePointType, Map<String, Double>>> passagePointsData = new ArrayList<>() {{
-            add(Map.ofEntries(Map.entry(PassagePointType.DEPOT, PlanningRequestController.getDepot())));
-        }};
+        List<Map<PassagePointType, Map<String, Double>>> passagePointsData = new ArrayList<>();
 
-        for(int i = 1; i < passagePoints.length - 1; i += 2) {
-
-            Intersection pickupAddress = passagePoints[i].getAddress();
-            Intersection deliveryAddress = passagePoints[i+1].getAddress();
+        if(PLANNING_REQUEST.getDepot() != null) {
 
             passagePointsData.add(Map.ofEntries(
-                    Map.entry(PassagePointType.PICKUP, Map.ofEntries(
-                            Map.entry("x", pickupAddress.getLongitude()),
-                            Map.entry("y", pickupAddress.getLatitude())
-                    )),
-                    Map.entry(PassagePointType.DELIVERY, Map.ofEntries(
-                            Map.entry("x", deliveryAddress.getLongitude()),
-                            Map.entry("y", deliveryAddress.getLatitude())
-                    ))
+                    Map.entry(PassagePointType.DEPOT, PlanningRequestController.getDepot())
             ));
+
+            for (int i = 1; i < passagePoints.length - 1; i += 2) {
+
+                Intersection pickupAddress = passagePoints[i].getAddress();
+                Intersection deliveryAddress = passagePoints[i + 1].getAddress();
+
+                passagePointsData.add(Map.ofEntries(
+                        Map.entry(PassagePointType.PICKUP, Map.ofEntries(
+                                Map.entry("x", pickupAddress.getLongitude()),
+                                Map.entry("y", pickupAddress.getLatitude())
+                        )),
+                        Map.entry(PassagePointType.DELIVERY, Map.ofEntries(
+                                Map.entry("x", deliveryAddress.getLongitude()),
+                                Map.entry("y", deliveryAddress.getLatitude())
+                        ))
+                ));
+
+            }
 
         }
 

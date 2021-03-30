@@ -5,6 +5,7 @@ import fr.insa.lyon.ifa1.controller.PlanningRequestController;
 import fr.insa.lyon.ifa1.controller.ViewController;
 import fr.insa.lyon.ifa1.models.map.Intersection;
 import fr.insa.lyon.ifa1.models.request.PassagePointType;
+import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -13,6 +14,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -48,26 +51,29 @@ public class MainView implements ViewInterface {
     };
     private static final Color OVERED_PASSAGE_POINTS_COLOR = Color.RED;
 
-    private static final Scene SCENE = VIEW_CONTROLLER.loadScene(ViewController.View.MAIN_VIEW);
+    protected static final Scene SCENE = VIEW_CONTROLLER.loadScene(ViewController.View.MAIN_VIEW);
 
+    private static Map<String, Double> canvasOrigin;
     private static Map<String, Double> mapOrigin;
     private static Double ratio;
 
     private static StateMainView state;
-    private static Map<PassagePointType, Map<String, Double>> closestPassagePoint;
+    private static Map<PassagePointType, Map<String, Double>> closestPassagePoint = null;
 
     public void show() {
 
         Canvas map = (Canvas) SCENE.lookup("#map");
         Canvas overEffects = (Canvas) SCENE.lookup("#overEffects");
-        setMapParameters(map);
-        drawSegments(GeoMapController.getSegments(), map, MAP_SEGMENTS_WIDTH, MAP_SEGMENTS_COLOR);
-
-        setState(new MainViewWaitingState());
 
         overEffects.setOnMouseMoved(onMouseMove());
 
+        setState(new MainViewWaitingState());
+
         VIEW_CONTROLLER.showScene(SCENE);
+
+        SCENE.widthProperty().addListener(onWidthResize());
+        SCENE.heightProperty().addListener(onHeightResize());
+        SCENE.getWindow().setWidth(SCENE.getWindow().getWidth() + 1);
 
         //contextMenu
         ContextMenu contextMenu = new ContextMenu();
@@ -97,6 +103,41 @@ public class MainView implements ViewInterface {
                 map.getHeight() / (range.get("y").get("max") - range.get("y").get("min"))
         );
 
+        setCanvasOrigin();
+
+    }
+
+    private void setCanvasOrigin() {
+
+        Canvas map = (Canvas) SCENE.lookup("#map");
+        Map<String, Map<String, Double>> range = GeoMapController.getRange();
+
+        double x = (map.getWidth() - (range.get("x").get("max") - range.get("x").get("min")) * ratio) / 2;
+        double y = (map.getHeight() - (range.get("y").get("max") - range.get("y").get("min")) * ratio) / 2;
+
+        canvasOrigin = Map.ofEntries(
+                Map.entry("x", x),
+                Map.entry("y", y)
+        );
+
+    }
+
+    private Map<String, Double> getWorldCoordinatesFromMapCoordinates(double x, double y) {
+
+        return Map.ofEntries(
+                Map.entry("x", (x - canvasOrigin.get("x")) / ratio + mapOrigin.get("x")),
+                Map.entry("y", (y - canvasOrigin.get("y")) / ratio + mapOrigin.get("y"))
+        );
+
+    }
+
+    private Map<String, Integer> getMapCoordinatesFromWorldCoordinates(Map<String, Double> coordinates) {
+
+        return Map.ofEntries(
+                Map.entry("x", (int) ((coordinates.get("x") - mapOrigin.get("x")) * ratio + canvasOrigin.get("x"))),
+                Map.entry("y", (int) ((coordinates.get("y") - mapOrigin.get("y")) * ratio + canvasOrigin.get("y")))
+        );
+
     }
 
     private void drawSegments(List<Map<String, Map<String, Double>>> segments, Canvas map, double width, Color color) {
@@ -108,12 +149,10 @@ public class MainView implements ViewInterface {
 
         for(Map<String, Map<String, Double>> segment : segments) {
 
-            int x1 = (int) ((segment.get("origin").get("x") - mapOrigin.get("x")) * ratio);
-            int y1 = (int) ((segment.get("origin").get("y") - mapOrigin.get("y")) * ratio);
-            int x2 = (int) ((segment.get("destination").get("x") - mapOrigin.get("x")) * ratio);
-            int y2 = (int) ((segment.get("destination").get("y") - mapOrigin.get("y")) * ratio);
+            Map<String, Integer> coordinates1 = getMapCoordinatesFromWorldCoordinates(segment.get("origin"));
+            Map<String, Integer> coordinates2 = getMapCoordinatesFromWorldCoordinates(segment.get("destination"));
 
-            gc.strokeLine(x1, y1, x2, y2);
+            gc.strokeLine(coordinates1.get("x"), coordinates1.get("y"), coordinates2.get("x"), coordinates2.get("y"));
 
         }
 
@@ -130,41 +169,74 @@ public class MainView implements ViewInterface {
 
             for(Map.Entry<PassagePointType, Map<String, Double>> passagePoint : group.entrySet()) {
 
-                int x = (int) ((passagePoint.getValue().get("x") - mapOrigin.get("x")) * ratio - width / 2);
-                int y = (int) ((passagePoint.getValue().get("y") - mapOrigin.get("y")) * ratio - width / 2);
+                Map<String, Integer> coordinates = getMapCoordinatesFromWorldCoordinates(passagePoint.getValue());
 
-                if (passagePoint.getKey() == PassagePointType.DELIVERY)
-                { gc.fillRect(x, y, width, width); }
+                int x = (int) (coordinates.get("x") - width / 2);
+                int y = (int) (coordinates.get("y") - width / 2);
+
+                if (passagePoint.getKey() == PassagePointType.DELIVERY) { gc.fillRect(x, y, width, width); }
                 else { gc.fillOval(x, y, width, width); }
 
             }
 
             i++;
+
         }
+
+    }
+
+    private void drawMap() {
+
+        Canvas canvas = (Canvas) SCENE.lookup("#map");
+
+        clearCanvas(canvas);
+        drawSegments(GeoMapController.getSegments(), canvas, MAP_SEGMENTS_WIDTH, MAP_SEGMENTS_COLOR);
+
     }
 
     private void drawPassagePoints() {
 
         Canvas canvas = (Canvas) SCENE.lookup("#passagePoints");
-        clearCanvas(canvas);
-
         List<Map<PassagePointType, Map<String, Double>>> passagePoints = PlanningRequestController.getPassagePoints();
 
-        drawPoints(new ArrayList<>() {{ add(passagePoints.get(0)); }}, canvas, DEPOT_WIDTH, new Color[] { DEPOT_COLOR });
-        passagePoints.remove(0);
-        drawPoints(passagePoints, canvas, PASSAGE_POINTS_WIDTH, PASSAGE_POINTS_COLORS);
+        clearCanvas(canvas);
+
+        if(!passagePoints.isEmpty()) {
+
+            drawPoints(new ArrayList<>() {{ add(passagePoints.get(0)); }}, canvas, DEPOT_WIDTH, new Color[]{DEPOT_COLOR});
+            passagePoints.remove(0);
+            drawPoints(passagePoints, canvas, PASSAGE_POINTS_WIDTH, PASSAGE_POINTS_COLORS);
+
+        }
 
     }
 
-    public void drawDeliveryMenPaths() {
+    private void drawDeliveryMenPaths() {
 
         Canvas canvas = (Canvas) SCENE.lookup("#deliverymenPaths");
-        clearCanvas(canvas);
-
         List<List<Map<String, Map<String, Double>>>> deliveryMenPaths = PlanningRequestController.getDeliveryMenPaths();
+
+        clearCanvas(canvas);
 
         for(int i = 0; i < deliveryMenPaths.size(); i++)
         { drawSegments(deliveryMenPaths.get(i), canvas, DELIVERY_MEN_PATHS_WIDTH, DELIVERY_MEN_PATHS_COLORS[i % DELIVERY_MEN_PATHS_COLORS.length]); }
+
+    }
+
+    private void drawOveredPassagePoints() {
+
+        Canvas canvas = (Canvas) SCENE.lookup("#overEffects");
+
+        if(closestPassagePoint != null) {
+
+            List<Map<PassagePointType, Map<String, Double>>> closestPassagePoints = new ArrayList<>() {{
+                add(PlanningRequestController.getCouplePassagePoints(closestPassagePoint));
+            }};
+
+            clearCanvas(canvas);
+            drawPoints(closestPassagePoints, canvas, OVERED_PASSAGE_POINTS_WIDTH, new Color[] { OVERED_PASSAGE_POINTS_COLOR });
+
+        }
 
     }
 
@@ -185,8 +257,8 @@ public class MainView implements ViewInterface {
         }
 
         //draw
-        int x = (int) ((closestIntersection.getLongitude() - mapOrigin.get("x")) * ratio);
-        int y = (int) ((closestIntersection.getLatitude() - mapOrigin.get("y")) * ratio);
+        int x = (int) ((closestIntersection.getLongitude() - mapOrigin.get("x")) * ratio + canvasOrigin.get("x"));
+        int y = (int) ((closestIntersection.getLatitude() - mapOrigin.get("y")) * ratio + canvasOrigin.get("y"));
         GraphicsContext gc = map.getGraphicsContext2D();
         gc.setFill(color);
         gc.strokeOval(x, y, 5, 5);
@@ -195,7 +267,24 @@ public class MainView implements ViewInterface {
         //map.setOnContextMenuRequested(e -> menu.show(map.getScene().getWindow(), e.getScreenX(), e.getScreenY()));
     }
 
+    private void drawAll() {
+
+        drawMap();
+        drawPassagePoints();
+        drawDeliveryMenPaths();
+        drawOveredPassagePoints();
+
+    }
+
+    private void clearCanvas(Canvas canvas) {
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+    }
+
     public void openFileChooser() {
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Importer des points relais au format XML");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("xml file", "*.xml"));
@@ -217,36 +306,6 @@ public class MainView implements ViewInterface {
 
     }
 
-    public void quit() {
-        System.exit(0);
-    }
-
-    public void onCalculate() {
-
-        int deliveryMenNumber = Integer.parseInt(((TextField) SCENE.lookup("#nbLivreurs")).getText());
-        System.out.println("nb de livreurs :" + deliveryMenNumber);
-
-        System.out.println("Start calculating deliverymen paths");
-        PlanningRequestController.calculateDeliveryMenPaths(deliveryMenNumber);
-
-        drawDeliveryMenPaths();
-
-    }
-
-    private Map<String, Double> getWorldCoordinatesFromMapCoordinates(double x, double y) {
-        return Map.ofEntries(
-                Map.entry("x", x/ratio + mapOrigin.get("x")),
-                Map.entry("y", y/ratio + mapOrigin.get("y"))
-        );
-    }
-
-    private Map<String, Integer> getMapCoordinatesFromWorldCoordinates(double x, double y) {
-        return Map.ofEntries(
-                Map.entry("x", (int)((x - mapOrigin.get("x")) * ratio)),
-                Map.entry("y", (int)((y - mapOrigin.get("y")) * ratio))
-        );
-    }
-
     public void setState(StateMainView state) {
         MainView.state = state;
     }
@@ -261,45 +320,54 @@ public class MainView implements ViewInterface {
         }
 
         if(state != null) {
-            state.canvaClick(this);
+            state.canvasClick(this);
         }
     }
 
-    @FXML
-    public void canvaClick(MouseEvent event) {
-        if(state instanceof MainViewAddPickupState) {
-            userDrawPoint((Canvas)getScene().lookup("#map"), Color.RED, event.getX(), event.getY());
-            setState(new MainViewAddDeliveryState());
-        } else if(state instanceof MainViewAddDeliveryState) {
-            userDrawPoint((Canvas)getScene().lookup("#map"), Color.BLUE, event.getX(), event.getY());
-            setState(new MainViewWaitingState());
-        }
+    private ChangeListener<? super Number> onWidthResize() {
 
-        if(state != null) {
-            state.canvaClick(this);
-        }
-    }
+        return (obs, oldVal, newVal) -> {
 
-    public Scene getScene() {
-        return VIEW_CONTROLLER.getScene();
-    }
+            Canvas map = (Canvas) SCENE.lookup("#map");
+            Canvas deliverymenPaths = (Canvas) SCENE.lookup("#deliverymenPaths");
+            Canvas passagePoints = (Canvas) SCENE.lookup("#passagePoints");
+            Canvas overEffects = (Canvas) SCENE.lookup("#overEffects");
 
-    private EventHandler<ActionEvent> onDeletePassagePoint() {
+            map.setWidth(newVal.doubleValue());
+            deliverymenPaths.setWidth(newVal.doubleValue());
+            passagePoints.setWidth(newVal.doubleValue());
+            overEffects.setWidth(newVal.doubleValue());
 
-        return e -> {
-
-            PlanningRequestController.deleteOneRequest(closestPassagePoint);
-            drawPassagePoints();
-            drawDeliveryMenPaths();
+            setMapParameters(map);
+            drawAll();
 
         };
 
     }
 
-    private void clearCanvas(Canvas canvas) {
+    private ChangeListener<? super Number> onHeightResize() {
 
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        return (obs, oldVal, newVal) -> {
+
+            VBox borderPaneTop = (VBox) SCENE.lookup("#borderPaneTop");
+            HBox borderPaneBottom = (HBox) SCENE.lookup("#borderPaneBottom");
+
+            Canvas map = (Canvas) SCENE.lookup("#map");
+            Canvas deliverymenPaths = (Canvas) SCENE.lookup("#deliverymenPaths");
+            Canvas passagePoints = (Canvas) SCENE.lookup("#passagePoints");
+            Canvas overEffects = (Canvas) SCENE.lookup("#overEffects");
+
+            double height = newVal.doubleValue() - borderPaneTop.getHeight() - borderPaneBottom.getHeight();
+
+            map.setHeight(height);
+            deliverymenPaths.setHeight(height);
+            passagePoints.setHeight(height);
+            overEffects.setHeight(height);
+
+            setMapParameters(map);
+            drawAll();
+
+        };
 
     }
 
@@ -309,19 +377,61 @@ public class MainView implements ViewInterface {
 
             if(!PlanningRequestController.isEmpty()) {
 
-                closestPassagePoint = PlanningRequestController.getClosestPassagePoint(getWorldCoordinatesFromMapCoordinates(e.getX(), e.getY()));
-                List<Map<PassagePointType, Map<String, Double>>> closestPassagePoints = new ArrayList<>() {{
-                    add(PlanningRequestController.getCouplePassagePoints(closestPassagePoint));
-                }};
+                Map<String, Double> coordinates = getWorldCoordinatesFromMapCoordinates(e.getX(), e.getY());
+                closestPassagePoint = PlanningRequestController.getClosestPassagePoint(coordinates);
 
-                Canvas canvas = (Canvas) SCENE.lookup("#overEffects");
-                clearCanvas(canvas);
-                drawPoints(closestPassagePoints, canvas, OVERED_PASSAGE_POINTS_WIDTH, new Color[] { OVERED_PASSAGE_POINTS_COLOR });
+                drawOveredPassagePoints();
 
             }
 
         };
 
+    }
+
+    @FXML
+    public void onCanvasClick(MouseEvent event) {
+
+        if(state instanceof MainViewAddPickupState) {
+            userDrawPoint((Canvas)SCENE.lookup("#map"), Color.RED, event.getX(), event.getY());
+            setState(new MainViewAddDeliveryState());
+        } else if(state instanceof MainViewAddDeliveryState) {
+            userDrawPoint((Canvas)SCENE.lookup("#map"), Color.BLUE, event.getX(), event.getY());
+            setState(new MainViewWaitingState());
+        }
+
+        if(state != null) {
+            state.canvasClick(this);
+        }
+
+    }
+
+    private EventHandler<ActionEvent> onDeletePassagePoint() {
+
+        return e -> {
+
+            PlanningRequestController.deleteOneRequest(closestPassagePoint);
+            drawPassagePoints();
+            drawDeliveryMenPaths();
+            clearCanvas((Canvas) SCENE.lookup("#overEffects"));
+
+        };
+
+    }
+
+    public void onCalculate() {
+
+        int deliveryMenNumber = Integer.parseInt(((TextField) SCENE.lookup("#nbLivreurs")).getText());
+        System.out.println("nb de livreurs :" + deliveryMenNumber);
+
+        System.out.println("Start calculating deliverymen paths");
+        PlanningRequestController.calculateDeliveryMenPaths(deliveryMenNumber);
+
+        drawDeliveryMenPaths();
+
+    }
+
+    public void quit() {
+        System.exit(0);
     }
 
 }

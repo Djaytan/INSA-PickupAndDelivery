@@ -12,4 +12,8 @@ public class PassagePoint {
     public Intersection getAddress() {
         return address;
     }
+
+    public void setAddress(Intersection address) {
+      this.address = address;
+    }
 }

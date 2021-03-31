@@ -35,7 +35,7 @@ public class PlanningRequestController {
 
     public static PlanningRequest getModel() { return PLANNING_REQUEST; }
 
-    public static Request tmpRequest = null;
+    private static Request tmpRequest = null;
     
     public static void importPlanningRequest(File file) {
 
@@ -169,6 +169,10 @@ public class PlanningRequestController {
         dijkstraRoutes = DIJKSTRA.solve(geoMap, PLANNING_REQUEST.getPassagePoints());
         hamiltonianCircuit = HAMILTONIAN_CIRCUIT_FINDER.solve(geoMap, dijkstraRoutes, PLANNING_REQUEST);
 
+    }
+
+    public static List<PassagePoint> getHamiltonianCircuit() {
+        return hamiltonianCircuit;
     }
 
     public static List<List<Map<String, Map<String, Double>>>> getDeliveryMenPaths() {

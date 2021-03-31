@@ -4,15 +4,13 @@ import fr.insa.lyon.ifa1.controller.GeoMapController;
 import fr.insa.lyon.ifa1.controller.PlanningRequestController;
 import fr.insa.lyon.ifa1.controller.ViewController;
 import fr.insa.lyon.ifa1.models.map.Intersection;
-import fr.insa.lyon.ifa1.models.request.PassagePointType;
+import fr.insa.lyon.ifa1.models.request.*;
+import fr.insa.lyon.ifa1.models.view.TableViewModel;
 import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -75,6 +73,7 @@ public class MainView implements ViewInterface {
         SCENE.heightProperty().addListener(onHeightResize());
         SCENE.getWindow().setHeight(SCENE.getWindow().getHeight() + 1);
         SCENE.getWindow().setWidth(SCENE.getWindow().getWidth() + 1);
+        SCENE.getWindow().setHeight(SCENE.getWindow().getHeight() + 1);
 
         //contextMenu
         ContextMenu contextMenu = new ContextMenu();
@@ -186,6 +185,25 @@ public class MainView implements ViewInterface {
 
     }
 
+    private void populateDeliveryData() {
+        List<PassagePoint> passagePointList = PlanningRequestController.getHamiltonianCircuit();
+        TableView tableView = (TableView) SCENE.lookup("#tableViewDetailsPoints");
+        int i = 0;
+        for(PassagePoint passagePoint : passagePointList) {
+            try {
+                DurationPassagePoint point = (DurationPassagePoint)passagePoint;
+                i++;
+                String type = "P";
+                if(point.getType() == PassagePointType.DELIVERY) {
+                    type = "D";
+                }
+                tableView.getItems().add(new TableViewModel(Integer.toString(i), point.getAddress().toString(), type,"",""));
+            } catch(ClassCastException ex) {
+                //depot
+            }
+        }
+    }
+
     private void drawMap() {
 
         Canvas canvas = (Canvas) SCENE.lookup("#map");
@@ -222,7 +240,10 @@ public class MainView implements ViewInterface {
         for(int i = 0; i < deliveryMenPaths.size(); i++)
         { drawSegments(deliveryMenPaths.get(i), canvas, DELIVERY_MEN_PATHS_WIDTH, DELIVERY_MEN_PATHS_COLORS[i % DELIVERY_MEN_PATHS_COLORS.length]); }
 
+
     }
+
+
 
     private void drawOveredPassagePoints() {
 
@@ -428,6 +449,8 @@ public class MainView implements ViewInterface {
         PlanningRequestController.calculateDeliveryMenPaths(deliveryMenNumber);
 
         drawDeliveryMenPaths();
+
+        populateDeliveryData();
 
     }
 

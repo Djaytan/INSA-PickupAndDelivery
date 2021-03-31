@@ -37,5 +37,9 @@ public class Depot extends PassagePoint {
     public int getSeconds() {
       return seconds;
     }
+
+    public PassagePointType getType() {
+      return PassagePointType.DEPOT;
+    }
   }
 }

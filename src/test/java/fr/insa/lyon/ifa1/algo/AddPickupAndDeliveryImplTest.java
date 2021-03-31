@@ -5,188 +5,146 @@ import fr.insa.lyon.ifa1.models.map.Intersection;
 import fr.insa.lyon.ifa1.models.map.Segment;
 import fr.insa.lyon.ifa1.models.request.*;
 import org.junit.Test;
-import org.junit.Before; 
+import org.junit.Before;
 import org.junit.After;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
-/** 
-* AddPickupAndDeliveryImpl Tester. 
-* 
-* @author <Authors name> 
-* @since <pre>mars 31, 2021</pre> 
-* @version 1.0 
-*/ 
-public class AddPickupAndDeliveryImplTest { 
+/**
+ * AddPickupAndDeliveryImpl Tester.
+ *
+ * @author <Authors name>
+ * @version 1.0
+ * @since <pre>mars 31, 2021</pre>
+ */
+public class AddPickupAndDeliveryImplTest {
 
-@Before
-public void before() throws Exception { 
-} 
+    @Before
+    public void before() throws Exception {
 
-@After
-public void after() throws Exception { 
-} 
+    }
 
-/** 
-* 
-* Method: solve(GeoMap gm, PlanningRequest pr, Request r, List<PassagePoint> circuit, Map<String, Map<String, FindShortestRoutes.Route>> routes) 
-* 
-*/ 
-@Test
-public void testSolve() throws Exception { 
-//TODO: Test goes here...
+    @After
+    public void after() throws Exception {
+    }
 
-    Map<String, Intersection> intersections = new HashMap<>();
-    intersections.put("Depot", new Intersection("Depot", 0, 0));
-    intersections.put("A", new Intersection("A", 0, 0));
-    intersections.put("B", new Intersection("B", 0, 0));
-    intersections.put("C", new Intersection("C", 0, 0));
-    intersections.put("D", new Intersection("D", 0, 0));
+    /**
+     * Method: solve(GeoMap gm, PlanningRequest pr, Request r, List<PassagePoint> circuit, Map<String, Map<String, FindShortestRoutes.Route>> routes)
+     */
+    @Test
+    public void testSolve() throws Exception {
 
-    intersections.put("X", new Intersection("X", 0, 0));
-    intersections.put("Y", new Intersection("Y", 0, 0));
+        Map<String, Intersection> intersections = new HashMap<>();
+        intersections.put("Depot", new Intersection("Depot", 0, 0));
+        intersections.put("A", new Intersection("A", 0, 0));
+        intersections.put("B", new Intersection("B", 0, 0));
+        intersections.put("C", new Intersection("C", 0, 0));
+        intersections.put("D", new Intersection("D", 0, 0));
+
+        intersections.put("X", new Intersection("X", 0, 0));
+        intersections.put("Y", new Intersection("Y", 0, 0));
 
 
-    Map<String, Map<String, Segment>> segments = new HashMap<>();
-    Map<String, Segment> destDeDepot = new HashMap<>();
-    Map<String, Segment> destDeA = new HashMap<>();
-    Map<String, Segment> destDeB = new HashMap<>();
-    Map<String, Segment> destDeC = new HashMap<>();
-    Map<String, Segment> destDeD = new HashMap<>();
-    Map<String, Segment> destDeX = new HashMap<>();
-    Map<String, Segment> destDeY = new HashMap<>();
+        Map<String, Map<String, Segment>> segments = new HashMap<>();
+        Map<String, Segment> destDeDepot = new HashMap<>();
+        Map<String, Segment> destDeA = new HashMap<>();
+        Map<String, Segment> destDeB = new HashMap<>();
+        Map<String, Segment> destDeC = new HashMap<>();
+        Map<String, Segment> destDeD = new HashMap<>();
+        Map<String, Segment> destDeX = new HashMap<>();
+        Map<String, Segment> destDeY = new HashMap<>();
 
 
-    destDeDepot.put("A", new Segment(5, "rue", intersections.get("Depot"), intersections.get("A")));
-    destDeDepot.put("D", new Segment(2, "rue", intersections.get("Depot"), intersections.get("D")));
-    destDeDepot.put("Y", new Segment(1, "rue", intersections.get("Depot"), intersections.get("Y")));
+        destDeDepot.put("A", new Segment(5, "rue", intersections.get("Depot"), intersections.get("A")));
+        destDeDepot.put("D", new Segment(2, "rue", intersections.get("Depot"), intersections.get("D")));
+        destDeDepot.put("Y", new Segment(1, "rue", intersections.get("Depot"), intersections.get("Y")));
 
-    destDeA.put("Depot", new Segment(5, "rue", intersections.get("A"), intersections.get("Depot")));
-    destDeA.put("B", new Segment(2, "rue", intersections.get("A"), intersections.get("B")));
-    destDeA.put("X", new Segment(2, "rue", intersections.get("A"), intersections.get("X")));
+        destDeA.put("Depot", new Segment(5, "rue", intersections.get("A"), intersections.get("Depot")));
+        destDeA.put("B", new Segment(2, "rue", intersections.get("A"), intersections.get("B")));
+        destDeA.put("X", new Segment(2, "rue", intersections.get("A"), intersections.get("X")));
 
-    destDeB.put("A", new Segment(2, "rue", intersections.get("B"), intersections.get("A")));
-    destDeB.put("C", new Segment(4, "rue", intersections.get("B"), intersections.get("C")));
-    destDeB.put("X", new Segment(1, "rue", intersections.get("B"), intersections.get("X")));
+        destDeB.put("A", new Segment(2, "rue", intersections.get("B"), intersections.get("A")));
+        destDeB.put("C", new Segment(4, "rue", intersections.get("B"), intersections.get("C")));
+        destDeB.put("X", new Segment(1, "rue", intersections.get("B"), intersections.get("X")));
 
-    destDeC.put("B", new Segment(4, "rue", intersections.get("C"), intersections.get("B")));
-    destDeC.put("D", new Segment(3, "rue", intersections.get("C"), intersections.get("D")));
-    destDeC.put("X", new Segment(3, "rue", intersections.get("C"), intersections.get("X")));
+        destDeC.put("B", new Segment(4, "rue", intersections.get("C"), intersections.get("B")));
+        destDeC.put("D", new Segment(3, "rue", intersections.get("C"), intersections.get("D")));
+        destDeC.put("X", new Segment(3, "rue", intersections.get("C"), intersections.get("X")));
 
-    destDeD.put("C", new Segment(3, "rue", intersections.get("D"), intersections.get("C")));
-    destDeD.put("Depot", new Segment(2, "rue", intersections.get("D"), intersections.get("Depot")));
-    destDeD.put("Y", new Segment(2, "rue", intersections.get("D"), intersections.get("Y")));
+        destDeD.put("C", new Segment(3, "rue", intersections.get("D"), intersections.get("C")));
+        destDeD.put("Depot", new Segment(2, "rue", intersections.get("D"), intersections.get("Depot")));
+        destDeD.put("Y", new Segment(2, "rue", intersections.get("D"), intersections.get("Y")));
 
-    destDeX.put("A", new Segment(2, "rue", intersections.get("X"), intersections.get("A")));
-    destDeX.put("B", new Segment(1, "rue", intersections.get("X"), intersections.get("B")));
-    destDeX.put("C", new Segment(3, "rue", intersections.get("X"), intersections.get("C")));
+        destDeX.put("A", new Segment(2, "rue", intersections.get("X"), intersections.get("A")));
+        destDeX.put("B", new Segment(1, "rue", intersections.get("X"), intersections.get("B")));
+        destDeX.put("C", new Segment(3, "rue", intersections.get("X"), intersections.get("C")));
 
-    destDeY.put("D", new Segment(2, "rue", intersections.get("Y"), intersections.get("D")));
-    destDeY.put("Depot", new Segment(1, "rue", intersections.get("Y"), intersections.get("Depot")));
+        destDeY.put("D", new Segment(2, "rue", intersections.get("Y"), intersections.get("D")));
+        destDeY.put("Depot", new Segment(1, "rue", intersections.get("Y"), intersections.get("Depot")));
 
-    segments.put("Depot", destDeA);
-    segments.put("A", destDeA);
-    segments.put("B", destDeB);
-    segments.put("C", destDeC);
-    segments.put("D", destDeD);
-    segments.put("X", destDeX);
-    segments.put("Y", destDeY);
+        segments.put("Depot", destDeDepot);
+        segments.put("A", destDeA);
+        segments.put("B", destDeB);
+        segments.put("C", destDeC);
+        segments.put("D", destDeD);
+        segments.put("X", destDeX);
+        segments.put("Y", destDeY);
 
-    GeoMap gM = new GeoMap(intersections, segments);
+        GeoMap gM = new GeoMap(intersections, segments);
 
-    Depot depot = new Depot(new Intersection("Depot", 0, 0), new Depot.Time(7, 0, 0));
+        Depot depot = new Depot(new Intersection("Depot", 0, 0), new Depot.Time(7, 0, 0));
 
-    DurationPassagePoint P1 = new DurationPassagePoint(intersections.get("A"),2, PassagePointType.PICKUP);
-    DurationPassagePoint P2 = new DurationPassagePoint(intersections.get("B"),2,PassagePointType.PICKUP);
+        DurationPassagePoint P1 = new DurationPassagePoint(intersections.get("A"), 2, PassagePointType.PICKUP);
+        DurationPassagePoint P2 = new DurationPassagePoint(intersections.get("B"), 2, PassagePointType.PICKUP);
 
-    DurationPassagePoint D1 = new DurationPassagePoint(intersections.get("D"),2,PassagePointType.DELIVERY);
-    DurationPassagePoint D2 = new DurationPassagePoint(intersections.get("C"),2,PassagePointType.DELIVERY);
+        DurationPassagePoint D1 = new DurationPassagePoint(intersections.get("D"), 2, PassagePointType.DELIVERY);
+        DurationPassagePoint D2 = new DurationPassagePoint(intersections.get("C"), 2, PassagePointType.DELIVERY);
 
-    Request[] requests = new Request[]{
-            new Request(P1,D1),
-            new Request(P2,D2),
-    };
+        Request[] requests = new Request[]{
+                new Request(P1, D1),
+                new Request(P2, D2),
+        };
 
-    PlanningRequest pr = new PlanningRequest(Arrays.asList(requests),depot);
+        List<Request> requestList = new ArrayList<>(Arrays.asList(requests));
 
-
-    Dijkstra dd = new Dijkstra();
-    PassagePoint[] pps = new PassagePoint[]{
-            P1,
-            P2,
-            D1,
-            D2,
-            depot,
-    };
-    Map<String, Map<String, FindShortestRoutes.Route>> routes = dd.solve(gM,pps);
-
-    OptimalHamiltonianCircuit algoHamilton = new OptimalHamiltonianCircuit(5000);
-    List<PassagePoint> result = algoHamilton.solve(gM,routes,pr);
-
-    assertEquals(depot, result.get(0));
-    assertEquals(P1, result.get(1));
-    assertEquals(P2, result.get(2));
-    assertEquals(D2, result.get(3));
-    assertEquals(D1, result.get(4));
-
-    // 1er cas
+        PlanningRequest pr = new PlanningRequest(requestList, depot);
 
 
-    DurationPassagePoint cP1 = new DurationPassagePoint(intersections.get("X"),2,PassagePointType.PICKUP);
-    DurationPassagePoint cD1 = new DurationPassagePoint(intersections.get("Y"), 2,PassagePointType.DELIVERY);
+        Dijkstra dd = new Dijkstra();
+        PassagePoint[] pps = new PassagePoint[]{
+                P1,
+                P2,
+                D1,
+                D2,
+                depot,
+        };
+        Map<String, Map<String, FindShortestRoutes.Route>> routes = dd.solve(gM, pps);
 
-    Request r1 = new Request(cP1, cD1);
-
-    AddPickupAndDeliveryImpl addPickupAndDelivery = new AddPickupAndDeliveryImpl();
-    addPickupAndDelivery.solve(gM, pr, r1, result, routes);
+        OptimalHamiltonianCircuit algoHamilton = new OptimalHamiltonianCircuit(5000);
+        List<PassagePoint> result = algoHamilton.solve(gM, routes, pr);
 
 
-} 
+        // 1er cas
 
 
-/** 
-* 
-* Method: addPoint(GeoMap gm, List<PassagePoint> pps, Request r, List<PassagePoint> circuit, int startPoint, Map<String, Map<String, FindShortestRoutes.Route>> routes) 
-* 
-*/ 
-@Test
-public void testAddPoint() throws Exception { 
-//TODO: Test goes here... 
-/* 
-try { 
-   Method method = AddPickupAndDeliveryImpl.getClass().getMethod("addPoint", GeoMap.class, List<PassagePoint>.class, Request.class, List<PassagePoint>.class, int.class, Map<String,.class); 
-   method.setAccessible(true); 
-   method.invoke(<Object>, <Parameters>); 
-} catch(NoSuchMethodException e) { 
-} catch(IllegalAccessException e) { 
-} catch(InvocationTargetException e) { 
-} 
-*/ 
-} 
+        DurationPassagePoint cP1 = new DurationPassagePoint(intersections.get("X"), 2, PassagePointType.PICKUP);
+        DurationPassagePoint cD1 = new DurationPassagePoint(intersections.get("Y"), 2, PassagePointType.DELIVERY);
 
-/** 
-* 
-* Method: computeTripletLength(PassagePoint first, PassagePoint last, Map<String, FindShortestRoutes.Route> routes) 
-* 
-*/ 
-@Test
-public void testComputeTripletLength() throws Exception { 
-//TODO: Test goes here... 
-/* 
-try { 
-   Method method = AddPickupAndDeliveryImpl.getClass().getMethod("computeTripletLength", PassagePoint.class, PassagePoint.class, Map<String,.class); 
-   method.setAccessible(true); 
-   method.invoke(<Object>, <Parameters>); 
-} catch(NoSuchMethodException e) { 
-} catch(IllegalAccessException e) { 
-} catch(InvocationTargetException e) { 
-} 
-*/ 
-} 
+        Request r1 = new Request(cP1, cD1);
+
+        AddPickupAndDeliveryImpl addPickupAndDelivery = new AddPickupAndDeliveryImpl();
+        addPickupAndDelivery.solve(gM, pr, r1, result, routes);
+
+        assertEquals(depot, result.get(0));
+        assertEquals(P1, result.get(1));
+        assertEquals(cP1, result.get(2));
+        assertEquals(P2, result.get(3));
+        assertEquals(D2, result.get(4));
+        assertEquals(D1, result.get(5));
+        assertEquals(cD1, result.get(6));
+
+    }
 
 } 

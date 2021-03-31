@@ -23,16 +23,16 @@ public class AddPickupAndDeliveryImpl implements AddPickupAndDelivery {
         // deuxième étape : ajout du delivery
         // - même chose que pour l'étape une mais en ne prenant pas en compte les points avant le pickup
 
-        List<PassagePoint> pps = new ArrayList<>(Arrays.asList(pr.getPassagePoints()));
-        addPoint(gm, pps, r, circuit, 0, routes, PassagePointType.PICKUP);
-        pps.add(r.getPickup());
-        addPoint(gm, pps, r, circuit, pps.indexOf(r.getPickup()), routes, PassagePointType.DELIVERY);
+        //List<PassagePoint> pps = new ArrayList<>(Arrays.asList(pr.getPassagePoints()));
+        addPoint(gm, r, circuit, 0, routes, PassagePointType.PICKUP);
+       // pps.add(r.getPickup());
+        addPoint(gm, r, circuit, circuit.indexOf(r.getPickup()), routes, PassagePointType.DELIVERY);
         pr.addRequest(r);
     }
 
     private void addPoint(
             GeoMap gm,
-            List<PassagePoint> pps,
+            //List<PassagePoint> pps,
             Request r,
             List<PassagePoint> circuit,
             int startPoint,
@@ -40,8 +40,9 @@ public class AddPickupAndDeliveryImpl implements AddPickupAndDelivery {
             PassagePointType ppType
     ) {
         Dijkstra dijkstra = new Dijkstra();
-        PassagePoint[] searchPps = pps.subList(startPoint, pps.size() - 1).toArray(new PassagePoint[0]);
-        Map<String, FindShortestRoutes.Route> routesToNewPickup = dijkstra.solveOne(gm, r.getPickup(), searchPps, dijkstra.getSuccesors(gm));
+        PassagePoint[] searchPps = circuit.subList(startPoint, circuit.size()).toArray(new PassagePoint[0]);
+        PassagePoint ppToAdd = ppType.equals(PassagePointType.PICKUP) ? r.getPickup() : r.getDelivery();
+        Map<String, FindShortestRoutes.Route> routesToNewPickup = dijkstra.solveOne(gm, ppToAdd, searchPps, dijkstra.getSuccesors(gm));
 
         Map.Entry<String, FindShortestRoutes.Route> nearestPoint = routesToNewPickup.entrySet().stream().min(
                 Comparator.comparingDouble(r2 -> r2.getValue().getLength())
@@ -84,7 +85,7 @@ public class AddPickupAndDeliveryImpl implements AddPickupAndDelivery {
             }
         }
 
-        PassagePoint ppToAdd = ppType.equals(PassagePointType.PICKUP) ? r.getPickup() : r.getDelivery();
+
 
         circuit.add(bestPpIndex, ppToAdd);
 

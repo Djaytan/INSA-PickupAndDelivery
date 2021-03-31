@@ -300,5 +300,19 @@ public class PlanningRequestController {
 
     }
 
+    public static void deplacerPoint(PassagePoint pointToMove, int newLongitude, int newLatitude) {
+
+        List<PassagePoint> pps = hamiltonianCircuit;
+        for( PassagePoint pp: pps){
+            if (pp.equals(pointToMove)){
+                hamiltonianCircuit.remove(pointToMove);
+
+                // @TODO ajouter appel algorithme crochet
+                pointToMove.getAddress().setLatitude(newLatitude);
+                pointToMove.getAddress().setLongitude(newLongitude);
+                hamiltonianCircuit.add(pointToMove);
+            }
+        }
+    }
 
 }

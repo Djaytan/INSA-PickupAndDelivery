@@ -10,13 +10,13 @@ import javafx.scene.text.Text;
 
 public class MainViewAddDeliveryState implements StateMainView {
     @Override
-    public void canvaClick(MainView context) {
-        Button btnPickup = (Button) context.getScene().lookup("#btnAddPickup");
-        Button btnFileChooser = (Button) context.getScene().lookup("#btnFileChooser");
-        Button btnPath = (Button) context.getScene().lookup("#btnPath");
-        TextField input = (TextField) context.getScene().lookup("#nbLivreurs");
-        Text stateTxt = (Text) context.getScene().lookup("#stateTxt");
-        Canvas map = (Canvas) context.getScene().lookup("#overEffects");
+    public void canvasClick(MainView context) {
+        Button btnPickup = (Button) MainView.SCENE.lookup("#btnAddPickup");
+        Button btnFileChooser = (Button) MainView.SCENE.lookup("#btnFileChooser");
+        Button btnPath = (Button) MainView.SCENE.lookup("#btnPath");
+        TextField input = (TextField) MainView.SCENE.lookup("#nbLivreurs");
+        Text stateTxt = (Text) MainView.SCENE.lookup("#stateTxt");
+        Canvas map = (Canvas) MainView.SCENE.lookup("#overEffects");
 
         if(btnPickup != null && btnFileChooser != null && btnPath != null && input != null && stateTxt != null && map != null) {
             btnPickup.setText("Annuler l'ajout");

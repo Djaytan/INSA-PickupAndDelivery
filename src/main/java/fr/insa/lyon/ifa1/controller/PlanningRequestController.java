@@ -14,9 +14,11 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,7 +28,10 @@ public class PlanningRequestController {
 
     private static final PlanningRequest PLANNING_REQUEST = new PlanningRequest();
     private static final Dijkstra DIJKSTRA = new Dijkstra();
-    private static final FindShortestHamiltonianCircuit HAMILTONIAN_CIRCUIT = new OptimalHamiltonianCircuit(5000);
+    private static final FindShortestHamiltonianCircuit HAMILTONIAN_CIRCUIT_FINDER = new OptimalHamiltonianCircuit(5000);
+
+    private static Map<String, Map<String, FindShortestRoutes.Route>> dijkstraRoutes;
+    private static List<PassagePoint> hamiltonianCircuit = new ArrayList<>();
 
     public static PlanningRequest getModel() { return PLANNING_REQUEST; }
 
@@ -44,6 +49,8 @@ public class PlanningRequestController {
 
     }
 
+    public static boolean isEmpty() { return PLANNING_REQUEST.getRequests().isEmpty(); }
+
     public static Map<String, Double> getDepot() {
 
         Intersection depotAddress = PLANNING_REQUEST.getDepot().getAddress();
@@ -55,28 +62,34 @@ public class PlanningRequestController {
 
     }
 
-    public static List<Map<String, Map<String, Double>>> getPassagePoints() {
+    public static List<Map<PassagePointType, Map<String, Double>>> getPassagePoints() {
 
         PassagePoint[] passagePoints = PLANNING_REQUEST.getPassagePoints();
-        List<Map<String, Map<String, Double>>> passagePointsData = new ArrayList<>() {{
-            add(Map.ofEntries(Map.entry("depot", PlanningRequestController.getDepot())));
-        }};
+        List<Map<PassagePointType, Map<String, Double>>> passagePointsData = new ArrayList<>();
 
-        for(int i = 1; i < passagePoints.length - 1; i += 2) {
-
-            Intersection pickupAddress = passagePoints[i].getAddress();
-            Intersection deliveryAddress = passagePoints[i+1].getAddress();
+        if(PLANNING_REQUEST.getDepot() != null) {
 
             passagePointsData.add(Map.ofEntries(
-                    Map.entry("pickup", Map.ofEntries(
-                            Map.entry("x", pickupAddress.getLongitude()),
-                            Map.entry("y", pickupAddress.getLatitude())
-                    )),
-                    Map.entry("delivery", Map.ofEntries(
-                            Map.entry("x", deliveryAddress.getLongitude()),
-                            Map.entry("y", deliveryAddress.getLatitude())
-                    ))
+                    Map.entry(PassagePointType.DEPOT, PlanningRequestController.getDepot())
             ));
+
+            for (int i = 1; i < passagePoints.length - 1; i += 2) {
+
+                Intersection pickupAddress = passagePoints[i].getAddress();
+                Intersection deliveryAddress = passagePoints[i + 1].getAddress();
+
+                passagePointsData.add(Map.ofEntries(
+                        Map.entry(PassagePointType.PICKUP, Map.ofEntries(
+                                Map.entry("x", pickupAddress.getLongitude()),
+                                Map.entry("y", pickupAddress.getLatitude())
+                        )),
+                        Map.entry(PassagePointType.DELIVERY, Map.ofEntries(
+                                Map.entry("x", deliveryAddress.getLongitude()),
+                                Map.entry("y", deliveryAddress.getLatitude())
+                        ))
+                ));
+
+            }
 
         }
 
@@ -84,29 +97,41 @@ public class PlanningRequestController {
 
     }
 
-    public static Map<String, Double> getClosestPassagePoint(Map<String, Double> coordinates) {
+    public static Map<PassagePointType, Map<String, Double>> getClosestPassagePoint(Map<String, Double> coordinates) {
 
-        PassagePoint closestPassagePoint = null;
+        DurationPassagePoint closestPassagePoint = null;
         double distance = Double.MAX_VALUE;
         double tmpDistance;
         double x = coordinates.get("x");
         double y = coordinates.get("y");
 
-        PassagePoint[] passagePoints = PLANNING_REQUEST.getPassagePoints();
-
         //loop on all passage point to find the closest one to x,y
-        for (PassagePoint passagePoint : passagePoints) {
+        for(Request request : PLANNING_REQUEST.getRequests()) {
 
-            tmpDistance = Math.sqrt((y - passagePoint.getAddress().getLatitude()) * (y - passagePoint.getAddress().getLatitude()) + (x - passagePoint.getAddress().getLongitude()) * (x - passagePoint.getAddress().getLongitude()));
-            if(tmpDistance < distance) {
-                closestPassagePoint = passagePoint;
-                distance = tmpDistance;
+            DurationPassagePoint[] passagePoints = new DurationPassagePoint[] {
+                    request.getPickup(), request.getDelivery()
+            };
+
+            for(DurationPassagePoint passagePoint : passagePoints) {
+
+                Intersection address = passagePoint.getAddress();
+
+                tmpDistance = Math.sqrt(Math.pow(x - address.getLongitude(), 2) + Math.pow(y - address.getLatitude(), 2));
+
+                if (tmpDistance < distance) {
+                    closestPassagePoint = passagePoint;
+                    distance = tmpDistance;
+                }
+
             }
+
         }
 
         return Map.ofEntries(
-                Map.entry("x", closestPassagePoint.getAddress().getLongitude()),
-                Map.entry("y", closestPassagePoint.getAddress().getLatitude())
+                Map.entry(closestPassagePoint.getType(), Map.ofEntries(
+                    Map.entry("x", closestPassagePoint.getAddress().getLongitude()),
+                    Map.entry("y", closestPassagePoint.getAddress().getLatitude())
+                ))
         );
 
     }
@@ -137,14 +162,18 @@ public class PlanningRequestController {
         }
     }
 
-    public static List<List<Map<String, Map<String, Double>>>> getDeliveryMenPaths() {
+    public static void calculateDeliveryMenPaths(int deliveryMenNumber) {
 
         final GeoMap geoMap = GeoMapController.getModel();
-        final Map<String, Map<String, FindShortestRoutes.Route>> dijkstraRoutes = DIJKSTRA.solve(geoMap, PLANNING_REQUEST.getPassagePoints());
-        final List<List<PassagePoint>> passagePointsList = new ArrayList<>() {{
-            add(HAMILTONIAN_CIRCUIT.solve(geoMap, dijkstraRoutes, PLANNING_REQUEST));
-        }};
 
+        dijkstraRoutes = DIJKSTRA.solve(geoMap, PLANNING_REQUEST.getPassagePoints());
+        hamiltonianCircuit = HAMILTONIAN_CIRCUIT_FINDER.solve(geoMap, dijkstraRoutes, PLANNING_REQUEST);
+
+    }
+
+    public static List<List<Map<String, Map<String, Double>>>> getDeliveryMenPaths() {
+
+        final List<List<PassagePoint>> passagePointsList = new ArrayList<>() {{ add(hamiltonianCircuit); }};
         List<List<Map<String, Map<String, Double>>>> segmentsList = new ArrayList<>();
 
         for (List<PassagePoint> passagePoints : passagePointsList) {
@@ -182,19 +211,89 @@ public class PlanningRequestController {
 
     }
 
-    static public void deleteOneRequest(Map<String,Double> point) {
+    public static Map<PassagePointType, Map<String, Double>> getCouplePassagePoints(Map<PassagePointType, Map<String, Double>> passagePoint) {
+
+        Map<PassagePointType, Map<String, Double>> couple = null;
+        Optional<PassagePointType> passagePointType = passagePoint.keySet().stream().findFirst();
+
+        if(passagePointType.isEmpty()) { return null; }
+
+        Map<String, Double> coordinates = passagePoint.get(passagePointType.get());
+
+        for(Request request : PLANNING_REQUEST.getRequests()) {
+
+            double x = coordinates.get("x");
+            double y = coordinates.get("y");
+
+            Intersection pickupAddress = request.getPickup().getAddress();
+            Intersection deliveryAddress = request.getDelivery().getAddress();
+
+            if(passagePointType.get().equals(PassagePointType.PICKUP) && x == pickupAddress.getLongitude() && y == pickupAddress.getLatitude()) {
+
+                couple = Map.ofEntries(
+                        Map.entry(PassagePointType.PICKUP, coordinates),
+                        Map.entry(PassagePointType.DELIVERY, Map.ofEntries(
+                                Map.entry("x", deliveryAddress.getLongitude()),
+                                Map.entry("y", deliveryAddress.getLatitude())
+                        ))
+                );
+
+                break;
+
+            }
+
+            else if(passagePointType.get().equals(PassagePointType.DELIVERY) && x == deliveryAddress.getLongitude() && y == deliveryAddress.getLatitude()) {
+
+                couple = Map.ofEntries(
+                        Map.entry(PassagePointType.PICKUP, Map.ofEntries(
+                                Map.entry("x", pickupAddress.getLongitude()),
+                                Map.entry("y", pickupAddress.getLatitude())
+                        )),
+                        Map.entry(PassagePointType.DELIVERY, coordinates)
+                );
+
+                break;
+
+            }
+
+        }
+
+        return couple;
+
+    }
+
+     public static void deleteOneRequest(Map<PassagePointType, Map<String,Double>> passagePoint) {
 
         // suppression de la course
+        Optional<PassagePointType> passagePointType = passagePoint.keySet().stream().findFirst();
+
+        if(passagePointType.isEmpty()) { return; }
+
+        Map<String, Double> coordinates = passagePoint.get(passagePointType.get());
         List<Request> requests = PLANNING_REQUEST.getRequests();
 
-        for (Request request : PLANNING_REQUEST.getRequests()) {
-            if ((point.get("x").equals(request.getPickup().getAddress().getLongitude())
-                    && point.get("y").equals(request.getPickup().getAddress().getLatitude()))
-            || (point.get("x").equals(request.getDelivery().getAddress().getLongitude())
-                    && point.get("y").equals(request.getDelivery().getAddress().getLatitude()))){
+        for(Request request : requests) {
+
+            double x = coordinates.get("x");
+            double y = coordinates.get("y");
+
+            Intersection pickupAddress = request.getPickup().getAddress();
+            Intersection deliveryAddress = request.getDelivery().getAddress();
+
+            if(passagePointType.get().equals(PassagePointType.PICKUP) && x == pickupAddress.getLongitude() && y == pickupAddress.getLatitude() ||
+               passagePointType.get().equals(PassagePointType.DELIVERY) && x == deliveryAddress.getLongitude() && y == deliveryAddress.getLatitude()) {
+
+                if(!hamiltonianCircuit.isEmpty()) {
+                    hamiltonianCircuit.remove(request.getPickup());
+                    hamiltonianCircuit.remove(request.getDelivery());
+                }
+
                 requests.remove(request);
+
                 break;
+
             }
+
         }
 
         PLANNING_REQUEST.setRequests(requests);

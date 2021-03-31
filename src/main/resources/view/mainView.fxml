@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
@@ -12,76 +11,76 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.insa.lyon.ifa1.view.MainView">
-  <children>
-    <MenuBar VBox.vgrow="NEVER">
-      <menus>
-        <Menu mnemonicParsing="false" text="Fichier">
-          <items>
-            <MenuItem mnemonicParsing="false" onAction="#openFileChooser" text="Charger des points relais" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" onAction="#quit" text="Quitter" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Aide">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Documentation" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="A propos de Pick'up" />
-          </items>
-        </Menu>
-      </menus>
-    </MenuBar>
-      <VBox prefHeight="627.0" prefWidth="800.0">
-         <children>
-            <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="35.0" prefWidth="800.0">
-               <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Pick'up">
-                     <font>
+<BorderPane prefHeight="650.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.insa.lyon.ifa1.view.MainView">
+
+    <top>
+
+        <VBox id="borderPaneTop" alignment="TOP_CENTER">
+
+            <MenuBar>
+                <Menu text="Fichier">
+                    <MenuItem onAction="#openFileChooser" text="Charger des points relais" />
+                    <SeparatorMenuItem />
+                    <MenuItem onAction="#quit" text="Quitter" />
+                </Menu>
+                <Menu text="Aide">
+                    <MenuItem text="Documentation" />
+                    <SeparatorMenuItem />
+                    <MenuItem text="A propos de Pick'up" />
+                </Menu>
+            </MenuBar>
+
+            <VBox alignment="BOTTOM_CENTER" minHeight="75">
+
+                <Text text="Pick'up">
+                    <font>
                         <Font name="Tahoma" size="24.0" />
-                     </font>
-                  </Text>
-               </children>
-            </StackPane>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="590.0" prefWidth="800.0">
-               <children>
-                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" id="stateTxt"/>
-                        <ButtonBar prefHeight="35.0" prefWidth="866.0">
-                          <buttons>
-                            <Button id="btnAddPickup" mnemonicParsing="false" onAction="#addPickup" text="Ajouter une livraison" />
-                          </buttons>
-                        </ButtonBar>
-                     </children>
-                  </HBox>
-                  <StackPane alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-                     <children>
-                        <Canvas id="map" height="480.0" width="650.0" />
-                        <Canvas id="deliverymenPaths" height="480.0" width="650.0" />
-                        <Canvas id="passagePoints" height="480.0" width="650.0" />
-                        <Canvas id="overEffects" onMouseClicked="#canvaClick" height="480.0" width="650.0" />
-                     </children>
-                  </StackPane>
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
-                     <children>
-                        <Label text="Importer des points relais à partir d'un fichier XML" />
-                        <Button id="btnFileChooser" mnemonicParsing="false" onAction="#openFileChooser" text="Séléctionner un fichier" />
-                        <Label text="Nombre de livreurs" />
-                        <TextField id="nbLivreurs" maxWidth="-Infinity" HBox.hgrow="NEVER" disable="true" text="1"/>
-                        <Button id="btnPath" mnemonicParsing="false" onAction="#calculatePath" text="Calculer" disable="true"/>
-                     </children>
-                  </HBox>
-               </children>
+                    </font>
+                </Text>
+
+                <HBox alignment="BASELINE_RIGHT">
+                    <Text id="stateTxt"/>
+                    <ButtonBar>
+                        <buttons>
+                            <Button id="btnAddPickup" onAction="#addPickup" text="Ajouter une livraison" />
+                        </buttons>
+                    </ButtonBar>
+                </HBox>
+
             </VBox>
-         </children>
-         <VBox.margin>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </VBox.margin>
-      </VBox>
-  </children>
-</VBox>
+
+        </VBox>
+
+    </top>
+
+    <center>
+
+        <StackPane id="canvasContainer">
+            <Canvas id="map" />
+            <Canvas id="deliverymenPaths" />
+            <Canvas id="passagePoints" />
+            <Canvas id="overEffects" onMouseClicked="#onCanvasClick" />
+        </StackPane>
+
+    </center>
+
+    <bottom>
+
+        <HBox id="borderPaneBottom" alignment="CENTER" minHeight="75" spacing="10.0">
+
+            <Label text="Importer des points relais à partir d'un fichier XML" />
+            <Button id="btnFileChooser" onAction="#openFileChooser" text="Séléctionner un fichier" />
+            <Label text="Nombre de livreurs" />
+            <TextField id="nbLivreurs" disable="true" text="1"/>
+            <Button id="btnPath" onAction="#onCalculate" text="Calculer" disable="true"/>
+
+        </HBox>
+
+    </bottom>
+
+</BorderPane>

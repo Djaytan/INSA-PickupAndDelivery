@@ -1,6 +1,7 @@
 package fr.insa.lyon.ifa1.algo;
 
 import fr.insa.lyon.ifa1.models.request.*;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -10,9 +11,15 @@ import static org.junit.Assert.*;
 
 public class ChangePassageOrderImplTest {
 
-    @Test
-    public void testSolveTargetBeforeNew() {
-        List<Request> requests = Arrays.asList(
+    private PlanningRequest pr;
+    private List<PassagePoint> circuit;
+    private ChangePassageOrder cpo;
+    private List<Request> requests;
+    private Depot d;
+
+    @Before
+    public void setUp() throws Exception {
+        requests = Arrays.asList(
                 new Request(
                         new DurationPassagePoint(null, 0, PassagePointType.PICKUP),
                         new DurationPassagePoint(null, 0, PassagePointType.DELIVERY)
@@ -23,11 +30,11 @@ public class ChangePassageOrderImplTest {
                 )
         );
 
-        Depot d = new Depot(null, new Depot.Time(0, 0, 0));
+        d = new Depot(null, new Depot.Time(0, 0, 0));
 
-        PlanningRequest pr = new PlanningRequest(requests, d);
+        pr = new PlanningRequest(requests, d);
 
-        List<PassagePoint> circuit = Arrays.asList(
+        circuit = Arrays.asList(
                 d,
                 requests.get(0).getPickup(),
                 requests.get(1).getPickup(),
@@ -36,8 +43,11 @@ public class ChangePassageOrderImplTest {
                 d
         );
 
-        ChangePassageOrder cpo = new ChangePassageOrderImpl();
+        cpo = new ChangePassageOrderImpl();
+    }
 
+    @Test
+    public void testSolveTargetBeforeNew() {
         try {
             List<PassagePoint> newCircuit = cpo.solve(pr, circuit, requests.get(0).getPickup(), requests.get(1).getPickup());
             assertEquals(d, newCircuit.get(0));
@@ -53,31 +63,6 @@ public class ChangePassageOrderImplTest {
 
     @Test
     public void testTargetAfterNew() {
-        List<Request> requests = Arrays.asList(
-                new Request(
-                        new DurationPassagePoint(null, 0, PassagePointType.PICKUP),
-                        new DurationPassagePoint(null, 0, PassagePointType.DELIVERY)
-                ),
-                new Request(
-                        new DurationPassagePoint(null, 0, PassagePointType.PICKUP),
-                        new DurationPassagePoint(null, 0, PassagePointType.DELIVERY)
-                )
-        );
-
-        Depot d = new Depot(null, new Depot.Time(0, 0, 0));
-
-        PlanningRequest pr = new PlanningRequest(requests, d);
-
-        List<PassagePoint> circuit = Arrays.asList(
-                d,
-                requests.get(0).getPickup(),
-                requests.get(1).getPickup(),
-                requests.get(1).getDelivery(),
-                requests.get(0).getDelivery(),
-                d
-        );
-
-        ChangePassageOrder cpo = new ChangePassageOrderImpl();
 
         try {
             List<PassagePoint> newCircuit = cpo.solve(pr, circuit, requests.get(0).getDelivery(), requests.get(0).getPickup());
@@ -94,32 +79,6 @@ public class ChangePassageOrderImplTest {
 
     @Test
     public void testTargetDepotShouldFail() {
-        List<Request> requests = Arrays.asList(
-                new Request(
-                        new DurationPassagePoint(null, 0, PassagePointType.PICKUP),
-                        new DurationPassagePoint(null, 0, PassagePointType.DELIVERY)
-                ),
-                new Request(
-                        new DurationPassagePoint(null, 0, PassagePointType.PICKUP),
-                        new DurationPassagePoint(null, 0, PassagePointType.DELIVERY)
-                )
-        );
-
-        Depot d = new Depot(null, new Depot.Time(0, 0, 0));
-
-        PlanningRequest pr = new PlanningRequest(requests, d);
-
-        List<PassagePoint> circuit = Arrays.asList(
-                d,
-                requests.get(0).getPickup(),
-                requests.get(1).getPickup(),
-                requests.get(1).getDelivery(),
-                requests.get(0).getDelivery(),
-                d
-        );
-
-        ChangePassageOrder cpo = new ChangePassageOrderImpl();
-
         try {
             List<PassagePoint> newCircuit = cpo.solve(pr, circuit, d, requests.get(0).getPickup());
             fail("Should throw an exception");
@@ -130,32 +89,6 @@ public class ChangePassageOrderImplTest {
 
     @Test
     public void testNewPositionAfterDepotShouldFail() {
-        List<Request> requests = Arrays.asList(
-                new Request(
-                        new DurationPassagePoint(null, 0, PassagePointType.PICKUP),
-                        new DurationPassagePoint(null, 0, PassagePointType.DELIVERY)
-                ),
-                new Request(
-                        new DurationPassagePoint(null, 0, PassagePointType.PICKUP),
-                        new DurationPassagePoint(null, 0, PassagePointType.DELIVERY)
-                )
-        );
-
-        Depot d = new Depot(null, new Depot.Time(0, 0, 0));
-
-        PlanningRequest pr = new PlanningRequest(requests, d);
-
-        List<PassagePoint> circuit = Arrays.asList(
-                d,
-                requests.get(0).getPickup(),
-                requests.get(1).getPickup(),
-                requests.get(1).getDelivery(),
-                requests.get(0).getDelivery(),
-                d
-        );
-
-        ChangePassageOrder cpo = new ChangePassageOrderImpl();
-
         try {
             List<PassagePoint> newCircuit = cpo.solve(pr, circuit, requests.get(0).getPickup(), d);
             fail("Should throw an exception");
@@ -166,32 +99,6 @@ public class ChangePassageOrderImplTest {
 
     @Test
     public void testPrecedenceConstraint() {
-        List<Request> requests = Arrays.asList(
-                new Request(
-                        new DurationPassagePoint(null, 0, PassagePointType.PICKUP),
-                        new DurationPassagePoint(null, 0, PassagePointType.DELIVERY)
-                ),
-                new Request(
-                        new DurationPassagePoint(null, 0, PassagePointType.PICKUP),
-                        new DurationPassagePoint(null, 0, PassagePointType.DELIVERY)
-                )
-        );
-
-        Depot d = new Depot(null, new Depot.Time(0, 0, 0));
-
-        PlanningRequest pr = new PlanningRequest(requests, d);
-
-        List<PassagePoint> circuit = Arrays.asList(
-                d,
-                requests.get(0).getPickup(),
-                requests.get(1).getPickup(),
-                requests.get(1).getDelivery(),
-                requests.get(0).getDelivery(),
-                d
-        );
-
-        ChangePassageOrder cpo = new ChangePassageOrderImpl();
-
         try {
             List<PassagePoint> newCircuit = cpo.solve(pr, circuit, requests.get(0).getPickup(), requests.get(0).getDelivery());
             fail("Should throw an exception");

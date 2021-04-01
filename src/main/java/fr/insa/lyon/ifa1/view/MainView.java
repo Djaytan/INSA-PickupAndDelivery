@@ -186,21 +186,38 @@ public class MainView implements ViewInterface {
     }
 
     private void populateDeliveryData() {
+        //populate details data
         List<PassagePoint> passagePointList = PlanningRequestController.getHamiltonianCircuit();
         TableView tableView = (TableView) SCENE.lookup("#tableViewDetailsPoints");
-        int i = 0;
-        for(PassagePoint passagePoint : passagePointList) {
-            try {
-                DurationPassagePoint point = (DurationPassagePoint)passagePoint;
-                i++;
-                String type = "P";
-                if(point.getType() == PassagePointType.DELIVERY) {
-                    type = "D";
+        if(tableView != null) {
+            //clean table
+            tableView.getItems().clear();
+            //populate table
+            int i = 0;
+            for (PassagePoint passagePoint : passagePointList) {
+                try {
+                    DurationPassagePoint point = (DurationPassagePoint) passagePoint;
+                    i++;
+                    String type = "P";
+                    if (point.getType() == PassagePointType.DELIVERY) {
+                        type = "D";
+                    }
+                    String adresseDestination = GeoMapController.getPointAdresseDestination(passagePoint);
+                    System.out.println(adresseDestination);
+                    if (adresseDestination == null) {
+                        adresseDestination = "impossible de récupérer l'adresse";
+                    }
+
+                    tableView.getItems().add(new TableViewModel(Integer.toString(i), adresseDestination, type, "", ""));
+                } catch (ClassCastException ex) {
+                    //depot
                 }
-                tableView.getItems().add(new TableViewModel(Integer.toString(i), point.getAddress().toString(), type,"",""));
-            } catch(ClassCastException ex) {
-                //depot
             }
+        }
+
+        //populate adress list
+        TableView tableView2 = (TableView) SCENE.lookup("#tableViewDetailsTrajet");
+        if(tableView2 != null) {
         }
     }
 

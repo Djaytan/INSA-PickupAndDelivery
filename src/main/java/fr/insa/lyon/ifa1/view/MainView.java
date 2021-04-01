@@ -8,6 +8,7 @@ import fr.insa.lyon.ifa1.models.request.PassagePointType;
 import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -19,6 +20,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.FileChooser;
 
 import javafx.event.ActionEvent;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -51,6 +53,8 @@ public class MainView implements ViewInterface {
 
     protected static final Scene SCENE = VIEW_CONTROLLER.loadScene(ViewController.View.MAIN_VIEW);
 
+    private static final Tooltip tooltip = new Tooltip();
+
     private static Map<String, Double> canvasOrigin;
     private static Map<String, Double> mapOrigin;
     private static Double ratio;
@@ -64,6 +68,8 @@ public class MainView implements ViewInterface {
         Canvas overEffects = (Canvas) SCENE.lookup("#overEffects");
 
         overEffects.setOnMouseMoved(onMouseMove());
+
+        tooltip.setShowDelay(Duration.ZERO);
 
         setState(new MainViewWaitingState());
 
@@ -87,9 +93,10 @@ public class MainView implements ViewInterface {
         contextMenu.getItems().addAll(itemDelete, itemMove, itemChangeOrder);
 
         overEffects.setOnContextMenuRequested(e -> contextMenu.show(map.getScene().getWindow(), e.getScreenX(), e.getScreenY()));
+
     }
 
-    private void setMapParameters(Canvas map) {
+  private void setMapParameters(Canvas map) {
 
         Map<String, Map<String, Double>> range = GeoMapController.getRange();
 
@@ -235,6 +242,7 @@ public class MainView implements ViewInterface {
 
             clearCanvas(canvas);
             drawPoints(closestPassagePoints, canvas, OVERED_PASSAGE_POINTS_WIDTH, new Color[] { OVERED_PASSAGE_POINTS_COLOR });
+            setToolTip();
 
         }
 
@@ -283,6 +291,21 @@ public class MainView implements ViewInterface {
 
     }
 
+    private void setToolTip() {
+
+      Canvas overEffects = (Canvas) SCENE.lookup("#overEffects");
+      Bounds bounds = overEffects.localToScreen(overEffects.getBoundsInLocal());
+      Map<String, Integer> coordinates = getMapCoordinatesFromWorldCoordinates(Map.ofEntries(
+        Map.entry("x", (double) closestPassagePoint.get("x")),
+        Map.entry("y", (double) closestPassagePoint.get("y") )
+      ));
+
+      tooltip.setX(coordinates.get("x") + bounds.getMinX());
+      tooltip.setY(coordinates.get("y")+ bounds.getMinY());
+      tooltip.setText("x : " + closestPassagePoint.get("x") + " y " + closestPassagePoint.get("y"));
+
+    }
+
     public void openFileChooser() {
 
         FileChooser fileChooser = new FileChooser();
@@ -292,7 +315,8 @@ public class MainView implements ViewInterface {
         File file = fileChooser.showOpenDialog(null);
 
         if(file != null && file.getName().endsWith(".xml")) {
-            Canvas canvas = (Canvas) SCENE.lookup("#passagePoints");
+
+            Canvas overEffects = (Canvas) SCENE.lookup("#overEffects");
 
             PlanningRequestController.importPlanningRequest(file);
             System.out.println("Start drawing P&D points");
@@ -302,6 +326,9 @@ public class MainView implements ViewInterface {
             if(btnPath != null) {
                 btnPath.setDisable(false);
             }
+
+            Tooltip.install(overEffects, tooltip);
+
         }
 
     }

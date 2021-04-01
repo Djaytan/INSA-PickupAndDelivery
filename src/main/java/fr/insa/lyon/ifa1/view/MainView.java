@@ -6,7 +6,9 @@ import fr.insa.lyon.ifa1.controller.ViewController;
 import fr.insa.lyon.ifa1.models.map.Intersection;
 import fr.insa.lyon.ifa1.models.request.*;
 import fr.insa.lyon.ifa1.models.view.TableViewModel;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -203,7 +205,6 @@ public class MainView implements ViewInterface {
                         type = "D";
                     }
                     String adresseDestination = GeoMapController.getPointAdresseDestination(passagePoint);
-                    System.out.println(adresseDestination);
                     if (adresseDestination == null) {
                         adresseDestination = "impossible de récupérer l'adresse";
                     }
@@ -217,7 +218,11 @@ public class MainView implements ViewInterface {
 
         //populate adress list
         TableView tableView2 = (TableView) SCENE.lookup("#tableViewDetailsTrajet");
-        if(tableView2 != null) {
+        TableColumn<String,String> tableColumn = (TableColumn)tableView2.getColumns().get(0);
+
+        if(tableView2 != null && tableColumn != null) {
+            tableColumn.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue()));
+            tableView2.setItems(FXCollections.observableList(PlanningRequestController.getDeliveryTableViewAdress()));
         }
     }
 

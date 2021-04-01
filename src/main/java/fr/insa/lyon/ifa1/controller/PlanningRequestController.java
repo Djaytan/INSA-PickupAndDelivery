@@ -175,6 +175,25 @@ public class PlanningRequestController {
         return hamiltonianCircuit;
     }
 
+    public static List<String> getDeliveryTableViewAdress() {
+        List<String> adressList = new ArrayList<>();
+
+        if(hamiltonianCircuit.size() > 1) {
+            for (int i = 0; i < hamiltonianCircuit.size() - 1; i++) {
+
+                String origin = hamiltonianCircuit.get(i).getAddress().getId();
+                String destination = hamiltonianCircuit.get(i + 1).getAddress().getId();
+                FindShortestRoutes.Route route = dijkstraRoutes.get(origin).get(destination);
+
+                for (Segment segment : route.getItinerary()) {
+                    adressList.add(segment.getName());
+                }
+            }
+        }
+
+        return adressList;
+    }
+
     public static List<List<Map<String, Map<String, Double>>>> getDeliveryMenPaths() {
 
         final List<List<PassagePoint>> passagePointsList = new ArrayList<>() {{ add(hamiltonianCircuit); }};

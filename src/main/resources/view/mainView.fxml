@@ -117,7 +117,7 @@
                                  </Text>
                                  <TableView id="tableViewDetailsTrajet" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                                    <columns>
-                                     <TableColumn prefWidth="415.0" text="Prochaine rue à emprunter" />
+                                     <TableColumn prefWidth="415.0" text="Prochaine rue à emprunter" id="columnAdress"/>
                                    </columns>
                                  </TableView>
                                  <TableView id="tableViewDetailsPoints" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">

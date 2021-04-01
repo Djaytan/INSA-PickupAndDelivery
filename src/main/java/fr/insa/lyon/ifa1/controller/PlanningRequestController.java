@@ -14,11 +14,9 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,6 +48,8 @@ public class PlanningRequestController {
     }
 
     public static boolean isEmpty() { return PLANNING_REQUEST.getRequests().isEmpty(); }
+
+    public static boolean isCalculated() { return !hamiltonianCircuit.isEmpty(); }
 
     public static Map<String, Double> getDepot() {
 
@@ -97,7 +97,7 @@ public class PlanningRequestController {
 
     }
 
-    public static Map<PassagePointType, Map<String, Double>> getClosestPassagePoint(Map<String, Double> coordinates) {
+    public static Map<String, Object> getClosestPassagePoint(Map<String, Double> coordinates) {
 
         DurationPassagePoint closestPassagePoint = null;
         double distance = Double.MAX_VALUE;
@@ -128,11 +128,30 @@ public class PlanningRequestController {
         }
 
         return Map.ofEntries(
-                Map.entry(closestPassagePoint.getType(), Map.ofEntries(
-                    Map.entry("x", closestPassagePoint.getAddress().getLongitude()),
-                    Map.entry("y", closestPassagePoint.getAddress().getLatitude())
-                ))
+
+                  Map.entry("type", closestPassagePoint.getType()),
+
+                  Map.entry("x", closestPassagePoint.getAddress().getLongitude()),
+                  Map.entry("y", closestPassagePoint.getAddress().getLatitude()),
+
+                  Map.entry("order", getPassagePointOrder(closestPassagePoint))
+
         );
+
+    }
+
+    private static int getPassagePointOrder(PassagePoint passagePoint) {
+
+      int order = 0;
+
+      for(int i = 1; i <= hamiltonianCircuit.size(); i++) {
+
+        if(passagePoint == hamiltonianCircuit.get(i))
+        { order = i; break; }
+
+      }
+
+      return order;
 
     }
 
@@ -211,65 +230,63 @@ public class PlanningRequestController {
 
     }
 
-    public static Map<PassagePointType, Map<String, Double>> getCouplePassagePoints(Map<PassagePointType, Map<String, Double>> passagePoint) {
+    private static Request getRequest(Map<String, Object> passagePointData) {
 
-        Map<PassagePointType, Map<String, Double>> couple = null;
-        Optional<PassagePointType> passagePointType = passagePoint.keySet().stream().findFirst();
+      Request result = null;
 
-        if(passagePointType.isEmpty()) { return null; }
+      for(Request request : PLANNING_REQUEST.getRequests()) {
 
-        Map<String, Double> coordinates = passagePoint.get(passagePointType.get());
+        double x = (double) passagePointData.get("x");
+        double y = (double) passagePointData.get("y");
 
-        for(Request request : PLANNING_REQUEST.getRequests()) {
+        boolean passagePointIsPickup = passagePointData.get("type").equals(PassagePointType.PICKUP);
+        boolean passagePointIsDelivery = passagePointData.get("type").equals(PassagePointType.DELIVERY);
 
-            double x = coordinates.get("x");
-            double y = coordinates.get("y");
+        double pickupX = request.getPickup().getAddress().getLongitude();
+        double pickupY = request.getPickup().getAddress().getLatitude();
+        double deliveryX = request.getDelivery().getAddress().getLongitude();
+        double deliveryY = request.getDelivery().getAddress().getLatitude();
 
-            Intersection pickupAddress = request.getPickup().getAddress();
-            Intersection deliveryAddress = request.getDelivery().getAddress();
+        if(passagePointIsPickup && x == pickupX && y == pickupY ||
+           passagePointIsDelivery && x == deliveryX && y == deliveryY)
+        { result = request; break; }
 
-            if(passagePointType.get().equals(PassagePointType.PICKUP) && x == pickupAddress.getLongitude() && y == pickupAddress.getLatitude()) {
+      }
 
-                couple = Map.ofEntries(
-                        Map.entry(PassagePointType.PICKUP, coordinates),
-                        Map.entry(PassagePointType.DELIVERY, Map.ofEntries(
-                                Map.entry("x", deliveryAddress.getLongitude()),
-                                Map.entry("y", deliveryAddress.getLatitude())
-                        ))
-                );
-
-                break;
-
-            }
-
-            else if(passagePointType.get().equals(PassagePointType.DELIVERY) && x == deliveryAddress.getLongitude() && y == deliveryAddress.getLatitude()) {
-
-                couple = Map.ofEntries(
-                        Map.entry(PassagePointType.PICKUP, Map.ofEntries(
-                                Map.entry("x", pickupAddress.getLongitude()),
-                                Map.entry("y", pickupAddress.getLatitude())
-                        )),
-                        Map.entry(PassagePointType.DELIVERY, coordinates)
-                );
-
-                break;
-
-            }
-
-        }
-
-        return couple;
+      return result;
 
     }
 
-     public static void deleteOneRequest(Map<PassagePointType, Map<String,Double>> passagePoint) {
+    public static Map<PassagePointType, Map<String, Double>> getCouplePassagePoints(Map<String, Object> passagePointData) {
+
+        Request request = getRequest(passagePointData);
+
+        Intersection pickupAddress = request.getPickup().getAddress();
+        Intersection deliveryAddress = request.getDelivery().getAddress();
+
+        return Map.ofEntries(
+
+          Map.entry(PassagePointType.PICKUP, Map.ofEntries(
+            Map.entry("x", pickupAddress.getLongitude()),
+            Map.entry("y", pickupAddress.getLatitude())
+          )),
+
+          Map.entry(PassagePointType.DELIVERY, Map.ofEntries(
+            Map.entry("x", deliveryAddress.getLongitude()),
+            Map.entry("y", deliveryAddress.getLatitude())
+          ))
+
+        );
+
+    }
+
+     public static void deleteOneRequest(Map<String, Object> passagePoint) {
 
         // suppression de la course
-        Optional<PassagePointType> passagePointType = passagePoint.keySet().stream().findFirst();
-
-        if(passagePointType.isEmpty()) { return; }
-
-        Map<String, Double> coordinates = passagePoint.get(passagePointType.get());
+        Map<String, Double> coordinates = Map.ofEntries(
+          Map.entry("x", (double) passagePoint.get("x")),
+          Map.entry("y", (double) passagePoint.get("y"))
+        );
         List<Request> requests = PLANNING_REQUEST.getRequests();
 
         for(Request request : requests) {
@@ -280,8 +297,8 @@ public class PlanningRequestController {
             Intersection pickupAddress = request.getPickup().getAddress();
             Intersection deliveryAddress = request.getDelivery().getAddress();
 
-            if(passagePointType.get().equals(PassagePointType.PICKUP) && x == pickupAddress.getLongitude() && y == pickupAddress.getLatitude() ||
-               passagePointType.get().equals(PassagePointType.DELIVERY) && x == deliveryAddress.getLongitude() && y == deliveryAddress.getLatitude()) {
+            if(passagePoint.get("type").equals(PassagePointType.PICKUP) && x == pickupAddress.getLongitude() && y == pickupAddress.getLatitude() ||
+              passagePoint.get("type").equals(PassagePointType.DELIVERY) && x == deliveryAddress.getLongitude() && y == deliveryAddress.getLatitude()) {
 
                 if(!hamiltonianCircuit.isEmpty()) {
                     hamiltonianCircuit.remove(request.getPickup());
@@ -300,5 +317,28 @@ public class PlanningRequestController {
 
     }
 
+    public static boolean changeOrder(Map<String, Object> passagePointData, int order) {
+
+      PassagePoint passagePoint;
+      Request request = getRequest(passagePointData);
+
+      if(passagePointData.get("type") == PassagePointType.PICKUP) {
+
+        passagePoint = request.getPickup();
+        if(order >= getPassagePointOrder(request.getDelivery())) { return false; }
+
+      } else {
+
+        passagePoint = request.getDelivery();
+        if(order <= getPassagePointOrder(request.getPickup())) { return false; }
+
+      }
+
+      hamiltonianCircuit.remove(passagePoint);
+      hamiltonianCircuit.add(order, passagePoint);
+
+      return true;
+
+    }
 
 }

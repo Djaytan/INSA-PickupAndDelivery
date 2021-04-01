@@ -9,10 +9,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -27,6 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.lang.Math.min;
 
@@ -58,7 +56,7 @@ public class MainView implements ViewInterface {
     private static Double ratio;
 
     private static StateMainView state;
-    private static Map<PassagePointType, Map<String, Double>> closestPassagePoint = null;
+    private static Map<String, Object> closestPassagePoint = null;
 
     public void show() {
 
@@ -82,9 +80,11 @@ public class MainView implements ViewInterface {
         itemDelete.setOnAction(onDeletePassagePoint());
         MenuItem itemMove = new MenuItem("Déplacer");
         itemMove.setOnAction(e -> { int x = 0; });
+        MenuItem itemChangeOrder = new MenuItem("Modifier l'ordre");
+        itemChangeOrder.setOnAction(onChangeOrder());
 
         // Add MenuItem to ContextMenu
-        contextMenu.getItems().addAll(itemDelete, itemMove);
+        contextMenu.getItems().addAll(itemDelete, itemMove, itemChangeOrder);
 
         overEffects.setOnContextMenuRequested(e -> contextMenu.show(map.getScene().getWindow(), e.getScreenX(), e.getScreenY()));
     }
@@ -174,7 +174,7 @@ public class MainView implements ViewInterface {
                 int x = (int) (coordinates.get("x") - width / 2);
                 int y = (int) (coordinates.get("y") - width / 2);
 
-                if (passagePoint.getKey() == PassagePointType.DELIVERY) { gc.fillRect(x, y, width, width); }
+                if (passagePoint.getKey() == PassagePointType.PICKUP) { gc.fillRect(x, y, width, width); }
                 else { gc.fillOval(x, y, width, width); }
 
             }
@@ -415,6 +415,51 @@ public class MainView implements ViewInterface {
             clearCanvas((Canvas) SCENE.lookup("#overEffects"));
 
         };
+
+    }
+
+    private EventHandler<ActionEvent> onChangeOrder() {
+
+        return e -> {
+
+          if(PlanningRequestController.isCalculated()) {
+
+            TextInputDialog textInputDialog = new TextInputDialog(closestPassagePoint.get("order").toString());
+
+            textInputDialog.setHeaderText("Ordre de passage");
+            textInputDialog.setContentText("Ordre : ");
+
+            Optional<String> order = textInputDialog.showAndWait();
+
+            order.ifPresent(this::onCloseChangeOrder);
+
+          }
+
+        };
+
+    }
+
+    private void onCloseChangeOrder(String stringOrder) {
+
+      int order = Integer.parseInt(stringOrder);
+
+      if(PlanningRequestController.changeOrder(closestPassagePoint, order)) {
+
+        closestPassagePoint = Map.ofEntries(
+
+          Map.entry("type", closestPassagePoint.get(("type"))),
+
+          Map.entry("x", closestPassagePoint.get(("x"))),
+          Map.entry("y", closestPassagePoint.get(("y"))),
+
+          Map.entry("order", order)
+
+        );
+
+        drawDeliveryMenPaths();
+        drawPassagePoints();
+
+      }
 
     }
 

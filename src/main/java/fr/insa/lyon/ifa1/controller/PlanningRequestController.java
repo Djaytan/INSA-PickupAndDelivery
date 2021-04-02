@@ -426,7 +426,9 @@ public class PlanningRequestController {
       pointToMove.setAddress(intersection);
 
       // maj du circuit hamiltonien
-      calculateDeliveryMenPaths(1);
+      if(PlanningRequestController.isCalculated()){
+        calculateDeliveryMenPaths(1);
+      }
 
       //@TODO: remplacer la maj du circuit hamiltonien par traitement avec algo plus léger
 //        for( PassagePoint pp: pps){

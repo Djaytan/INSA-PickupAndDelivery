@@ -5,15 +5,15 @@ public class TableViewModel {
     private String adresse;
     private String type;
     private String heureArrivee;
+    private String tempsVoyage;
     private String tempsLivraison;
 
-    public TableViewModel() {}
-
-    public TableViewModel(String idColis, String adresse, String type, String heureArrivee, String tempsLivraison) {
+    public TableViewModel(String idColis, String adresse, String type, String heureArrivee, String tempsVoyage, String tempsLivraison) {
         this.idColis = idColis;
         this.adresse = adresse;
         this.type = type;
         this.heureArrivee = heureArrivee;
+        this.tempsVoyage = tempsVoyage;
         this.tempsLivraison = tempsLivraison;
     }
 
@@ -28,6 +28,10 @@ public class TableViewModel {
     public String getType() {
         return type;
     }
+
+  public String getTempsVoyage() {
+    return tempsVoyage;
+  }
 
     public String getHeureArrivee() {
         return heureArrivee;

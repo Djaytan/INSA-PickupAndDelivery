@@ -162,11 +162,15 @@
                        <cellValueFactory><PropertyValueFactory property="type" />
                        </cellValueFactory>
                      </TableColumn>
-                     <TableColumn prefWidth="102.0" text="Heure d'arrivées">
+                     <TableColumn prefWidth="85.0" text="Heure d'arrivées">
                        <cellValueFactory><PropertyValueFactory property="heureArrivee" />
                        </cellValueFactory>
                      </TableColumn>
-                     <TableColumn prefWidth="116.0" text="Temps de livraison">
+                     <TableColumn prefWidth="85.0" text="Temps de voyage">
+                       <cellValueFactory><PropertyValueFactory property="tempsVoyage" />
+                       </cellValueFactory>
+                     </TableColumn>
+                     <TableColumn prefWidth="85.0" text="Temps de livraison">
                        <cellValueFactory><PropertyValueFactory property="tempsLivraison" />
                        </cellValueFactory>
                      </TableColumn>

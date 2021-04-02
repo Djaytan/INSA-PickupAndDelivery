@@ -14,6 +14,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,8 @@ public class PlanningRequestController {
         );
 
     }
+
+    public static Depot getRealDepot() { return PLANNING_REQUEST.getDepot(); }
 
     public static List<Map<PassagePointType, Map<String, Double>>> getPassagePoints() {
 
@@ -220,10 +223,11 @@ public class PlanningRequestController {
         tmpRequest = new Request();
     }
 
-    public static void calculateDeliveryMenPaths(int deliveryMenNumber, int computationTime) {
+    public static void calculateDeliveryMenPaths(int deliveryMenNumber, int dmSpeed, int computationTime) {
 
         final GeoMap geoMap = GeoMapController.getModel();
 
+        deliveryMenSpeed = dmSpeed;
         hamiltonianCircuitFinder = new OptimalHamiltonianCircuit(computationTime * 1000);
         dijkstraRoutes = DIJKSTRA.solve(geoMap, PLANNING_REQUEST.getPassagePoints());
         hamiltonianCircuit = hamiltonianCircuitFinder.solve(geoMap, dijkstraRoutes, PLANNING_REQUEST);
@@ -416,7 +420,7 @@ public class PlanningRequestController {
 
     }
 
-    public static void deplacerPoint(PassagePoint pointToMove, Intersection intersection, int computationTime) {
+    public static void deplacerPoint(PassagePoint pointToMove, Intersection intersection, int deliveryMenSpeed, int computationTime) {
 
 //        List<PassagePoint> pps = hamiltonianCircuit;
 
@@ -429,7 +433,7 @@ public class PlanningRequestController {
       pointToMove.setAddress(intersection);
 
       // maj du circuit hamiltonien
-      calculateDeliveryMenPaths(1, computationTime * 1000);
+      calculateDeliveryMenPaths(1, deliveryMenSpeed, computationTime * 1000);
 
       //@TODO: remplacer la maj du circuit hamiltonien par traitement avec algo plus léger
 //        for( PassagePoint pp: pps){
@@ -442,6 +446,12 @@ public class PlanningRequestController {
 //                hamiltonianCircuit.add(pointToMove);
 //            }
 //        }
+
+    }
+
+    public static double getTravelDuration(PassagePoint origin, PassagePoint destination) {
+
+      return dijkstraRoutes.get(origin.getAddress().getId()).get(destination.getAddress().getId()).getLength() / (deliveryMenSpeed / 3.6);
 
     }
 

@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"fr.insa.lyon.ifa1"},{"l":"fr.insa.lyon.ifa1.algo"},{"l":"fr.insa.lyon.ifa1.controller"},{"l":"fr.insa.lyon.ifa1.models.map"},{"l":"fr.insa.lyon.ifa1.models.request"},{"l":"fr.insa.lyon.ifa1.models.view"},{"l":"fr.insa.lyon.ifa1.view"},{"l":"fr.insa.lyon.ifa1.xml"}];updateSearchResults();

@@ -400,6 +400,12 @@ public class MainView implements ViewInterface {
 
             if(!PlanningRequestController.getPassagePoints().isEmpty()) {
               PlanningRequestController.resetPassagePoints();
+              TableView tableView = (TableView) SCENE.lookup("#tableViewDetailsPoints");
+              TableView tableView2 = (TableView) SCENE.lookup("#tableViewDetailsTrajet");
+              if(tableView != null && tableView2 != null) {
+                tableView.getItems().clear();
+                tableView2.getItems().clear();
+              }
             }
             Canvas overEffects = (Canvas) SCENE.lookup("#overEffects");
             PlanningRequestController.importPlanningRequest(file);

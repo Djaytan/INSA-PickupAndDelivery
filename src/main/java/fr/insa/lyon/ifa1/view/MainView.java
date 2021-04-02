@@ -609,6 +609,8 @@ public class MainView implements ViewInterface {
         drawDeliveryMenPaths();
         drawPassagePoints();
 
+        populateDeliveryData();
+
       }
 
     }

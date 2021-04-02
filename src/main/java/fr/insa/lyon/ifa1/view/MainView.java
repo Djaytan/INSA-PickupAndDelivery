@@ -30,6 +30,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.lang.Math.min;
 
@@ -296,13 +297,13 @@ public class MainView implements ViewInterface {
 
     }
 
-    private void userAddPickupDeliveryDraw(Canvas map, Color color, double mapX, double mapY) {
+    private void userAddPickupDeliveryDraw(Canvas map, Color color, double mapX, double mapY, int duration) {
         //get closest intersect position
         Intersection closestIntersection = GeoMapController.getClosestIntersection(getWorldCoordinatesFromMapCoordinates(mapX, mapY).get("x"), getWorldCoordinatesFromMapCoordinates(mapX, mapY).get("y"));
 
         //insert value in data structure temporary
         if (state instanceof MainViewAddPickupState) {
-            PlanningRequestController.addPickupPoint(closestIntersection);
+            PlanningRequestController.addPickupPoint(closestIntersection, duration);
 
             //draw
             int x = (int) ((closestIntersection.getLongitude() - mapOrigin.get("x")) * ratio + canvasOrigin.get("x"));
@@ -312,7 +313,7 @@ public class MainView implements ViewInterface {
             gc.strokeOval(x, y, 5, 5);
             gc.fillOval(x, y, 5, 5);
         } else if (state instanceof MainViewAddDeliveryState) {
-            PlanningRequestController.addDeliveryPoint(closestIntersection);
+            PlanningRequestController.addDeliveryPoint(closestIntersection,duration);
             PlanningRequestController.commit();
             drawPassagePoints();
             return;
@@ -446,11 +447,17 @@ public class MainView implements ViewInterface {
     public void onCanvasClick(MouseEvent event) {
 
         if (state instanceof MainViewAddPickupState) {
-            userAddPickupDeliveryDraw((Canvas) SCENE.lookup("#passagePoints"), Color.RED, event.getX(), event.getY());
-            setState(new MainViewAddDeliveryState());
+            int duration = showPopUpDurationPoint();
+            if(duration != -1) {
+                userAddPickupDeliveryDraw((Canvas) SCENE.lookup("#passagePoints"), Color.RED, event.getX(), event.getY(), duration);
+                setState(new MainViewAddDeliveryState());
+            }
         } else if (state instanceof MainViewAddDeliveryState) {
-            userAddPickupDeliveryDraw((Canvas) SCENE.lookup("#passagePoints"), Color.BLUE, event.getX(), event.getY());
-            setState(new MainViewWaitingState());
+            int duration = showPopUpDurationPoint();
+            if(duration != -1) {
+                userAddPickupDeliveryDraw((Canvas) SCENE.lookup("#passagePoints"), Color.BLUE, event.getX(), event.getY(), duration);
+                setState(new MainViewWaitingState());
+            }
         } else if (state instanceof MainViewMovePointState) {
             double x = getWorldCoordinatesFromMapCoordinates(event.getX(), event.getY()).get("x");
             double y = getWorldCoordinatesFromMapCoordinates(event.getX(), event.getY()).get("y");
@@ -469,6 +476,30 @@ public class MainView implements ViewInterface {
             state.canvasClick(this);
         }
 
+    }
+
+    private int showPopUpDurationPoint() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setHeaderText("Temps d'attente du point ?");
+        int duration = 0;
+        String res;
+        boolean error = true;
+        while(error) {
+            try {
+                 Optional<String> result = dialog.showAndWait();
+                 if(!result.isPresent()) {
+                     return -1;
+                 }
+                 res = dialog.getEditor().getText();
+                 duration = Integer.parseInt(res);
+                 error = false;
+
+            }catch(NumberFormatException ex) {
+
+            }
+        }
+
+        return duration;
     }
 
     private void setLoadingCursor(boolean bool) {

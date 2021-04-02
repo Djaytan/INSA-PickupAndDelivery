@@ -167,12 +167,12 @@ public class PlanningRequestController {
 
   }
 
-    public static void addPickupPoint(Intersection intersection) {
-        tmpRequest.setPickup(new DurationPassagePoint(intersection, 5, PassagePointType.PICKUP));
+    public static void addPickupPoint(Intersection intersection, int duration) {
+        tmpRequest.setPickup(new DurationPassagePoint(intersection, duration, PassagePointType.PICKUP));
     }
 
-    public static void addDeliveryPoint(Intersection intersection) {
-        tmpRequest.setDelivery(new DurationPassagePoint(intersection, 5, PassagePointType.DELIVERY));
+    public static void addDeliveryPoint(Intersection intersection, int duration) {
+        tmpRequest.setDelivery(new DurationPassagePoint(intersection, duration, PassagePointType.DELIVERY));
     }
 
     public static boolean commit() {

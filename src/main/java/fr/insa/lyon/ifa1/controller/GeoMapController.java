@@ -2,6 +2,8 @@ package fr.insa.lyon.ifa1.controller;
 
 import fr.insa.lyon.ifa1.models.map.GeoMap;
 import fr.insa.lyon.ifa1.models.map.Intersection;
+import fr.insa.lyon.ifa1.models.map.Segment;
+import fr.insa.lyon.ifa1.models.request.PassagePoint;
 import fr.insa.lyon.ifa1.xml.XMLDeserialization;
 import org.xml.sax.SAXException;
 
@@ -99,6 +101,17 @@ public class GeoMapController {
         }
 
         return closestIntersection;
+    }
+
+    public static String getPointAdresseDestination(PassagePoint point) {
+        List<Segment> segments = GEO_MAP.getSegments();
+        for(Segment s : segments) {
+            if(s.getDest().getId() == point.getAddress().getId()) {
+                return s.getName();
+            }
+        }
+
+        return null;
     }
 
 }

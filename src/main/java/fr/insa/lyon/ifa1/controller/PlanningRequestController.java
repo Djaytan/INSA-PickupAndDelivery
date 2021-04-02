@@ -33,7 +33,7 @@ public class PlanningRequestController {
 
     public static PlanningRequest getModel() { return PLANNING_REQUEST; }
 
-    public static Request tmpRequest = null;
+    private static Request tmpRequest = null;
     
     public static void importPlanningRequest(File file) {
 
@@ -157,16 +157,53 @@ public class PlanningRequestController {
 
     }
 
-    public static void addPickupPoint(Intersection intersection) {
-        tmpRequest.setPickup(new DurationPassagePoint(intersection, 5, PassagePointType.PICKUP));
+  public static PassagePoint getRealClosestPassagePoint(Map<String, Double> coordinates) {
+
+    DurationPassagePoint closestPassagePoint = null;
+    double distance = Double.MAX_VALUE;
+    double tmpDistance;
+    double x = coordinates.get("x");
+    double y = coordinates.get("y");
+
+    //loop on all passage point to find the closest one to x,y
+    for(Request request : PLANNING_REQUEST.getRequests()) {
+
+      DurationPassagePoint[] passagePoints = new DurationPassagePoint[] {
+        request.getPickup(), request.getDelivery()
+      };
+
+      for(DurationPassagePoint passagePoint : passagePoints) {
+
+        Intersection address = passagePoint.getAddress();
+
+        tmpDistance = Math.sqrt(Math.pow(x - address.getLongitude(), 2) + Math.pow(y - address.getLatitude(), 2));
+
+        if (tmpDistance < distance) {
+          closestPassagePoint = passagePoint;
+          distance = tmpDistance;
+        }
+
+      }
+
     }
 
-    public static void addDeliveryPoint(Intersection intersection) {
-        tmpRequest.setDelivery(new DurationPassagePoint(intersection, 5, PassagePointType.DELIVERY));
+    return closestPassagePoint;
+
+  }
+
+    public static void addPickupPoint(Intersection intersection, int duration) {
+        tmpRequest.setPickup(new DurationPassagePoint(intersection, duration, PassagePointType.PICKUP));
+    }
+
+    public static void addDeliveryPoint(Intersection intersection, int duration) {
+        tmpRequest.setDelivery(new DurationPassagePoint(intersection, duration, PassagePointType.DELIVERY));
     }
 
     public static boolean commit() {
         if(tmpRequest != null) {
+            if(!hamiltonianCircuit.isEmpty()) {
+                //TODO : crochet
+            }
             PLANNING_REQUEST.addRequest(tmpRequest);
             return true;
         }
@@ -178,9 +215,7 @@ public class PlanningRequestController {
     }
 
     public static void begin() {
-        if(tmpRequest == null) {
-            tmpRequest = new Request();
-        }
+        tmpRequest = new Request();
     }
 
     public static void calculateDeliveryMenPaths(int deliveryMenNumber) {
@@ -190,6 +225,37 @@ public class PlanningRequestController {
         dijkstraRoutes = DIJKSTRA.solve(geoMap, PLANNING_REQUEST.getPassagePoints());
         hamiltonianCircuit = HAMILTONIAN_CIRCUIT_FINDER.solve(geoMap, dijkstraRoutes, PLANNING_REQUEST);
 
+    }
+
+    public static List<PassagePoint> getHamiltonianCircuit() {
+        return hamiltonianCircuit;
+    }
+
+    public static List<String> getDeliveryTableViewAdress() {
+        List<String> adressList = new ArrayList<>();
+        String tmpSegmentName;
+
+        if(hamiltonianCircuit.size() > 1) {
+            for (int i = 0; i < hamiltonianCircuit.size() - 1; i++) {
+
+                String origin = hamiltonianCircuit.get(i).getAddress().getId();
+                String destination = hamiltonianCircuit.get(i + 1).getAddress().getId();
+                FindShortestRoutes.Route route = dijkstraRoutes.get(origin).get(destination);
+
+                if(route.getItinerary().size() > 0) {
+                    tmpSegmentName = route.getItinerary().get(0).getName();
+                    adressList.add(tmpSegmentName);
+                    for (int j = 1; j < route.getItinerary().size() - 1; j++) {
+                        if(!tmpSegmentName.equals(route.getItinerary().get(j).getName())) {
+                            adressList.add(route.getItinerary().get(j).getName());
+                            tmpSegmentName = route.getItinerary().get(j).getName();
+                        }
+                    }
+                }
+            }
+        }
+
+        return adressList;
     }
 
     public static List<List<Map<String, Map<String, Double>>>> getDeliveryMenPaths() {
@@ -324,15 +390,19 @@ public class PlanningRequestController {
       PassagePoint passagePoint;
       Request request = getRequest(passagePointData);
 
-      if(passagePointData.get("type") == PassagePointType.PICKUP) {
+      if (passagePointData.get("type") == PassagePointType.PICKUP) {
 
         passagePoint = request.getPickup();
-        if(order >= getPassagePointOrder(request.getDelivery())) { return false; }
+        if (order >= getPassagePointOrder(request.getDelivery())) {
+          return false;
+        }
 
       } else {
 
         passagePoint = request.getDelivery();
-        if(order <= getPassagePointOrder(request.getPickup())) { return false; }
+        if (order <= getPassagePointOrder(request.getPickup())) {
+          return false;
+        }
 
       }
 
@@ -340,6 +410,35 @@ public class PlanningRequestController {
       hamiltonianCircuit.add(order, passagePoint);
 
       return true;
+
+    }
+
+    public static void deplacerPoint(PassagePoint pointToMove, Intersection intersection) {
+
+//        List<PassagePoint> pps = hamiltonianCircuit;
+
+//      for (PassagePoint pp: PLANNING_REQUEST.getPassagePoints()){
+//        if (pp.equals(pointToMove)){
+//          pp.setAddress(intersection);
+//        }
+//      }
+
+      pointToMove.setAddress(intersection);
+
+      // maj du circuit hamiltonien
+      calculateDeliveryMenPaths(1);
+
+      //@TODO: remplacer la maj du circuit hamiltonien par traitement avec algo plus léger
+//        for( PassagePoint pp: pps){
+//            if (pp.equals(pointToMove)){
+//                hamiltonianCircuit.remove(pointToMove);
+//
+//                // ajouter ici appel algorithme crochet
+//                pointToMove.getAddress().setLatitude(newLatitude);
+//                pointToMove.getAddress().setLongitude(newLongitude);
+//                hamiltonianCircuit.add(pointToMove);
+//            }
+//        }
 
     }
 

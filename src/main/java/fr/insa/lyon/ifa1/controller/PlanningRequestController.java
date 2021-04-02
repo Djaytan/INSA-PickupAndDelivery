@@ -15,10 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -135,6 +132,40 @@ public class PlanningRequestController {
         );
 
     }
+
+  public static PassagePoint getRealClosestPassagePoint(Map<String, Double> coordinates) {
+
+    DurationPassagePoint closestPassagePoint = null;
+    double distance = Double.MAX_VALUE;
+    double tmpDistance;
+    double x = coordinates.get("x");
+    double y = coordinates.get("y");
+
+    //loop on all passage point to find the closest one to x,y
+    for(Request request : PLANNING_REQUEST.getRequests()) {
+
+      DurationPassagePoint[] passagePoints = new DurationPassagePoint[] {
+        request.getPickup(), request.getDelivery()
+      };
+
+      for(DurationPassagePoint passagePoint : passagePoints) {
+
+        Intersection address = passagePoint.getAddress();
+
+        tmpDistance = Math.sqrt(Math.pow(x - address.getLongitude(), 2) + Math.pow(y - address.getLatitude(), 2));
+
+        if (tmpDistance < distance) {
+          closestPassagePoint = passagePoint;
+          distance = tmpDistance;
+        }
+
+      }
+
+    }
+
+    return closestPassagePoint;
+
+  }
 
     public static void addPickupPoint(Intersection intersection) {
         tmpRequest.setPickup(new DurationPassagePoint(intersection, 5, PassagePointType.PICKUP));
@@ -332,5 +363,32 @@ public class PlanningRequestController {
 
     }
 
+    public static void deplacerPoint(PassagePoint pointToMove, Intersection intersection) {
+
+//        List<PassagePoint> pps = hamiltonianCircuit;
+
+//      for (PassagePoint pp: PLANNING_REQUEST.getPassagePoints()){
+//        if (pp.equals(pointToMove)){
+//          pp.setAddress(intersection);
+//        }
+//      }
+
+      pointToMove.setAddress(intersection);
+
+      // maj du circuit hamiltonien
+      calculateDeliveryMenPaths(1);
+
+      //@TODO: remplacer la maj du circuit hamiltonien par traitement avec algo plus léger
+//        for( PassagePoint pp: pps){
+//            if (pp.equals(pointToMove)){
+//                hamiltonianCircuit.remove(pointToMove);
+//
+//                // ajouter ici appel algorithme crochet
+//                pointToMove.getAddress().setLatitude(newLatitude);
+//                pointToMove.getAddress().setLongitude(newLongitude);
+//                hamiltonianCircuit.add(pointToMove);
+//            }
+//        }
+    }
 
 }

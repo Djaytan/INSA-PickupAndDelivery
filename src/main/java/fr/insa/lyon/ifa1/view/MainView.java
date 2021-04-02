@@ -7,6 +7,8 @@ import fr.insa.lyon.ifa1.models.map.Intersection;
 import fr.insa.lyon.ifa1.models.request.*;
 import fr.insa.lyon.ifa1.models.view.TableViewModel;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import fr.insa.lyon.ifa1.models.request.PassagePoint;
+import fr.insa.lyon.ifa1.models.request.PassagePointType;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -59,6 +61,7 @@ public class MainView implements ViewInterface {
 
     private static StateMainView state;
     private static Map<PassagePointType, Map<String, Double>> closestPassagePoint = null;
+    private static PassagePoint realClosestPassagePoint = null;
 
     public void show() {
 
@@ -83,7 +86,7 @@ public class MainView implements ViewInterface {
         MenuItem itemDelete = new MenuItem("Supprimer");
         itemDelete.setOnAction(onDeletePassagePoint());
         MenuItem itemMove = new MenuItem("Déplacer");
-        itemMove.setOnAction(e -> { int x = 0; });
+        itemMove.setOnAction(e -> { setState(new MainViewMovePointState(realClosestPassagePoint)); });
 
         // Add MenuItem to ContextMenu
         contextMenu.getItems().addAll(itemDelete, itemMove);
@@ -421,7 +424,7 @@ public class MainView implements ViewInterface {
 
                 Map<String, Double> coordinates = getWorldCoordinatesFromMapCoordinates(e.getX(), e.getY());
                 closestPassagePoint = PlanningRequestController.getClosestPassagePoint(coordinates);
-
+                realClosestPassagePoint = PlanningRequestController.getRealClosestPassagePoint(coordinates);
                 drawOveredPassagePoints();
 
             }
@@ -439,6 +442,17 @@ public class MainView implements ViewInterface {
         } else if(state instanceof MainViewAddDeliveryState) {
             userAddPickupDeliveryDraw((Canvas)SCENE.lookup("#passagePoints"), Color.BLUE, event.getX(), event.getY());
             setState(new MainViewWaitingState());
+        } else if( state instanceof MainViewMovePointState){
+          double x = getWorldCoordinatesFromMapCoordinates(event.getX(),event.getY()).get("x");
+          double y = getWorldCoordinatesFromMapCoordinates(event.getX(),event.getY()).get("y");
+          Intersection nearestIntersection = GeoMapController.getClosestIntersection(x,y);
+          PlanningRequestController.deplacerPoint(((MainViewMovePointState) state).pointToMove,nearestIntersection);
+//          userDrawPoint((Canvas)SCENE.lookup("#map"), Color.RED, event.getX(), event.getY());
+          drawPassagePoints();
+          drawDeliveryMenPaths();
+          clearCanvas((Canvas) SCENE.lookup("#overEffects"));
+          setState(new MainViewWaitingState());
+
         }
 
         if(state != null) {

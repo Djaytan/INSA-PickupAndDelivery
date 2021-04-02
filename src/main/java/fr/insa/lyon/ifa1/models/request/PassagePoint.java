@@ -14,5 +14,11 @@ public class PassagePoint {
         return address;
     }
 
-    public PassagePointType getType() { return PassagePointType.NONE;};
+    public PassagePointType getType() { 
+        return PassagePointType.NONE;
+    }
+    
+    public void setAddress(Intersection address) {
+      this.address = address;
+    }
 }

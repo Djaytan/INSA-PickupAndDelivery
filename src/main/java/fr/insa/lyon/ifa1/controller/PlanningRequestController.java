@@ -63,6 +63,11 @@ public class PlanningRequestController {
 
     }
 
+    public static void resetPassagePoints() {
+      PLANNING_REQUEST.resetRequests();
+      hamiltonianCircuit.clear();
+    }
+
     public static Depot getRealDepot() { return PLANNING_REQUEST.getDepot(); }
 
     public static List<Map<PassagePointType, Map<String, Double>>> getPassagePoints() {

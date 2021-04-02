@@ -389,7 +389,6 @@ public class MainView implements ViewInterface {
     }
 
     public void openFileChooser() {
-
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Importer des points relais au format XML");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("xml file", "*.xml"));
@@ -398,11 +397,14 @@ public class MainView implements ViewInterface {
 
         if(file != null && file.getName().endsWith(".xml")) {
 
+            if(!PlanningRequestController.getPassagePoints().isEmpty()) {
+              PlanningRequestController.resetPassagePoints();
+            }
             Canvas overEffects = (Canvas) SCENE.lookup("#overEffects");
-
             PlanningRequestController.importPlanningRequest(file);
             System.out.println("Start drawing P&D points");
             drawPassagePoints();
+            drawDeliveryMenPaths();
 
             Button btnPath = (Button) SCENE.lookup("#btnPath");
             Button btnAddDelivery = (Button) SCENE.lookup("#btnAddPickup");

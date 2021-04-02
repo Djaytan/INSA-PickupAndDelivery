@@ -130,6 +130,8 @@ public class PlanningRequestController {
         return Map.ofEntries(
 
                   Map.entry("type", closestPassagePoint.getType()),
+                  Map.entry("address", closestPassagePoint.getAddress().getId()),
+                  Map.entry("duration", closestPassagePoint.getDuration()),
 
                   Map.entry("x", closestPassagePoint.getAddress().getLongitude()),
                   Map.entry("y", closestPassagePoint.getAddress().getLatitude()),

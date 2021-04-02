@@ -70,6 +70,8 @@ public class MainView implements ViewInterface {
         overEffects.setOnMouseMoved(onMouseMove());
 
         tooltip.setShowDelay(Duration.ZERO);
+        tooltip.setPrefWidth(125);
+        tooltip.setWrapText(true);
 
         setState(new MainViewWaitingState());
 
@@ -300,9 +302,22 @@ public class MainView implements ViewInterface {
         Map.entry("y", (double) closestPassagePoint.get("y") )
       ));
 
+      int order = (int) closestPassagePoint.get("order");
+      String address = (String) closestPassagePoint.get("address");
+      double latitude = (double) closestPassagePoint.get("x");
+      double longitude = (double) closestPassagePoint.get("y");
+      int minutes = (int) closestPassagePoint.get("duration") / 60;
+      int seconds = (int) closestPassagePoint.get("duration") - minutes * 60;
+
       tooltip.setX(coordinates.get("x") + bounds.getMinX());
       tooltip.setY(coordinates.get("y")+ bounds.getMinY());
-      tooltip.setText("x : " + closestPassagePoint.get("x") + " y " + closestPassagePoint.get("y"));
+      tooltip.setText(
+        "Ordre : " + order + "               " +
+        " Adresse : " + address +
+        " Latitude : " + latitude +
+        " Longitude : " + longitude +
+        " Durée : " + minutes + "mins " + seconds + "secs"
+      );
 
     }
 

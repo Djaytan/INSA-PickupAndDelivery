@@ -1,6 +1,5 @@
 package fr.insa.lyon.ifa1.controller;
 
-import fr.insa.lyon.ifa1.view.DeliveryView;
 import fr.insa.lyon.ifa1.view.ImportView;
 import fr.insa.lyon.ifa1.view.MainView;
 import fr.insa.lyon.ifa1.view.ViewInterface;
@@ -26,8 +25,7 @@ public class ViewController extends Application {
 
   private static final Map<View, Class<? extends ViewInterface>> VIEWS_CLASS = Map.ofEntries(
           Map.entry(View.IMPORT_VIEW, ImportView.class),
-          Map.entry(View.MAIN_VIEW, MainView.class),
-          Map.entry(View.DELIVERY_VIEW, DeliveryView.class)
+          Map.entry(View.MAIN_VIEW, MainView.class)
   );
 
   private static final String FXML_REPOSITORY = "/view/";

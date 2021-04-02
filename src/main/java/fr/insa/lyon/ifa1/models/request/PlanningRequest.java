@@ -50,4 +50,8 @@ public class PlanningRequest {
 
   public void setRequests(List<Request> requests) { this.requests = requests; }
 
+  public void resetRequests(){
+    this.requests.clear();
+  }
+
 }

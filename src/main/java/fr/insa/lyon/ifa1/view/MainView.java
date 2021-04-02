@@ -339,6 +339,7 @@ public class MainView implements ViewInterface {
             PlanningRequestController.addDeliveryPoint(closestIntersection,duration);
             PlanningRequestController.commit();
             drawPassagePoints();
+            drawDeliveryMenPaths();
         }
     }
 
@@ -483,22 +484,24 @@ public class MainView implements ViewInterface {
 
     }
 
-    private EventHandler<? super MouseEvent> onMouseMove() {
+  private EventHandler<? super MouseEvent> onMouseMove() {
 
-        return e -> {
+    return e -> {
 
-            if (!PlanningRequestController.isEmpty()) {
+      if (!(state instanceof MainViewMovePointState)) {
+        if (!PlanningRequestController.isEmpty()) {
 
-                Map<String, Double> coordinates = getWorldCoordinatesFromMapCoordinates(e.getX(), e.getY());
-                closestPassagePoint = PlanningRequestController.getClosestPassagePoint(coordinates);
-                realClosestPassagePoint = PlanningRequestController.getRealClosestPassagePoint(coordinates);
-                drawOveredPassagePoints();
+          Map<String, Double> coordinates = getWorldCoordinatesFromMapCoordinates(e.getX(), e.getY());
+          closestPassagePoint = PlanningRequestController.getClosestPassagePoint(coordinates);
+          realClosestPassagePoint = PlanningRequestController.getRealClosestPassagePoint(coordinates);
+          drawOveredPassagePoints();
+        }
+      }
 
-            }
+    };
 
-        };
 
-    }
+  }
 
     @FXML
     public void onCanvasClick(MouseEvent event) {
@@ -539,7 +542,7 @@ public class MainView implements ViewInterface {
 
     private int showPopUpDurationPoint() {
         TextInputDialog dialog = new TextInputDialog();
-        dialog.setHeaderText("Temps d'attente du point ?");
+        dialog.setHeaderText("Temps d'attente du point (en s) ?");
         int duration = 0;
         String res;
         boolean error = true;

@@ -1,9 +1,6 @@
 package fr.insa.lyon.ifa1.controller;
 
-import fr.insa.lyon.ifa1.algo.Dijkstra;
-import fr.insa.lyon.ifa1.algo.FindShortestHamiltonianCircuit;
-import fr.insa.lyon.ifa1.algo.FindShortestRoutes;
-import fr.insa.lyon.ifa1.algo.OptimalHamiltonianCircuit;
+import fr.insa.lyon.ifa1.algo.*;
 import fr.insa.lyon.ifa1.models.map.GeoMap;
 import fr.insa.lyon.ifa1.models.map.Intersection;
 import fr.insa.lyon.ifa1.models.request.*;
@@ -28,6 +25,7 @@ public class PlanningRequestController {
     private static final PlanningRequest PLANNING_REQUEST = new PlanningRequest();
     private static final Dijkstra DIJKSTRA = new Dijkstra();
     private static FindShortestHamiltonianCircuit hamiltonianCircuitFinder;
+    private static final AddPickupAndDeliveryImpl ADD_PICKUP_AND_DELIVERY = new AddPickupAndDeliveryImpl();
 
     private static Map<String, Map<String, FindShortestRoutes.Route>> dijkstraRoutes;
     private static List<PassagePoint> hamiltonianCircuit = new ArrayList<>();
@@ -208,8 +206,12 @@ public class PlanningRequestController {
         if(tmpRequest != null) {
             if(!hamiltonianCircuit.isEmpty()) {
                 //TODO : crochet
+              final GeoMap geoMap = GeoMapController.getModel();
+              ADD_PICKUP_AND_DELIVERY.solve(geoMap, PLANNING_REQUEST, tmpRequest, hamiltonianCircuit, dijkstraRoutes);
+              //hamiltonianCircuit.add()
+            } else {
+              PLANNING_REQUEST.addRequest(tmpRequest);
             }
-            PLANNING_REQUEST.addRequest(tmpRequest);
             return true;
         }
        return false;
@@ -421,31 +423,14 @@ public class PlanningRequestController {
     }
 
     public static void deplacerPoint(PassagePoint pointToMove, Intersection intersection, int deliveryMenSpeed, int computationTime) {
-
-//        List<PassagePoint> pps = hamiltonianCircuit;
-
-//      for (PassagePoint pp: PLANNING_REQUEST.getPassagePoints()){
-//        if (pp.equals(pointToMove)){
-//          pp.setAddress(intersection);
-//        }
-//      }
-
       pointToMove.setAddress(intersection);
 
       // maj du circuit hamiltonien
-      calculateDeliveryMenPaths(1, deliveryMenSpeed, computationTime * 1000);
+      if(PlanningRequestController.isCalculated()){
+        //@TODO: remplacer la maj du circuit hamiltonien par traitement avec algo plus léger
+        calculateDeliveryMenPaths(1, deliveryMenSpeed, computationTime * 1000);
+      }
 
-      //@TODO: remplacer la maj du circuit hamiltonien par traitement avec algo plus léger
-//        for( PassagePoint pp: pps){
-//            if (pp.equals(pointToMove)){
-//                hamiltonianCircuit.remove(pointToMove);
-//
-//                // ajouter ici appel algorithme crochet
-//                pointToMove.getAddress().setLatitude(newLatitude);
-//                pointToMove.getAddress().setLongitude(newLongitude);
-//                hamiltonianCircuit.add(pointToMove);
-//            }
-//        }
 
     }
 

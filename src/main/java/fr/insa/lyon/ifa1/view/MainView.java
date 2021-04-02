@@ -79,6 +79,7 @@ public class MainView implements ViewInterface {
 
         SCENE.widthProperty().addListener(onWidthResize());
         SCENE.heightProperty().addListener(onHeightResize());
+        SCENE.getWindow().setHeight(SCENE.getWindow().getHeight() + 1);
         SCENE.getWindow().setWidth(SCENE.getWindow().getWidth() + 1);
 
         //contextMenu

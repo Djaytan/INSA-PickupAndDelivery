@@ -66,7 +66,7 @@ public class OptimalHamiltonianCircuitTest {
         destDeG.put("F", new Segment(3, "rue", intersections.get("G"), intersections.get("F")));
         destDeG.put("Depot", new Segment(1, "rue", intersections.get("G"), intersections.get("Depot")));
 
-        segments.put("Depot", destDeA);
+        segments.put("Depot", destDeDepot);
         segments.put("A", destDeA);
         segments.put("B", destDeB);
         segments.put("C", destDeC);

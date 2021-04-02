@@ -216,6 +216,7 @@ public class MainView implements ViewInterface {
             String travelTimeString;
             double travelTime;
             double hourOfArrival = 0;
+            int duration = 0;
             //populate table
             int i = 0;
             for (PassagePoint passagePoint : passagePointList) {
@@ -231,9 +232,6 @@ public class MainView implements ViewInterface {
                         adresseDestination = "impossible de récupérer l'adresse";
                     }
 
-                    int duration = point.getDuration();
-                    String durationString = (int) (duration / 3600) + "h" + (int) ((duration % 3600) / 60) + "m" + (int) duration % 60 + "s";
-
                     if(i>1) { travelTime = PlanningRequestController.getTravelDuration(passagePointList.get(i-1), point); }
                     else { travelTime = PlanningRequestController.getTravelDuration(PlanningRequestController.getRealDepot(), point); }
                     travelTimeString = (int) (travelTime / 3600) + "h" + (int) ((travelTime % 3600) / 60) + "m" + (int) travelTime % 60 + "s";
@@ -241,6 +239,9 @@ public class MainView implements ViewInterface {
                     hourOfArrival = hourOfArrival + travelTime;
                     if(i>1) { hourOfArrival = hourOfArrival + duration; }
                     String timeOfArrival = (int) (hourOfArrival / 3600) + "h" + (int) ((hourOfArrival % 3600) / 60) + "m" + (int) hourOfArrival % 60 + "s";
+
+                    duration = point.getDuration();
+                    String durationString = (int) (duration / 3600) + "h" + (int) ((duration % 3600) / 60) + "m" + (int) duration % 60 + "s";
 
                     tableView.getItems().add(new TableViewModel(Integer.toString(i), adresseDestination, type, timeOfArrival, travelTimeString, durationString));
                 } catch (ClassCastException ex) {

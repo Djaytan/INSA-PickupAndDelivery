@@ -302,6 +302,7 @@ public class MainView implements ViewInterface {
         Map.entry("y", (double) closestPassagePoint.get("y") )
       ));
 
+      String type = closestPassagePoint.get("type") == PassagePointType.PICKUP ? "Pickup" : "Delivery";
       int order = (int) closestPassagePoint.get("order");
       String address = (String) closestPassagePoint.get("address");
       double latitude = (double) closestPassagePoint.get("x");
@@ -312,7 +313,7 @@ public class MainView implements ViewInterface {
       tooltip.setX(coordinates.get("x") + bounds.getMinX());
       tooltip.setY(coordinates.get("y")+ bounds.getMinY());
       tooltip.setText(
-        "Ordre : " + order + "               " +
+        type + " (" + order + ")                 " +
         " Adresse : " + address +
         " Latitude : " + latitude +
         " Longitude : " + longitude +

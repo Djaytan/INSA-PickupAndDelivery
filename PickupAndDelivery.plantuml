@@ -1,0 +1,319 @@
+@startuml
+
+title __PICKUPANDDELIVERY's Class Diagram__\n
+
+  namespace fr.insa.lyon.ifa1 {
+    class fr.insa.lyon.ifa1.App {
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace algo {
+      interface fr.insa.lyon.ifa1.algo.AddPickupAndDelivery {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace algo {
+      class fr.insa.lyon.ifa1.algo.AddPickupAndDeliveryImpl {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace algo {
+      interface fr.insa.lyon.ifa1.algo.ChangePassageOrder {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace algo {
+      class fr.insa.lyon.ifa1.algo.ChangePassageOrderImpl {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace algo {
+      class fr.insa.lyon.ifa1.algo.Dijkstra {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace algo {
+      interface fr.insa.lyon.ifa1.algo.FindShortestHamiltonianCircuit {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace algo {
+      interface fr.insa.lyon.ifa1.algo.FindShortestRoutes {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace algo {
+      class fr.insa.lyon.ifa1.algo.OptimalHamiltonianCircuit {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace controller {
+      class fr.insa.lyon.ifa1.controller.GeoMapController {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace controller {
+      class fr.insa.lyon.ifa1.controller.PlanningRequestController {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace controller {
+      class fr.insa.lyon.ifa1.controller.ViewController {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace models.map {
+      class fr.insa.lyon.ifa1.models.map.GeoMap {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace models.map {
+      class fr.insa.lyon.ifa1.models.map.Intersection {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace models.map {
+      class fr.insa.lyon.ifa1.models.map.Segment {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace models.request {
+      class fr.insa.lyon.ifa1.models.request.Depot {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace models.request {
+      class fr.insa.lyon.ifa1.models.request.DurationPassagePoint {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace models.request {
+      class fr.insa.lyon.ifa1.models.request.PassagePoint {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace models.request {
+      enum PassagePointType {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace models.request {
+      class fr.insa.lyon.ifa1.models.request.PlanningRequest {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace models.request {
+      class fr.insa.lyon.ifa1.models.request.Request {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace models.view {
+      class fr.insa.lyon.ifa1.models.view.TableViewModel {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace view {
+      class fr.insa.lyon.ifa1.view.DeliveryView {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace view {
+      class fr.insa.lyon.ifa1.view.ImportView {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace view {
+      class fr.insa.lyon.ifa1.view.MainView {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace view {
+      class fr.insa.lyon.ifa1.view.MainViewAddDeliveryState {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace view {
+      class fr.insa.lyon.ifa1.view.MainViewAddPickupState {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace view {
+      class fr.insa.lyon.ifa1.view.MainViewMovePointState {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace view {
+      class fr.insa.lyon.ifa1.view.MainViewWaitingState {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace view {
+      interface fr.insa.lyon.ifa1.view.StateMainView {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace view {
+      interface fr.insa.lyon.ifa1.view.ViewInterface {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace xml {
+      class fr.insa.lyon.ifa1.xml.InvalidXMLTagException {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace xml {
+      class fr.insa.lyon.ifa1.xml.XMLDeserialization {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace xml {
+      class fr.insa.lyon.ifa1.xml.XMLMapHandler {
+      }
+    }
+  }
+  
+
+  namespace fr.insa.lyon.ifa1 {
+    namespace xml {
+      class fr.insa.lyon.ifa1.xml.XMLRequestsHandler {
+      }
+    }
+  }
+  
+
+  fr.insa.lyon.ifa1.algo.AddPickupAndDeliveryImpl .up.|> fr.insa.lyon.ifa1.algo.AddPickupAndDelivery
+  fr.insa.lyon.ifa1.algo.ChangePassageOrderImpl .up.|> fr.insa.lyon.ifa1.algo.ChangePassageOrder
+  fr.insa.lyon.ifa1.algo.Dijkstra .up.|> fr.insa.lyon.ifa1.algo.FindShortestRoutes
+  fr.insa.lyon.ifa1.algo.OptimalHamiltonianCircuit .up.|> fr.insa.lyon.ifa1.algo.FindShortestHamiltonianCircuit
+  fr.insa.lyon.ifa1.algo.OptimalHamiltonianCircuit o-- fr.insa.lyon.ifa1.models.request.PlanningRequest : pr
+  fr.insa.lyon.ifa1.controller.ViewController -up-|> javafx.application.Application
+  fr.insa.lyon.ifa1.models.map.Segment o-- fr.insa.lyon.ifa1.models.map.Intersection : dest
+  fr.insa.lyon.ifa1.models.map.Segment o-- fr.insa.lyon.ifa1.models.map.Intersection : origin
+  fr.insa.lyon.ifa1.models.request.Depot -up-|> fr.insa.lyon.ifa1.models.request.PassagePoint
+  fr.insa.lyon.ifa1.models.request.Depot o-- fr.insa.lyon.ifa1.models.request.Depot.Time : departureTime
+  fr.insa.lyon.ifa1.models.request.DurationPassagePoint -up-|> fr.insa.lyon.ifa1.models.request.PassagePoint
+  fr.insa.lyon.ifa1.models.request.DurationPassagePoint o-- fr.insa.lyon.ifa1.models.request.PassagePointType : type
+  fr.insa.lyon.ifa1.models.request.PassagePoint o-- fr.insa.lyon.ifa1.models.map.Intersection : address
+  fr.insa.lyon.ifa1.models.request.PlanningRequest o-- fr.insa.lyon.ifa1.models.request.Depot : depot
+  fr.insa.lyon.ifa1.models.request.Request o-- fr.insa.lyon.ifa1.models.request.DurationPassagePoint : delivery
+  fr.insa.lyon.ifa1.models.request.Request o-- fr.insa.lyon.ifa1.models.request.DurationPassagePoint : pickup
+  fr.insa.lyon.ifa1.view.DeliveryView .up.|> fr.insa.lyon.ifa1.view.ViewInterface
+  fr.insa.lyon.ifa1.view.ImportView .up.|> fr.insa.lyon.ifa1.view.ViewInterface
+  fr.insa.lyon.ifa1.view.MainView .up.|> fr.insa.lyon.ifa1.view.ViewInterface
+  fr.insa.lyon.ifa1.view.MainViewAddDeliveryState .up.|> fr.insa.lyon.ifa1.view.StateMainView
+  fr.insa.lyon.ifa1.view.MainViewAddPickupState .up.|> fr.insa.lyon.ifa1.view.StateMainView
+  fr.insa.lyon.ifa1.view.MainViewMovePointState .up.|> fr.insa.lyon.ifa1.view.StateMainView
+  fr.insa.lyon.ifa1.view.MainViewMovePointState o-- fr.insa.lyon.ifa1.models.request.PassagePoint : pointToMove
+  fr.insa.lyon.ifa1.view.MainViewWaitingState .up.|> fr.insa.lyon.ifa1.view.StateMainView
+  fr.insa.lyon.ifa1.xml.InvalidXMLTagException -up-|> org.xml.sax.SAXException
+  fr.insa.lyon.ifa1.xml.XMLMapHandler -up-|> org.xml.sax.helpers.DefaultHandler
+  fr.insa.lyon.ifa1.xml.XMLRequestsHandler -up-|> org.xml.sax.helpers.DefaultHandler
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

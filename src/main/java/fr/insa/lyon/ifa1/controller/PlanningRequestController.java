@@ -1,9 +1,6 @@
 package fr.insa.lyon.ifa1.controller;
 
-import fr.insa.lyon.ifa1.algo.Dijkstra;
-import fr.insa.lyon.ifa1.algo.FindShortestHamiltonianCircuit;
-import fr.insa.lyon.ifa1.algo.FindShortestRoutes;
-import fr.insa.lyon.ifa1.algo.OptimalHamiltonianCircuit;
+import fr.insa.lyon.ifa1.algo.*;
 import fr.insa.lyon.ifa1.models.map.GeoMap;
 import fr.insa.lyon.ifa1.models.map.Intersection;
 import fr.insa.lyon.ifa1.models.request.*;
@@ -27,6 +24,7 @@ public class PlanningRequestController {
     private static final PlanningRequest PLANNING_REQUEST = new PlanningRequest();
     private static final Dijkstra DIJKSTRA = new Dijkstra();
     private static final FindShortestHamiltonianCircuit HAMILTONIAN_CIRCUIT_FINDER = new OptimalHamiltonianCircuit(5000);
+    private static final AddPickupAndDeliveryImpl ADD_PICKUP_AND_DELIVERY = new AddPickupAndDeliveryImpl();
 
     private static Map<String, Map<String, FindShortestRoutes.Route>> dijkstraRoutes;
     private static List<PassagePoint> hamiltonianCircuit = new ArrayList<>();
@@ -203,8 +201,12 @@ public class PlanningRequestController {
         if(tmpRequest != null) {
             if(!hamiltonianCircuit.isEmpty()) {
                 //TODO : crochet
+              final GeoMap geoMap = GeoMapController.getModel();
+              ADD_PICKUP_AND_DELIVERY.solve(geoMap, PLANNING_REQUEST, tmpRequest, hamiltonianCircuit, dijkstraRoutes);
+              //hamiltonianCircuit.add()
+            } else {
+              PLANNING_REQUEST.addRequest(tmpRequest);
             }
-            PLANNING_REQUEST.addRequest(tmpRequest);
             return true;
         }
        return false;

@@ -328,6 +328,7 @@ public class MainView implements ViewInterface {
             PlanningRequestController.addDeliveryPoint(closestIntersection,duration);
             PlanningRequestController.commit();
             drawPassagePoints();
+            drawDeliveryMenPaths();
         }
     }
 

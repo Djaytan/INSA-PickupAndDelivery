@@ -89,7 +89,7 @@ public class ViewController extends Application {
 
   }
 
-  public Scene getScene() {
+  public static Scene getScene() {
     return stage.getScene();
   }
 

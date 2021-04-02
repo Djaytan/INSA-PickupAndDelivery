@@ -56,7 +56,7 @@
                                    </font>
                                </Text>
                
-                                     <HBox alignment="BASELINE_RIGHT" prefWidth="900.0">
+                                     <HBox alignment="BASELINE_RIGHT" prefWidth="880.0">
                                    <Text id="stateTxt" />
                                    <ButtonBar>
                                        <buttons>

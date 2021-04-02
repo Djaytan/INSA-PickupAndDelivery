@@ -138,7 +138,7 @@
                      <Font name="Tahoma" size="24.0" />
                    </font>
                  </Text>
-                 <Text text="Liste des points à attendre" GridPane.columnIndex="1">
+                 <Text text="Liste des points à atteindre" GridPane.columnIndex="1">
                    <font>
                      <Font name="Tahoma" size="24.0" />
                    </font>

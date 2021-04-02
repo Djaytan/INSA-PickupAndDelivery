@@ -284,31 +284,27 @@ public class MainView implements ViewInterface {
 
     }
 
-    private void userDrawPoint(Canvas map, Color color, double mapX, double mapY) {
+    private void userAddPickupDeliveryDraw(Canvas map, Color color, double mapX, double mapY) {
         //get closest intersect position
         Intersection closestIntersection = GeoMapController.getClosestIntersection(getWorldCoordinatesFromMapCoordinates(mapX, mapY).get("x"), getWorldCoordinatesFromMapCoordinates(mapX, mapY).get("y"));
 
         //insert value in data structure temporary
         if(state instanceof MainViewAddPickupState) {
             PlanningRequestController.addPickupPoint(closestIntersection);
+
+            //draw
+            int x = (int) ((closestIntersection.getLongitude() - mapOrigin.get("x")) * ratio + canvasOrigin.get("x"));
+            int y = (int) ((closestIntersection.getLatitude() - mapOrigin.get("y")) * ratio + canvasOrigin.get("y"));
+            GraphicsContext gc = map.getGraphicsContext2D();
+            gc.setFill(color);
+            gc.strokeOval(x, y, 5, 5);
+            gc.fillOval(x, y, 5, 5);
         } else if(state instanceof MainViewAddDeliveryState) {
             PlanningRequestController.addDeliveryPoint(closestIntersection);
             PlanningRequestController.commit();
-            Button btnPath = (Button) SCENE.lookup("#btnPath");
-            if(btnPath != null) {
-                btnPath.setDisable(false);
-            }
+            drawPassagePoints();
+            return;
         }
-
-        //draw
-        int x = (int) ((closestIntersection.getLongitude() - mapOrigin.get("x")) * ratio + canvasOrigin.get("x"));
-        int y = (int) ((closestIntersection.getLatitude() - mapOrigin.get("y")) * ratio + canvasOrigin.get("y"));
-        GraphicsContext gc = map.getGraphicsContext2D();
-        gc.setFill(color);
-        gc.strokeOval(x, y, 5, 5);
-        gc.fillOval(x, y, 5, 5);
-
-        //map.setOnContextMenuRequested(e -> menu.show(map.getScene().getWindow(), e.getScreenX(), e.getScreenY()));
     }
 
     private void drawAll() {
@@ -336,17 +332,18 @@ public class MainView implements ViewInterface {
         File file = fileChooser.showOpenDialog(null);
 
         if(file != null && file.getName().endsWith(".xml")) {
-            Canvas canvas = (Canvas) SCENE.lookup("#passagePoints");
-
             PlanningRequestController.importPlanningRequest(file);
             System.out.println("Start drawing P&D points");
             drawPassagePoints();
 
             Button btnPath = (Button) SCENE.lookup("#btnPath");
-            if(btnPath != null) {
+            Button btnAddDelivery = (Button) SCENE.lookup("#btnAddPickup");
+            if(btnPath != null && btnAddDelivery != null) {
                 btnPath.setDisable(false);
+                btnAddDelivery.setDisable(false);
             }
         }
+
 
     }
 
@@ -361,6 +358,7 @@ public class MainView implements ViewInterface {
         } else {
             setState(new MainViewWaitingState());
             PlanningRequestController.undo();
+            drawPassagePoints();
         }
 
         if(state != null) {
@@ -436,10 +434,10 @@ public class MainView implements ViewInterface {
     public void onCanvasClick(MouseEvent event) {
 
         if(state instanceof MainViewAddPickupState) {
-            userDrawPoint((Canvas)SCENE.lookup("#map"), Color.RED, event.getX(), event.getY());
+            userAddPickupDeliveryDraw((Canvas)SCENE.lookup("#passagePoints"), Color.RED, event.getX(), event.getY());
             setState(new MainViewAddDeliveryState());
         } else if(state instanceof MainViewAddDeliveryState) {
-            userDrawPoint((Canvas)SCENE.lookup("#map"), Color.BLUE, event.getX(), event.getY());
+            userAddPickupDeliveryDraw((Canvas)SCENE.lookup("#passagePoints"), Color.BLUE, event.getX(), event.getY());
             setState(new MainViewWaitingState());
         }
 

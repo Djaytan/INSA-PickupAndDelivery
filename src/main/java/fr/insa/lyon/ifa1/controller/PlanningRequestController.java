@@ -146,6 +146,9 @@ public class PlanningRequestController {
 
     public static boolean commit() {
         if(tmpRequest != null) {
+            if(!hamiltonianCircuit.isEmpty()) {
+                //TODO : crochet
+            }
             PLANNING_REQUEST.addRequest(tmpRequest);
             return true;
         }
@@ -157,9 +160,7 @@ public class PlanningRequestController {
     }
 
     public static void begin() {
-        if(tmpRequest == null) {
-            tmpRequest = new Request();
-        }
+        tmpRequest = new Request();
     }
 
     public static void calculateDeliveryMenPaths(int deliveryMenNumber) {
@@ -177,6 +178,7 @@ public class PlanningRequestController {
 
     public static List<String> getDeliveryTableViewAdress() {
         List<String> adressList = new ArrayList<>();
+        String tmpSegmentName;
 
         if(hamiltonianCircuit.size() > 1) {
             for (int i = 0; i < hamiltonianCircuit.size() - 1; i++) {
@@ -185,8 +187,15 @@ public class PlanningRequestController {
                 String destination = hamiltonianCircuit.get(i + 1).getAddress().getId();
                 FindShortestRoutes.Route route = dijkstraRoutes.get(origin).get(destination);
 
-                for (Segment segment : route.getItinerary()) {
-                    adressList.add(segment.getName());
+                if(route.getItinerary().size() > 0) {
+                    tmpSegmentName = route.getItinerary().get(0).getName();
+                    adressList.add(tmpSegmentName);
+                    for (int j = 1; j < route.getItinerary().size() - 1; j++) {
+                        if(!tmpSegmentName.equals(route.getItinerary().get(j).getName())) {
+                            adressList.add(route.getItinerary().get(j).getName());
+                            tmpSegmentName = route.getItinerary().get(j).getName();
+                        }
+                    }
                 }
             }
         }

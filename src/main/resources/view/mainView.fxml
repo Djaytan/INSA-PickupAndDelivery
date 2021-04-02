@@ -60,7 +60,7 @@
                                    <Text id="stateTxt" />
                                    <ButtonBar>
                                        <buttons>
-                                           <Button id="btnAddPickup" onAction="#addPickup" text="Ajouter une livraison" />
+                                           <Button id="btnAddPickup" onAction="#addPickup" text="Ajouter une livraison" disable="true"/>
                                        </buttons>
                                    </ButtonBar>
                                </HBox>
@@ -117,7 +117,7 @@
                                  </Text>
                                  <TableView id="tableViewDetailsTrajet" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                                    <columns>
-                                     <TableColumn prefWidth="415.0" text="Prochaine rue à emprunter" id="columnAdress"/>
+                                     <TableColumn prefWidth="415.0" text="Prochaines rues à emprunter" id="columnAdress"/>
                                    </columns>
                                  </TableView>
                                  <TableView id="tableViewDetailsPoints" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">

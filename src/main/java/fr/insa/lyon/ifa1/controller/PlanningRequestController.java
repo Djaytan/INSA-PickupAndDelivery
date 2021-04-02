@@ -343,11 +343,8 @@ public class PlanningRequestController {
 
       pointToMove.setAddress(intersection);
 
-
       // maj du circuit hamiltonien
-      final GeoMap geoMap = GeoMapController.getModel();
-      final Map<String, Map<String, FindShortestRoutes.Route>> dijkstraRoutes = DIJKSTRA.solve(geoMap, PLANNING_REQUEST.getPassagePoints());
-      hamiltonianCircuit = HAMILTONIAN_CIRCUIT_FINDER.solve(geoMap, dijkstraRoutes, PLANNING_REQUEST);
+      calculateDeliveryMenPaths(1);
 
       //@TODO: remplacer la maj du circuit hamiltonien par traitement avec algo plus léger
 //        for( PassagePoint pp: pps){

@@ -20,13 +20,6 @@
             <MenuItem mnemonicParsing="false" onAction="#quit" text="Quitter" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Aide">
-          <items>
-                  <MenuItem mnemonicParsing="false" text="Documentation" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="A propos de Pick'up" />
-          </items>
-        </Menu>
       </menus>
     </MenuBar>
       <HBox alignment="CENTER" prefHeight="631.0" prefWidth="900.0" spacing="30.0">

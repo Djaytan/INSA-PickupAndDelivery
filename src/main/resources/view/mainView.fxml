@@ -41,11 +41,6 @@
                     <SeparatorMenuItem />
                     <MenuItem onAction="#quit" text="Quitter" />
                 </Menu>
-                <Menu text="Aide">
-                    <MenuItem text="Documentation" />
-                    <SeparatorMenuItem />
-                    <MenuItem text="A propos de Pick'up" />
-                </Menu>
             </MenuBar>
 
 

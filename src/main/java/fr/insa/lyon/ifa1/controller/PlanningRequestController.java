@@ -414,33 +414,13 @@ public class PlanningRequestController {
     }
 
     public static void deplacerPoint(PassagePoint pointToMove, Intersection intersection) {
-
-//        List<PassagePoint> pps = hamiltonianCircuit;
-
-//      for (PassagePoint pp: PLANNING_REQUEST.getPassagePoints()){
-//        if (pp.equals(pointToMove)){
-//          pp.setAddress(intersection);
-//        }
-//      }
-
       pointToMove.setAddress(intersection);
 
       // maj du circuit hamiltonien
       if(PlanningRequestController.isCalculated()){
+        //@TODO: remplacer la maj du circuit hamiltonien par traitement avec algo plus léger
         calculateDeliveryMenPaths(1);
       }
-
-      //@TODO: remplacer la maj du circuit hamiltonien par traitement avec algo plus léger
-//        for( PassagePoint pp: pps){
-//            if (pp.equals(pointToMove)){
-//                hamiltonianCircuit.remove(pointToMove);
-//
-//                // ajouter ici appel algorithme crochet
-//                pointToMove.getAddress().setLatitude(newLatitude);
-//                pointToMove.getAddress().setLongitude(newLongitude);
-//                hamiltonianCircuit.add(pointToMove);
-//            }
-//        }
 
     }
 

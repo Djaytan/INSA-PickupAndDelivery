@@ -9,5 +9,12 @@ import java.util.Map;
 
 public interface FindShortestHamiltonianCircuit {
 
+  /**
+   * Find the shortest hamiltonian circuit, given a planning request
+   * @param gm The Geomap model
+   * @param routes The shortest routes between every passage point
+   * @param pr The planning request
+   * @return The shortest hamiltonian circuit (or an heuristic)
+   */
     List<PassagePoint> solve(GeoMap gm, Map<String, Map<String, FindShortestRoutes.Route>> routes, PlanningRequest pr);
 }

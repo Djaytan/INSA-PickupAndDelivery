@@ -84,8 +84,20 @@
       </center>
 
       <bottom>
+        <VBox id="borderPaneBottom" minHeight="125" >
 
-               <HBox id="borderPaneBottom" alignment="TOP_CENTER" minHeight="75" spacing="10.0">
+          <HBox alignment="BOTTOM_CENTER" minHeight="50" spacing="10.0">
+
+            <Label text="Temps de calcul" />
+            <TextField id="computationTime" text="5" />
+            <Label text="s" />
+            <Label text="Vitesse des livreurs" />
+            <TextField id="deliveryMenSpeed" text="20" />
+            <Label text="km/h" />
+
+          </HBox>
+
+               <HBox alignment="TOP_CENTER" spacing="10.0">
 
                  <Label text="Importer des points relais à partir d'un fichier XML" />
                  <Button id="btnFileChooser" onAction="#openFileChooser" text="Séléctionner un fichier" />
@@ -94,6 +106,8 @@
                  <Button id="btnPath" disable="true" onAction="#onCalculate" text="Calculer" />
 
                </HBox>
+
+        </VBox>
 
       </bottom>
 

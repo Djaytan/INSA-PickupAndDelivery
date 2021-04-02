@@ -26,7 +26,7 @@ public class PlanningRequestController {
 
     private static final PlanningRequest PLANNING_REQUEST = new PlanningRequest();
     private static final Dijkstra DIJKSTRA = new Dijkstra();
-    private static final FindShortestHamiltonianCircuit HAMILTONIAN_CIRCUIT_FINDER = new OptimalHamiltonianCircuit(5000);
+    private static FindShortestHamiltonianCircuit hamiltonianCircuitFinder;
 
     private static Map<String, Map<String, FindShortestRoutes.Route>> dijkstraRoutes;
     private static List<PassagePoint> hamiltonianCircuit = new ArrayList<>();
@@ -34,6 +34,8 @@ public class PlanningRequestController {
     public static PlanningRequest getModel() { return PLANNING_REQUEST; }
 
     private static Request tmpRequest = null;
+
+    private static int deliveryMenSpeed;
     
     public static void importPlanningRequest(File file) {
 
@@ -218,12 +220,13 @@ public class PlanningRequestController {
         tmpRequest = new Request();
     }
 
-    public static void calculateDeliveryMenPaths(int deliveryMenNumber) {
+    public static void calculateDeliveryMenPaths(int deliveryMenNumber, int computationTime) {
 
         final GeoMap geoMap = GeoMapController.getModel();
 
+        hamiltonianCircuitFinder = new OptimalHamiltonianCircuit(computationTime * 1000);
         dijkstraRoutes = DIJKSTRA.solve(geoMap, PLANNING_REQUEST.getPassagePoints());
-        hamiltonianCircuit = HAMILTONIAN_CIRCUIT_FINDER.solve(geoMap, dijkstraRoutes, PLANNING_REQUEST);
+        hamiltonianCircuit = hamiltonianCircuitFinder.solve(geoMap, dijkstraRoutes, PLANNING_REQUEST);
 
     }
 
@@ -413,7 +416,7 @@ public class PlanningRequestController {
 
     }
 
-    public static void deplacerPoint(PassagePoint pointToMove, Intersection intersection) {
+    public static void deplacerPoint(PassagePoint pointToMove, Intersection intersection, int computationTime) {
 
 //        List<PassagePoint> pps = hamiltonianCircuit;
 
@@ -426,7 +429,7 @@ public class PlanningRequestController {
       pointToMove.setAddress(intersection);
 
       // maj du circuit hamiltonien
-      calculateDeliveryMenPaths(1);
+      calculateDeliveryMenPaths(1, computationTime * 1000);
 
       //@TODO: remplacer la maj du circuit hamiltonien par traitement avec algo plus léger
 //        for( PassagePoint pp: pps){

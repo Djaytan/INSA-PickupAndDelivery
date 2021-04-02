@@ -18,7 +18,6 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.canvas.Canvas;
@@ -69,8 +68,6 @@ public class MainView implements ViewInterface {
 
     private static Map<String, Object> closestPassagePoint = null;
     private static PassagePoint realClosestPassagePoint = null;
-
-    //private static Map<PassagePointType, Map<String, Double>> closestPassagePoint = null;
 
     public void show() {
 
@@ -451,7 +448,7 @@ public class MainView implements ViewInterface {
         return (obs, oldVal, newVal) -> {
 
             VBox borderPaneTop = (VBox) SCENE.lookup("#borderPaneTop");
-            HBox borderPaneBottom = (HBox) SCENE.lookup("#borderPaneBottom");
+            VBox borderPaneBottom = (VBox) SCENE.lookup("#borderPaneBottom");
 
             Canvas map = (Canvas) SCENE.lookup("#map");
             Canvas deliverymenPaths = (Canvas) SCENE.lookup("#deliverymenPaths");
@@ -505,11 +502,12 @@ public class MainView implements ViewInterface {
                 setState(new MainViewWaitingState());
             }
         } else if (state instanceof MainViewMovePointState) {
+            int computationTime = Integer.parseInt(((TextField) SCENE.lookup("#computationTime")).getText());
             double x = getWorldCoordinatesFromMapCoordinates(event.getX(), event.getY()).get("x");
             double y = getWorldCoordinatesFromMapCoordinates(event.getX(), event.getY()).get("y");
             Intersection nearestIntersection = GeoMapController.getClosestIntersection(x, y);
             setLoadingCursor(true);
-            PlanningRequestController.deplacerPoint(((MainViewMovePointState) state).pointToMove, nearestIntersection);
+            PlanningRequestController.deplacerPoint(((MainViewMovePointState) state).pointToMove, nearestIntersection, computationTime);
             drawPassagePoints();
             drawDeliveryMenPaths();
             setLoadingCursor(false);
@@ -619,8 +617,9 @@ public class MainView implements ViewInterface {
 
         setLoadingCursor(true);
         int deliveryMenNumber = Integer.parseInt(((TextField) SCENE.lookup("#nbLivreurs")).getText());
+        int computationTime = Integer.parseInt(((TextField) SCENE.lookup("#computationTime")).getText());
 
-        PlanningRequestController.calculateDeliveryMenPaths(deliveryMenNumber);
+        PlanningRequestController.calculateDeliveryMenPaths(deliveryMenNumber, computationTime);
 
         drawDeliveryMenPaths();
 

@@ -472,22 +472,24 @@ public class MainView implements ViewInterface {
 
     }
 
-    private EventHandler<? super MouseEvent> onMouseMove() {
+  private EventHandler<? super MouseEvent> onMouseMove() {
 
-        return e -> {
+    return e -> {
 
-            if (!PlanningRequestController.isEmpty()) {
+      if (!(state instanceof MainViewMovePointState)) {
+        if (!PlanningRequestController.isEmpty()) {
 
-                Map<String, Double> coordinates = getWorldCoordinatesFromMapCoordinates(e.getX(), e.getY());
-                closestPassagePoint = PlanningRequestController.getClosestPassagePoint(coordinates);
-                realClosestPassagePoint = PlanningRequestController.getRealClosestPassagePoint(coordinates);
-                drawOveredPassagePoints();
+          Map<String, Double> coordinates = getWorldCoordinatesFromMapCoordinates(e.getX(), e.getY());
+          closestPassagePoint = PlanningRequestController.getClosestPassagePoint(coordinates);
+          realClosestPassagePoint = PlanningRequestController.getRealClosestPassagePoint(coordinates);
+          drawOveredPassagePoints();
+        }
+      }
 
-            }
+    };
 
-        };
 
-    }
+  }
 
     @FXML
     public void onCanvasClick(MouseEvent event) {

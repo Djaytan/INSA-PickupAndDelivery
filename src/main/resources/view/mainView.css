@@ -1,0 +1,10 @@
+Canvas {
+    -fx-border-width: 3;
+    -fx-border-color: black black black black;
+}
+
+.root {
+    -fx-padding: 20;
+    -fx-margin: 20;
+    -fx-background-color: white;
+}

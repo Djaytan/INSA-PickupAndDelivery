@@ -1,7 +1,7 @@
 package fr.insa.lyon.ifa1.xml;
 
-import fr.insa.lyon.ifa1.cache.GeoMapRegistry;
-import fr.insa.lyon.ifa1.cache.PlanningRequestRegistry;
+import fr.insa.lyon.ifa1.controller.GeoMapController;
+import fr.insa.lyon.ifa1.controller.PlanningRequestController;
 import fr.insa.lyon.ifa1.models.map.Intersection;
 import fr.insa.lyon.ifa1.models.request.Depot;
 import fr.insa.lyon.ifa1.models.request.Depot.Time;
@@ -38,9 +38,9 @@ public class XMLRequestsHandler extends DefaultHandler {
           int minutes = Integer.parseInt(departureTimeSplited[1]);
           int seconds = Integer.parseInt(departureTimeSplited[2]);
           Time departureTime = new Time(hours, minutes, seconds);
-          Intersection intersection = GeoMapRegistry.getGeoMap().getIntersection(intersectionId);
+          Intersection intersection = GeoMapController.getModel().getIntersection(intersectionId);
           Depot depot = new Depot(intersection, departureTime);
-          PlanningRequestRegistry.createPlanningRequest(depot);
+          PlanningRequestController.getModel().setDepot(depot);
           break;
         }
       case "request":
@@ -49,16 +49,14 @@ public class XMLRequestsHandler extends DefaultHandler {
           String deliveryIntersectionId = attributes.getValue("deliveryAddress");
           int pickupDuration = Integer.parseInt(attributes.getValue("pickupDuration"));
           int deliveryDuration = Integer.parseInt(attributes.getValue("deliveryDuration"));
-          Intersection pickupIntersection =
-              GeoMapRegistry.getGeoMap().getIntersection(pickupIntersectionId);
-          Intersection deliveryIntersection =
-              GeoMapRegistry.getGeoMap().getIntersection(deliveryIntersectionId);
+          Intersection pickupIntersection = GeoMapController.getModel().getIntersection(pickupIntersectionId);
+          Intersection deliveryIntersection = GeoMapController.getModel().getIntersection(deliveryIntersectionId);
           DurationPassagePoint pickupPassagePoint =
               new DurationPassagePoint(pickupIntersection, pickupDuration, PassagePointType.PICKUP);
           DurationPassagePoint delivertPassagePoint =
               new DurationPassagePoint(deliveryIntersection, deliveryDuration, PassagePointType.DELIVERY);
           Request request = new Request(pickupPassagePoint, delivertPassagePoint);
-          PlanningRequestRegistry.getPlanningRequest().addRequest(request);
+          PlanningRequestController.getModel().addRequest(request);
           break;
         }
       default:

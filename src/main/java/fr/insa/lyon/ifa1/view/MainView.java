@@ -527,7 +527,7 @@ public class MainView implements ViewInterface {
 
     private int showPopUpDurationPoint() {
         TextInputDialog dialog = new TextInputDialog();
-        dialog.setHeaderText("Temps d'attente du point ?");
+        dialog.setHeaderText("Temps d'attente du point (en s) ?");
         int duration = 0;
         String res;
         boolean error = true;
